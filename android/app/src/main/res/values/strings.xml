@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">H2O NexPulse</string>
+    <string name="title_activity_main">H2O NexPulse</string>
+    <string name="package_name">com.h2o.nexpulse</string>
+    <string name="custom_url_scheme">com.h2o.nexpulse</string>
+</resources>

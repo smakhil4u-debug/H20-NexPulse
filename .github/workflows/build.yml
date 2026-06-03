@@ -1,0 +1,63 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ master, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          check-latest: true
+
+      - name: Debug Android Folder
+        run: ls -R android
+
+      - name: Verify Versions
+        run: |
+          node -v
+          java -version
+
+      - name: Install Dependencies
+        run: |
+          npm install -g @capacitor/cli@latest
+          npm install
+          npm install @capacitor/android
+
+      - name: Build Web App
+        run: ls www
+
+      - name: Sync Capacitor
+        run: |
+          rm -rf android
+          npx cap add android
+          npx cap sync android
+
+      - name: Generate Assets
+        run: |
+          npm install @capacitor/assets
+          npx capacitor-assets generate --android
+
+      - name: Build with Gradle
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
