@@ -71,8 +71,10 @@ const AppEngine = {
                 console.log("Firebase Auth Success:", user.phoneNumber);
 
                 // Now sync with Supabase
-                this.syncWithSupabase(user.phoneNumber.replace('+91', ''));
+                btn.innerText = "SYNCING PROFILE...";
+                await this.syncWithSupabase(user.phoneNumber.replace('+91', ''));
             } catch (err) {
+                console.error("Verification failed:", err);
                 alert("Invalid code. Try again!");
                 btn.innerText = "VERIFY CODE";
                 btn.disabled = false;
@@ -81,35 +83,52 @@ const AppEngine = {
     },
 
     async syncWithSupabase(cleanPhone) {
+        console.log("Syncing with Supabase for phone:", cleanPhone);
         const supabase = window.supabaseClient;
-        const { data, error } = await supabase
-            .from('customers')
-            .select('*')
-            .eq('phone_number', cleanPhone)
-            .maybeSingle();
-
-        if (!data) {
-            const { data: newUser } = await supabase
+        
+        try {
+            const { data, error } = await supabase
                 .from('customers')
-                .upsert({ phone_number: cleanPhone, full_name: 'Valued Customer' })
-                .select().single();
-            this.loginSuccess(newUser);
-        } else {
-            this.loginSuccess(data);
+                .select('*')
+                .eq('phone_number', cleanPhone)
+                .maybeSingle();
+
+            if (!data) {
+                console.log("Creating new profile for:", cleanPhone);
+                const { data: newUser, error: createErr } = await supabase
+                    .from('customers')
+                    .upsert({ phone_number: cleanPhone, full_name: 'NexPulse Member' })
+                    .select().single();
+                
+                if (createErr) throw createErr;
+                this.loginSuccess(newUser);
+            } else {
+                console.log("Existing user found:", data.customer_id);
+                this.loginSuccess(data);
+            }
+        } catch (e) {
+            console.error("Supabase Sync Failed:", e);
+            alert("Database Sync Failed. Please check internet connection.");
+            document.getElementById('btn-login-action').innerText = "RETRY SYNC";
+            document.getElementById('btn-login-action').disabled = false;
         }
     },
 
     loginSuccess(user) {
         this.currentUser = user;
         localStorage.setItem('h2o_phone', user.phone_number);
-        const overlay = document.getElementById('auth-overlay');
-        if (overlay) overlay.classList.add('translate-y-full');
-        console.log("Logged in as:", user.phone_number);
         
-        // --- REAL-TIME NOTIFICATION LISTENER ---
+        // BUG FIX: Ensure overlay is hidden and screen is reset
+        const overlay = document.getElementById('auth-overlay');
+        if (overlay) {
+            overlay.classList.add('translate-y-full');
+            overlay.style.pointerEvents = 'none';
+        }
+        
+        console.log("LOGIN COMPLETE. Welcome:", user.phone_number);
+        
+        // Start background engines
         this.initRealtime();
-
-        // Refresh all personalized data
         this.fetchCustomerAssets();
         this.fetchOrderHistory();
         this.fetchSubscriptions();
