@@ -8,6 +8,59 @@ const AppEngine = {
     subscriptions: [],
     orderHistory: [],
     products: [],
+    currentUser: null,
+
+    // --- AUTH LOGIC ---
+    async handleLogin() {
+        const phone = document.getElementById('login-phone').value;
+        if (!phone || phone.length < 10) {
+            alert("Please enter a valid 10-digit phone number!");
+            return;
+        }
+
+        const supabase = window.supabaseClient;
+        if (!supabase) return;
+
+        // Simple OTP Simulation for Demo (In production, use supabase.auth.signInWithOtp)
+        const { data, error } = await supabase
+            .from('customers')
+            .select('*')
+            .eq('phone_number', phone)
+            .single();
+
+        if (error) {
+            // New user case: Create profile
+            const { data: newUser, error: createErr } = await supabase
+                .from('customers')
+                .upsert({ phone_number: phone, full_name: 'Valued Customer' })
+                .select()
+                .single();
+            
+            if (!createErr) this.loginSuccess(newUser);
+        } else {
+            this.loginSuccess(data);
+        }
+    },
+
+    loginSuccess(user) {
+        this.currentUser = user;
+        localStorage.setItem('h2o_phone', user.phone_number);
+        document.getElementById('auth-overlay').classList.add('translate-y-full');
+        console.log("Logged in as:", user.phone_number);
+        
+        // Refresh all personalized data
+        this.fetchCustomerAssets();
+        this.fetchOrderHistory();
+        this.fetchSubscriptions();
+    },
+
+    checkSession() {
+        const savedPhone = localStorage.getItem('h2o_phone');
+        if (savedPhone) {
+            document.getElementById('login-phone').value = savedPhone;
+            this.handleLogin();
+        }
+    },
 
     // --- CART LOGIC ---
     addToCart(productKey) {
