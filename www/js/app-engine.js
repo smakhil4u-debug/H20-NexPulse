@@ -16,29 +16,46 @@ const AppEngine = {
         const phoneInput = document.getElementById('login-phone');
         if (!phoneInput) return;
         
-        const phone = phoneInput.value;
+        const phone = phoneInput.value.trim();
         if (!phone || phone.length < 10) {
             alert("Please enter a valid 10-digit phone number!");
             return;
         }
 
         const supabase = window.supabaseClient;
-        if (!supabase) return;
+        if (!supabase) {
+            alert("Database connection not initialized!");
+            return;
+        }
 
+        console.log("Attempting login for:", phone);
+
+        // Fetch user or create if new
         const { data, error } = await supabase
             .from('customers')
             .select('*')
             .eq('phone_number', phone)
-            .single();
+            .maybeSingle();
 
         if (error) {
+            console.error("Login Error:", error.message);
+            alert("Login failed: " + error.message);
+            return;
+        }
+
+        if (!data) {
+            // New user case: Create profile
             const { data: newUser, error: createErr } = await supabase
                 .from('customers')
                 .upsert({ phone_number: phone, full_name: 'Valued Customer' })
                 .select()
                 .single();
             
-            if (!createErr) this.loginSuccess(newUser);
+            if (createErr) {
+                alert("Error creating account: " + createErr.message);
+            } else {
+                this.loginSuccess(newUser);
+            }
         } else {
             this.loginSuccess(data);
         }
@@ -49,6 +66,7 @@ const AppEngine = {
         localStorage.setItem('h2o_phone', user.phone_number);
         const overlay = document.getElementById('auth-overlay');
         if (overlay) overlay.classList.add('translate-y-full');
+        console.log("Logged in as:", user.phone_number);
         
         // --- REAL-TIME NOTIFICATION LISTENER ---
         this.initRealtime();
@@ -126,17 +144,22 @@ const AppEngine = {
         if (!product) return;
 
         const existing = this.cart.find(item => item.product_key === productKey);
-        if (existing) existing.qty++;
-        else this.cart.push({ ...product, qty: 1 });
-        
+        if (existing) {
+            existing.qty++;
+        } else {
+            this.cart.push({ ...product, qty: 1 });
+        }
         this.syncCartUI();
     },
 
     removeFromCart(productKey) {
         const index = this.cart.findIndex(item => item.product_key === productKey);
         if (index > -1) {
-            if (this.cart[index].qty > 1) this.cart[index].qty--;
-            else this.cart.splice(index, 1);
+            if (this.cart[index].qty > 1) {
+                this.cart[index].qty--;
+            } else {
+                this.cart.splice(index, 1);
+            }
         }
         this.syncCartUI();
     },
@@ -202,6 +225,7 @@ const AppEngine = {
         this.subState.freq = freq;
         ['daily', 'weekly', 'custom'].forEach(f => {
             const el = document.getElementById(`freq-${f}`);
+            if (!el) return;
             if (f === freq) el.classList.add('bg-teal-500/10', 'text-teal-400', 'border-teal-500/50');
             else el.classList.remove('bg-teal-500/10', 'text-teal-400', 'border-teal-500/50');
         });
@@ -218,6 +242,7 @@ const AppEngine = {
     updateDayPickerUI() {
         for (let i = 0; i <= 6; i++) {
             const el = document.getElementById(`day-${i}`);
+            if (!el) continue;
             if (this.subState.days.includes(i)) el.classList.add('bg-teal-600', 'border-teal-400', 'text-white');
             else el.classList.remove('bg-teal-600', 'border-teal-400', 'text-white');
         }
@@ -228,6 +253,7 @@ const AppEngine = {
         const supabase = window.supabaseClient;
         const { error } = await supabase.from('subscriptions').insert({ customer_id: this.currentUser.customer_id, product_key: this.subState.productKey, frequency: this.subState.freq, selected_days: this.subState.days });
         if (!error) { alert("Subscription Activated! 📅"); this.closeSubscriptionFlow(); this.fetchSubscriptions(); }
+        else { alert("Error: " + error.message); }
     },
 
     async fetchSubscriptions() {
@@ -240,13 +266,17 @@ const AppEngine = {
         const target = document.getElementById('view-subscriptions');
         if (!target) return;
         if (this.subscriptions.length === 0) {
-            target.innerHTML = `<div class="view-header"><h2>Subscription</h2></div><div class="empty-state-view"><div class="empty-vector">🫙❌</div><h3>No Active Subscriptions</h3></div>`;
+            target.innerHTML = `
+                <div class="view-header"><h2>Subscription</h2></div>
+                <div class="sub-toggle-tabs"><button class="sub-tab-btn active">Active</button><button class="sub-tab-btn">Inactive</button></div>
+                <div class="empty-state-view"><div class="empty-vector">🫙❌</div><h3>No Active Subscriptions</h3><p>Schedule your first delivery now!</p></div>
+            `;
             return;
         }
         let html = `<div class="view-header"><h2>Subscription</h2></div><div class="space-y-4">`;
         this.subscriptions.forEach(sub => {
             const days = sub.selected_days.map(d => ['S','M','T','W','T','F','S'][d]).join(', ');
-            html += `<div class="glass-card rounded-3xl p-5 border border-teal-500/20"><h4 class="font-bold text-teal-400">${sub.product_key}</h4><p class="text-[10px] text-slate-500 uppercase">${sub.frequency} • ${days}</p></div>`;
+            html += `<div class="glass-card rounded-3xl p-5 border border-teal-500/20"><h4 class="font-bold text-teal-400">${sub.product_key.replace(/_/g, ' ')}</h4><p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-1">${sub.frequency} • ${days}</p></div>`;
         });
         target.innerHTML = html + `</div>`;
     },
@@ -261,24 +291,72 @@ const AppEngine = {
     syncOrderHistoryUI() {
         const target = document.getElementById('dynamic-order-history-target');
         if (!target) return;
+        if (this.orderHistory.length === 0) {
+            target.innerHTML = `<div class="menu-item text-secondary italic"><span><i class="fa-solid fa-box"></i> No orders found</span></div>`;
+            return;
+        }
         target.innerHTML = '';
         this.orderHistory.forEach(o => {
             const item = document.createElement('div'); item.className = 'menu-item';
             item.innerHTML = `<span><i class="fa-solid fa-box"></i> Order #${o.order_id}</span><span class="value font-bold text-accent">₹${o.total_amount}</span>`;
             target.appendChild(item);
         });
+        this.syncCalendarUI();
+    },
+
+    syncCalendarUI() {
+        console.log("Calendar UI synced.");
     },
 
     async fetchCustomerAssets() {
         if (!this.currentUser) return;
         const { data, error } = await window.supabaseClient.from('customers').select('jars_held, security_deposit').eq('customer_id', this.currentUser.customer_id).single();
-        if (!error) { document.getElementById('ui-jars-held').innerText = data.jars_held; document.getElementById('ui-deposit-held').innerText = `₹${data.security_deposit}`; }
+        if (!error && data) { 
+            const jarsEl = document.getElementById('ui-jars-held');
+            const depEl = document.getElementById('ui-deposit-held');
+            if (jarsEl) jarsEl.innerText = data.jars_held; 
+            if (depEl) depEl.innerText = `₹${parseFloat(data.security_deposit).toFixed(2)}`; 
+        }
     },
 
-    checkout() {
-        let msg = `*H2O NexPulse Order*%0A*Customer:* ${this.currentUser.full_name}%0A`;
-        this.cart.forEach(i => msg += `• ${i.display_name}: ${i.qty}%0A`);
+    // --- CHECKOUT ---
+    openCheckout() {
+        if (!this.currentUser) return alert("Please login to proceed!");
+        const modal = document.getElementById('checkout-modal');
+        if (modal) modal.classList.remove('hidden');
+        const phoneEl = document.getElementById('cust-phone');
+        if (phoneEl) phoneEl.value = this.currentUser.phone_number;
+        const nameEl = document.getElementById('cust-name');
+        if (nameEl) nameEl.value = this.currentUser.full_name || '';
+    },
+
+    closeCheckout() {
+        const modal = document.getElementById('checkout-modal');
+        if (modal) modal.classList.add('hidden');
+    },
+
+    toggleMapPicker() {
+        const container = document.getElementById('map-picker-container');
+        if (container) container.classList.toggle('hidden');
+    },
+
+    async finalOrder() {
+        const name = document.getElementById('cust-name').value;
+        const address = document.getElementById('cust-address').value;
+        if (!name || !address) return alert("Please provide your name and address!");
+
+        const supabase = window.supabaseClient;
+        await supabase.from('customers').update({ full_name: name }).eq('customer_id', this.currentUser.customer_id);
+
+        let msg = `*H2O NexPulse Order*%0A*Customer:* ${name}%0A*Phone:* ${this.currentUser.phone_number}%0A*Address:* ${address}%0A---------------------------%0A`;
+        let total = 0;
+        this.cart.forEach(i => { msg += `• ${i.display_name}: ${i.qty}%0A`; total += i.unit_price * i.qty; });
+        msg += `---------------------------%0A*Total:* ₹${total.toFixed(2)}`;
+        
         window.open(`https://wa.me/917483266062?text=${msg}`, '_blank');
-    }
+        this.cart = []; this.syncCartUI(); this.closeCheckout();
+    },
+
+    checkout() { this.openCheckout(); }
 };
 window.AppEngine = AppEngine;
