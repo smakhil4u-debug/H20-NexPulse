@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H2O NexPulse - The Future of Pure H2O</title>
-    <!-- Tailwind CSS (Local) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>H2O NexPulse Engine</title>
+    <!-- Local Assets -->
     <script src="js/tailwind.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,141 +14,216 @@
     <script src="js/products.js"></script>
 </head>
 <body>
-    <div id="app-container">
-        
-        <header class="app-header">
-            <div class="location-wrapper" id="location-select">
-                <i class="fa-solid fa-location-dot pin-icon"></i>
-                <div class="location-meta">
-                    <div class="city-selector">
-                        <span id="current-city">Ballari</span>
-                        <i class="fa-solid fa-chevron-down arrow-indicator"></i>
-                    </div>
-                    <span class="street-address" id="current-address">36, Sri Rampura Colony, Bandimot, Ballari...</span>
+    <div id="app-viewport">
+
+        <!-- GLOBAL TOP BLOCK -->
+        <div id="global-top-bar">
+            <div class="location-banner">
+                <i class="fa-solid fa-location-dot pin"></i>
+                <div class="meta">
+                    <h4>Ballari <i class="fa-solid fa-chevron-down text-xs"></i></h4>
+                    <p>36, Sri Rampura Colony, Bandimot, Ballari, ...</p>
                 </div>
             </div>
-        </header>
-
-        <section class="search-section">
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" placeholder="Search for products, subscriptions, or water jars..." id="global-search">
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-ico"></i>
+                <input type="text" placeholder="Search..." id="global-search">
             </div>
-        </section>
+        </div>
 
-        <section class="promo-container">
-            <div class="promo-card">
-                <div class="promo-text">
-                    <span class="brand-accent-tag">NEXPULSE PREMIUM</span>
-                    <h2>DOUBLE THE PURITY</h2>
-                    <p>Advanced RO, UV, Copper & Alkaline filtration technology right at your doorstep.</p>
-                </div>
-                <div class="slider-indicators">
-                    <span class="indicator active"></span>
-                    <span class="indicator"></span>
-                    <span class="indicator"></span>
+        <!-- VIEW PANEL 1: HOME (Ref: 1000298513.jpg) -->
+        <section class="view-panel active" id="view-home">
+            <div class="promo-slider">
+                <div class="slide-content">
+                    <span class="brand-badge">Bisleri vedica</span>
+                    <h3>Himalayan Spring Water</h3>
+                    <p>A life full of altitude.</p>
                 </div>
             </div>
-        </section>
-
-        <section class="category-container">
-            <div class="category-scroller">
-                <div class="category-item active">
-                    <div class="icon-avatar master-can">🛢️</div>
-                    <span>Bisleri</span>
-                </div>
-                <div class="category-item">
-                    <div class="icon-avatar premium-vedica">💎</div>
-                    <span>Vedica</span>
-                </div>
-                <div class="category-item">
-                    <div class="icon-avatar soda-carbonated">🥤</div>
-                    <span>Fizzy Drinks</span>
-                </div>
-                <div class="category-item">
-                    <div class="icon-avatar tonic-mix">🫧</div>
-                    <span>Bisleri Soda</span>
-                </div>
+            
+            <div class="quick-category-row">
+                <div class="cat-chip active"><span>Bisleri</span></div>
+                <div class="cat-chip"><span>Vedica</span></div>
+                <div class="cat-chip"><span>Fizzy Drinks</span></div>
+                <div class="cat-chip"><span>Bisleri Soda</span></div>
             </div>
-        </section>
 
-        <section class="status-container" id="serviceability-banner">
-            <div class="alert-card-error">
-                <div class="alert-content">
+            <div class="service-alert-box">
+                <div class="alert-txt">
                     <h3>Location not deliverable</h3>
                     <p>Sorry, we are not delivering at this location at the moment.</p>
                 </div>
-                <div class="alert-icon-graphic">
-                    <div class="circle-x-frame">
-                        <i class="fa-solid fa-xmark"></i>
-                    </div>
+                <div class="alert-icon-circle"><i class="fa-solid fa-xmark"></i></div>
+            </div>
+
+            <div class="banner-subscribe-cta">
+                <h3>Subscribe Once. <br><span class="highlight">Stay hydrated daily.</span></h3>
+                <button class="cta-btn-sm" onclick="navigateTo('subscriptions')">SUBSCRIBE NOW</button>
+            </div>
+
+            <div class="grid-section">
+                <h3 class="section-title">Shop by Need</h3>
+                <div class="needs-grid">
+                    <div class="grid-card"><div>🛢️</div><span>Daily Hydration</span></div>
+                    <div class="grid-card"><div>💎</div><span>Premium Hydration</span></div>
+                    <div class="grid-card"><div>🥤</div><span>Refreshment</span></div>
+                    <div class="grid-card"><div>🏃</div><span>On the Go</span></div>
+                    <div class="grid-card"><div>🎉</div><span>House Party</span></div>
+                    <div class="grid-card"><div>🍷</div><span>Glass Range</span></div>
                 </div>
             </div>
         </section>
 
-        <section class="asset-ledger-section">
-            <div class="ledger-card">
-                <div class="ledger-header">
-                    <h4><i class="fa-solid fa-box-open"></i> Physical Account Ledger</h4>
+        <!-- VIEW PANEL 2: PRODUCTS (Ref: 1000298514.jpg) -->
+        <section class="view-panel" id="view-products">
+            <div class="view-header"><h2>Products</h2></div>
+            <div class="quick-category-row">
+                <div class="cat-chip active"><span>Bisleri</span></div>
+                <div class="cat-chip"><span>Vedica</span></div>
+                <div class="cat-chip"><span>Fizzy Drinks</span></div>
+                <div class="cat-chip"><span>Bisleri Soda</span></div>
+            </div>
+            <div class="service-alert-box">
+                <div class="alert-txt">
+                    <h3>Location not deliverable</h3>
+                    <p>Sorry, we are not delivering at this location at the moment.</p>
                 </div>
-                <div class="ledger-metrics">
-                    <div class="metric-node">
-                        <span class="metric-val" id="ui-jars-held">0</span>
-                        <span class="metric-lbl">Jars At Home</span>
-                    </div>
-                    <div class="metric-divider"></div>
-                    <div class="metric-node">
-                        <span class="metric-val" id="ui-deposit-held">₹0.00</span>
-                        <span class="metric-lbl">Security Deposit</span>
-                    </div>
-                </div>
+                <div class="alert-icon-circle"><i class="fa-solid fa-xmark"></i></div>
+            </div>
+            <div id="dynamic-product-list-target" class="product-grid">
+                <!-- Products will be injected here -->
+                 <p class="loading-msg">Loading premium products...</p>
             </div>
         </section>
 
-        <div class="scroll-padding-bottom"></div>
+        <!-- VIEW PANEL 3: SUBSCRIPTIONS (Ref: 1000298515.jpg) -->
+        <section class="view-panel" id="view-subscriptions">
+            <div class="view-header"><h2>Subscription</h2></div>
+            <div class="sub-toggle-tabs">
+                <button class="sub-tab-btn active">Active Subscriptions</button>
+                <button class="sub-tab-btn">Inactive Subscriptions</button>
+            </div>
+            <div class="empty-state-view">
+                <div class="empty-vector">🫙❌</div>
+                <h3>No Active Subscriptions Found</h3>
+                <p>Add items to your cart and subscribe them now.</p>
+            </div>
+        </section>
 
-        <nav class="sticky-bottom-nav">
-            <button class="nav-action-node active" data-route="home">
-                <i class="fa-solid fa-house"></i>
-                <span>Home</span>
-            </button>
-            <button class="nav-action-node" data-route="products">
-                <i class="fa-solid fa-bottle-water"></i>
-                <span>Products</span>
-            </button>
-            <button class="nav-action-node" data-route="subscriptions">
-                <i class="fa-solid fa-calendar-check"></i>
-                <span>Subscriptions</span>
-            </button>
-            <button class="nav-action-node" data-route="cart">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span>Cart</span>
-            </button>
-            <button class="nav-action-node" data-route="profile">
-                <i class="fa-solid fa-user-gear"></i>
-                <span>Profile</span>
-            </button>
+        <!-- VIEW PANEL 4: CART (Ref: 1000298517.jpg) -->
+        <section class="view-panel" id="view-cart">
+            <div class="view-header"><h2>Cart</h2></div>
+            <div class="empty-state-view">
+                <div class="empty-vector">🛒❗</div>
+                <h3>Don't leave your cart high & dry</h3>
+                <p>Add some bottles to quench your thirst</p>
+                <button class="action-accent-button" onclick="navigateTo('products')">BROWSE PRODUCTS</button>
+            </div>
+        </section>
+
+        <!-- VIEW PANEL 5: PROFILE (Ref: 1000298519.jpg) -->
+        <section class="view-panel" id="view-profile">
+            <div class="profile-identity-card">
+                <div class="avatar-icon"><i class="fa-solid fa-circle-user"></i></div>
+                <div class="info">
+                    <h3>Hi, Customer</h3>
+                    <p>7483266062</p>
+                </div>
+            </div>
+            
+            <div class="menu-list-group">
+                <div class="menu-item"><span><i class="fa-solid fa-user"></i> View Profile Details</span><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="menu-item"><span><i class="fa-solid fa-wallet"></i> NexPulse Wallet</span><span class="value">₹0</span></div>
+                <div class="menu-item"><span><i class="fa-solid fa-building-columns"></i> Bank Details</span><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+
+            <div class="menu-list-group">
+                <h4 class="group-title">Orders</h4>
+                <div class="menu-item"><span><i class="fa-solid fa-box"></i> All Orders</span><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="menu-item" onclick="navigateTo('calendar')"><span><i class="fa-solid fa-calendar-days"></i> Order Calendar</span><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="menu-item"><span><i class="fa-solid fa-heart"></i> Favorite Orders</span><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="menu-item"><span><i class="fa-solid fa-map-location-dot"></i> Address Book</span><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+
+            <div class="menu-list-group">
+                <h4 class="group-title">Customer Support</h4>
+                <div class="menu-item"><span><i class="fa-solid fa-address-book"></i> Contact Information</span><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="menu-item"><span><i class="fa-solid fa-comments"></i> Chat With Us</span><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+        </section>
+
+        <!-- SUB-VIEW PANEL 6: ORDER CALENDAR (Ref: 1000298516.jpg) -->
+        <section class="view-panel" id="view-calendar">
+            <div class="sub-view-navigation">
+                <button class="back-link-btn" onclick="navigateTo('profile')"><i class="fa-solid fa-chevron-left"></i> Order Calendar</button>
+            </div>
+            <div class="calendar-interface-widget">
+                <!-- Grid layouts rendering dates mapping to June 2026 -->
+                <div class="calendar-month-header"><h4>June 2026</h4></div>
+                <div class="calendar-days-grid">
+                    <!-- Standard day matrix blocks -->
+                    <div class="day-lbl">S</div><div class="day-lbl">M</div><div class="day-lbl">T</div><div class="day-lbl">W</div><div class="day-lbl">T</div><div class="day-lbl">F</div><div class="day-lbl">S</div>
+                    <div></div><div class="day-cell">1</div><div class="day-cell">2</div><div class="day-cell">3</div><div class="day-cell today">4</div><div class="day-cell">5</div><div class="day-cell">6</div>
+                </div>
+                <div class="status-legend-row">
+                    <span><span class="dot delayed"></span> Delayed</span>
+                    <span><span class="dot delivered"></span> Delivered</span>
+                    <span><span class="dot upcoming"></span> Upcoming</span>
+                </div>
+            </div>
+            <div class="empty-state-view">
+                <div class="empty-vector">📦❌</div>
+                <h3>No Orders Yet!</h3>
+                <p>You haven't placed any orders yet.</p>
+            </div>
+        </section>
+
+        <!-- GLOBAL STICKY ROUTING NAVIGATION FOOTER -->
+        <nav id="global-bottom-navigation">
+            <button class="nav-btn active" onclick="navigateTo('home')" data-target="home"><i class="fa-solid fa-house"></i><span>Home</span></button>
+            <button class="nav-btn" onclick="navigateTo('products')" data-target="products"><i class="fa-solid fa-bottle-water"></i><span>Products</span></button>
+            <button class="nav-btn" onclick="navigateTo('subscriptions')" data-target="subscriptions"><i class="fa-solid fa-calendar-check"></i><span>Subscriptions</span></button>
+            <button class="nav-btn" onclick="navigateTo('cart')" data-target="cart"><i class="fa-solid fa-cart-shopping"></i><span>Cart</span></button>
+            <button class="nav-btn" onclick="navigateTo('profile')" data-target="profile"><i class="fa-solid fa-user-gear"></i><span>Profile</span></button>
         </nav>
 
     </div>
 
     <script>
-        // Supabase Client is initialized in js/init-supabase.js
-        const supabase = window.supabaseClient;
+        /**
+         * H2O NexPulse Routing Engine
+         */
+        function navigateTo(target) {
+            // 1. Update View Panels
+            const panels = document.querySelectorAll('.view-panel');
+            panels.forEach(p => p.classList.remove('active'));
+            
+            const targetPanel = document.getElementById(`view-${target}`);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+
+            // 2. Update Bottom Nav Buttons
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-target') === target) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // 3. Special Logic for specific views
+            if (target === 'products') {
+                if (typeof syncProductUI === 'function') syncProductUI();
+            }
+
+            // Scroll to top on navigation
+            window.scrollTo(0,0);
+        }
 
         window.onload = () => {
-            if (typeof syncProductUI === 'function') {
-                syncProductUI(); 
-            }
-            // Add visual feedback for nav buttons
-            const navButtons = document.querySelectorAll('.nav-action-node');
-            navButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    navButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    console.log("Routing to:", btn.dataset.route);
-                });
-            });
+            // Initial load
+            if (typeof syncProductUI === 'function') syncProductUI();
         };
     </script>
 </body>

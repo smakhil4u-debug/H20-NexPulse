@@ -1,45 +1,73 @@
 /**
- * Fetch active products matching your UI layout from Supabase
+ * H2O NexPulse - Dynamic Product Engine
  */
+
 async function fetchProductCatalog() {
-  const supabase = window.supabaseClient;
-  if (!supabase) return null;
+    const supabase = window.supabaseClient;
+    if (!supabase) return null;
 
-  const { data, error } = await supabase
-    .from('products')
-    .select('product_key, display_name, unit_price');
+    const { data, error } = await supabase
+        .from('products')
+        .select('product_key, display_name, unit_price, category')
+        .order('unit_price', { ascending: false });
 
-  if (error) {
-    console.error('Error fetching data from Supabase:', error.message);
-    return null;
-  }
-  
-  return data;
+    if (error) {
+        console.error('Error fetching products:', error.message);
+        return null;
+    }
+    return data;
 }
 
-// Global function to sync the UI with the fetched data
 async function syncProductUI() {
+    const target = document.getElementById('dynamic-product-list-target');
+    if (!target) return;
+
     const products = await fetchProductCatalog();
-    if (!products) return;
+    if (!products) {
+        target.innerHTML = `<p class="error-msg">Failed to load products. Check connection.</p>`;
+        return;
+    }
+
+    // Clear loading state
+    target.innerHTML = '';
 
     products.forEach(product => {
-        // Map product_key to the UI IDs
-        // UI IDs used: can, b2l, b1l, b500m
-        let uiKey = '';
-        if (product.product_key === '20L_Master_Can') uiKey = 'can';
-        else if (product.product_key === '2L_Premium') uiKey = 'b2l';
-        else if (product.product_key === '1L_Premium') uiKey = 'b1l';
-        else if (product.product_key === '500ml_Premium') uiKey = 'b500m';
+        const card = document.createElement('div');
+        card.className = 'product-item-card glass-surface';
+        
+        // Define icons based on product type
+        let icon = '🛢️';
+        if (product.product_key.includes('Bottle') || product.product_key.includes('Premium')) icon = '💎';
+        if (product.product_key.includes('500ml')) icon = '🏃';
 
-        if (uiKey) {
-            const priceEl = document.getElementById(`${uiKey}-price`);
-            if (priceEl) priceEl.innerText = product.unit_price;
-            
-            // Update app state price if needed
-            if (window.cart && window.cart[uiKey]) {
-                window.cart[uiKey].price = product.unit_price;
-            }
-        }
+        card.innerHTML = `
+            <div class="product-info-row">
+                <div class="product-visual">${icon}</div>
+                <div class="product-details">
+                    <span class="product-cat-tag">${product.category}</span>
+                    <h4 class="product-name">${product.display_name}</h4>
+                    <p class="product-price text-accent">₹${product.unit_price}</p>
+                </div>
+                <div class="product-action-node">
+                    <button class="add-to-cart-btn" onclick="addToCart('${product.product_key}')">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        target.appendChild(card);
     });
-    console.log("Product UI synchronized with Supabase.");
+}
+
+// Simple Cart Logic for the new SPA
+window.appCart = [];
+
+function addToCart(productKey) {
+    window.appCart.push(productKey);
+    console.log("Cart Updated:", window.appCart);
+    updateCartBadge();
+}
+
+function updateCartBadge() {
+    // Logic to update cart tab icon or badge if needed
 }
