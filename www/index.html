@@ -12,9 +12,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
     <!-- Lucide Icons (Local) -->
     <script src="js/lucide.min.js"></script>
-    <!-- Supabase (Local) -->
     <script src="js/supabase.js"></script>
     <script src="js/init-supabase.js"></script>
+    <script src="js/products.js"></script>
     <style>
         :root {
             --brand-teal: #0d9488;
@@ -125,7 +125,7 @@
                                 <h4 class="font-bold text-base">2 Litre Premium</h4>
                                 <p class="text-[10px] text-slate-500">Perfect for Family</p>
                             </div>
-                            <span class="text-teal-400 font-bold">₹XX</span>
+                            <span class="text-teal-400 font-bold">₹<span id="b2l-price">XX</span></span>
                         </div>
                     </div>
                     <div class="flex items-center gap-3 bg-slate-900 rounded-xl p-1 border border-slate-800">
@@ -145,7 +145,7 @@
                                 <h4 class="font-bold text-base">1 Litre Premium</h4>
                                 <p class="text-[10px] text-slate-500">Standard Pack</p>
                             </div>
-                            <span class="text-teal-400 font-bold">₹XX</span>
+                            <span class="text-teal-400 font-bold">₹<span id="b1l-price">XX</span></span>
                         </div>
                     </div>
                     <div class="flex items-center gap-3 bg-slate-900 rounded-xl p-1 border border-slate-800">
@@ -165,7 +165,7 @@
                                 <h4 class="font-bold text-base">500ml Premium</h4>
                                 <p class="text-[10px] text-slate-500">Travel Size</p>
                             </div>
-                            <span class="text-teal-400 font-bold">₹XX</span>
+                            <span class="text-teal-400 font-bold">₹<span id="b500m-price">XX</span></span>
                         </div>
                     </div>
                     <div class="flex items-center gap-3 bg-slate-900 rounded-xl p-1 border border-slate-800">
@@ -380,6 +380,7 @@
 
         window.onload = () => {
             lucide.createIcons();
+            syncProductUI(); // Fetch and update prices from Supabase
             // Load saved details if any
             document.getElementById('cust-name').value = localStorage.getItem('h2o_name') || '';
             document.getElementById('cust-phone').value = localStorage.getItem('h2o_phone') || '';
