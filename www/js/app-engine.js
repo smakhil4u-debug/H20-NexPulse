@@ -33,6 +33,7 @@ const AppEngine = {
                 btn.innerText = "SENDING...";
                 btn.disabled = true;
 
+                console.log("Firebase: Sending SMS to", phone);
                 this.confirmationResult = await firebase.auth().signInWithPhoneNumber(phone, verifier);
                 
                 // Show OTP field
@@ -42,8 +43,16 @@ const AppEngine = {
                 btn.disabled = false;
                 alert("Code sent to your phone! 📱");
             } catch (err) {
-                console.error("Firebase Error:", err);
-                alert("Failed to send code: " + err.message);
+                console.error("Firebase Critical Error:", err.code, err.message);
+                
+                // PRO-ACTIVE DEBUGGER
+                let hint = "Check Firebase Console Settings.";
+                if (err.code === 'auth/operation-not-allowed') hint = "You must ENABLE 'Phone' in Authentication > Sign-in method AND enable 'India' in Settings > SMS Region Policy.";
+                if (err.code === 'auth/invalid-app-credential') hint = "Check your API Key and Auth Domain in firebase-init.js";
+                if (err.code === 'auth/unauthorized-domain') hint = "Add 'localhost' and your GitHub domain to Authentication > Settings > Authorized domains.";
+
+                alert(`Failed to send code:\n\nERROR: ${err.code}\n\nHINT: ${hint}`);
+                
                 btn.innerText = "GET START CODE";
                 btn.disabled = false;
             }
