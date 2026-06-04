@@ -10,52 +10,77 @@ const AppEngine = {
     products: [],
     currentUser: null,
     subState: { productKey: null, freq: 'daily', days: [1, 2, 3, 4, 5, 6, 0] },
+    confirmationResult: null,
 
-    // --- AUTH LOGIC ---
+    // --- AUTH LOGIC (Firebase OTP) ---
     async handleLogin() {
+        const btn = document.getElementById('btn-login-action');
         const phoneInput = document.getElementById('login-phone');
-        if (!phoneInput) return;
+        const otpInput = document.getElementById('login-otp');
+        const otpGroup = document.getElementById('otp-group');
         
-        const phone = phoneInput.value.trim();
-        if (!phone || phone.length < 10) {
-            alert("Please enter a valid 10-digit phone number!");
-            return;
-        }
+        const phone = "+91" + phoneInput.value.trim();
 
+        // STEP 1: Request SMS Code
+        if (!this.confirmationResult) {
+            if (phone.length < 13) return alert("Enter valid 10-digit number");
+            
+            try {
+                btn.innerText = "SENDING...";
+                btn.disabled = true;
+
+                this.confirmationResult = await firebase.auth().signInWithPhoneNumber(phone, window.recaptchaVerifier);
+                
+                // Show OTP field
+                otpGroup.classList.remove('hidden');
+                phoneInput.parentElement.parentElement.classList.add('opacity-50', 'pointer-events-none');
+                btn.innerText = "VERIFY CODE";
+                btn.disabled = false;
+                alert("Code sent to your phone! 📱");
+            } catch (err) {
+                console.error("Firebase Error:", err);
+                alert("Failed to send code: " + err.message);
+                btn.innerText = "GET START CODE";
+                btn.disabled = false;
+            }
+        } 
+        // STEP 2: Verify SMS Code
+        else {
+            const code = otpInput.value.trim();
+            if (code.length < 6) return alert("Enter 6-digit code");
+
+            try {
+                btn.innerText = "VERIFYING...";
+                btn.disabled = true;
+
+                const result = await this.confirmationResult.confirm(code);
+                const user = result.user;
+                console.log("Firebase Auth Success:", user.phoneNumber);
+
+                // Now sync with Supabase
+                this.syncWithSupabase(user.phoneNumber.replace('+91', ''));
+            } catch (err) {
+                alert("Invalid code. Try again!");
+                btn.innerText = "VERIFY CODE";
+                btn.disabled = false;
+            }
+        }
+    },
+
+    async syncWithSupabase(cleanPhone) {
         const supabase = window.supabaseClient;
-        if (!supabase) {
-            alert("Database connection not initialized!");
-            return;
-        }
-
-        console.log("Attempting login for:", phone);
-
-        // Fetch user or create if new
         const { data, error } = await supabase
             .from('customers')
             .select('*')
-            .eq('phone_number', phone)
+            .eq('phone_number', cleanPhone)
             .maybeSingle();
 
-        if (error) {
-            console.error("Login Error:", error.message);
-            alert("Login failed: " + error.message);
-            return;
-        }
-
         if (!data) {
-            // New user case: Create profile
-            const { data: newUser, error: createErr } = await supabase
+            const { data: newUser } = await supabase
                 .from('customers')
-                .upsert({ phone_number: phone, full_name: 'Valued Customer' })
-                .select()
-                .single();
-            
-            if (createErr) {
-                alert("Error creating account: " + createErr.message);
-            } else {
-                this.loginSuccess(newUser);
-            }
+                .upsert({ phone_number: cleanPhone, full_name: 'Valued Customer' })
+                .select().single();
+            this.loginSuccess(newUser);
         } else {
             this.loginSuccess(data);
         }
