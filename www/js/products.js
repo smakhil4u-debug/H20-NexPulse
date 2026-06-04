@@ -1,5 +1,5 @@
 /**
- * H2O NexPulse - Dynamic Product Engine
+ * H2O NexPulse - Dynamic Product Engine with Filtering
  */
 
 async function fetchProductCatalog() {
@@ -18,27 +18,41 @@ async function fetchProductCatalog() {
     return data;
 }
 
+let activeFilter = 'Bisleri';
+let searchQuery = '';
+
 async function syncProductUI() {
     const target = document.getElementById('dynamic-product-list-target');
     if (!target) return;
 
-    const products = await fetchProductCatalog();
+    let products = await fetchProductCatalog();
     if (!products) {
         target.innerHTML = `<p class="error-msg">Failed to load products. Check connection.</p>`;
         return;
     }
 
-    // Clear loading state
-    target.innerHTML = '';
-    
-    // Store in AppEngine
+    // Store in AppEngine for cart mapping
     window.AppEngine.products = products;
 
-    products.forEach(product => {
+    // Apply Filters
+    let filtered = products.filter(p => {
+        const matchesCat = activeFilter ? p.category.toLowerCase().includes(activeFilter.toLowerCase()) : true;
+        const matchesSearch = searchQuery ? p.display_name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+        return matchesCat && matchesSearch;
+    });
+
+    // Clear loading state
+    target.innerHTML = '';
+
+    if (filtered.length === 0) {
+        target.innerHTML = `<p class="p-8 text-center text-secondary text-xs italic">No products found matching your search.</p>`;
+        return;
+    }
+
+    filtered.forEach(product => {
         const card = document.createElement('div');
         card.className = 'product-item-card glass-surface';
         
-        // Define icons based on product type
         let icon = '🛢️';
         if (product.product_key.includes('Bottle') || product.product_key.includes('Premium')) icon = '💎';
         if (product.product_key.includes('500ml')) icon = '🏃';
@@ -65,15 +79,21 @@ async function syncProductUI() {
     });
 }
 
-// Simple Cart Logic for the new SPA
-window.appCart = [];
+// UI WIRING: Categories
+document.querySelectorAll('.cat-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeFilter = chip.innerText.trim();
+        syncProductUI();
+    });
+});
 
-function addToCart(productKey) {
-    window.appCart.push(productKey);
-    console.log("Cart Updated:", window.appCart);
-    updateCartBadge();
-}
-
-function updateCartBadge() {
-    // Logic to update cart tab icon or badge if needed
+// UI WIRING: Search
+const searchInput = document.getElementById('global-search');
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        syncProductUI();
+    });
 }
