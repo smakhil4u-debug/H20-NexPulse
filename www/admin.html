@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H2O NexPulse | Admin Command Center</title>
+    <!-- Tailwind CSS (Local) -->
+    <script src="js/tailwind.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase (Local) -->
+    <script src="js/supabase.js"></script>
+    <script src="js/init-supabase.js"></script>
+    <style>
+        :root {
+            --bg-main: #070A13;
+            --bg-surface: #111625;
+            --accent-teal: #0DDEC8;
+            --text-primary: #FFFFFF;
+        }
+        body { background-color: var(--bg-main); color: var(--text-primary); font-family: -apple-system, sans-serif; overflow-x: hidden; }
+        .sidebar { background-color: var(--bg-surface); border-right: 1px solid rgba(255,255,255,0.05); }
+        .glass-card { background: rgba(17, 22, 37, 0.7); border: 1px solid rgba(255,255,255,0.05); backdrop-blur: 10px; }
+        .active-link { color: var(--accent-teal); border-left: 4px solid var(--accent-teal); background: rgba(13, 222, 200, 0.05); }
+        table th { text-transform: uppercase; font-size: 10px; color: #8E9AA8; letter-spacing: 1px; padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        table td { padding: 16px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+
+    <!-- SECURITY LOCK OVERLAY -->
+    <div id="admin-lock" class="fixed inset-0 bg-slate-950 z-[1000] flex items-center justify-center p-8 transition-opacity duration-500">
+        <div class="w-full max-w-xs space-y-8 text-center">
+            <h1 class="text-3xl font-black tracking-tighter">H2O <span class="text-teal-400">ADMIN</span></h1>
+            <p class="text-xs text-slate-500 uppercase font-bold tracking-widest">Master Access PIN Required</p>
+            <input type="password" id="admin-pin" placeholder="Enter PIN" class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center text-2xl tracking-[1em] focus:border-teal-500 outline-none">
+            <button onclick="checkAdminPIN()" class="w-full py-4 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition">
+                UNLOCK DASHBOARD
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <div id="admin-viewport" class="hidden w-full min-h-screen flex">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 sidebar h-screen sticky top-0 flex flex-col p-6 space-y-8">
+            <div class="mb-4 px-4">
+                <h1 class="text-xl font-black tracking-tighter">H2O <span class="text-teal-400">NEXPULSE</span></h1>
+                <p class="text-[9px] uppercase tracking-widest font-bold text-slate-500">Command Center</p>
+            </div>
+
+            <nav class="flex-1 flex flex-col space-y-2">
+                <button onclick="switchAdminTab('orders')" id="tab-orders" class="w-full text-left p-4 rounded-xl active-link transition flex items-center gap-4">
+                    <i class="fa-solid fa-truck-fast"></i> <span class="font-bold text-sm">Active Orders</span>
+                </button>
+                <button onclick="switchAdminTab('subscriptions')" id="tab-subs" class="w-full text-left p-4 rounded-xl text-slate-400 hover:text-white transition flex items-center gap-4">
+                    <i class="fa-solid fa-calendar-check"></i> <span class="font-bold text-sm">Subscriptions</span>
+                </button>
+                <button onclick="switchAdminTab('customers')" id="tab-customers" class="w-full text-left p-4 rounded-xl text-slate-400 hover:text-white transition flex items-center gap-4">
+                    <i class="fa-solid fa-users-gear"></i> <span class="font-bold text-sm">Customers</span>
+                </button>
+            </nav>
+
+            <div class="pt-8 border-t border-white/5 px-4">
+                <p class="text-[10px] text-slate-600 font-bold uppercase tracking-widest mb-4">Account Status</p>
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-teal-400 shadow-[0_0_10px_rgba(45,212,191,0.5)]"></div>
+                    <span class="text-xs font-bold">Cloud Connected</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Data View -->
+        <main class="flex-1 p-10 overflow-y-auto">
+            
+            <div id="view-orders" class="admin-tab-content space-y-8">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <h2 class="text-3xl font-black tracking-tight">Order <span class="text-teal-400">Stream</span></h2>
+                        <p class="text-slate-500 text-sm mt-1">Real-time incoming delivery requests</p>
+                    </div>
+                    <button onclick="refreshAdminData()" class="bg-slate-900 border border-slate-800 px-6 py-3 rounded-xl text-xs font-bold hover:bg-slate-800 transition"><i class="fa-solid fa-rotate mr-2"></i> REFRESH STREAM</button>
+                </div>
+
+                <div class="glass-card rounded-[32px] overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-orders-body">
+                            <!-- Orders will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-subscriptions" class="admin-tab-content hidden space-y-8">
+                <div>
+                    <h2 class="text-3xl font-black tracking-tight">Recurring <span class="text-teal-400">Contracts</span></h2>
+                    <p class="text-slate-500 text-sm mt-1">Managed automated delivery schedules</p>
+                </div>
+                <div id="admin-subs-target" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Subscriptions will be injected here -->
+                </div>
+            </div>
+
+            <div id="view-customers" class="admin-tab-content hidden space-y-8">
+                <div>
+                    <h2 class="text-3xl font-black tracking-tight">User <span class="text-teal-400">Directory</span></h2>
+                    <p class="text-slate-500 text-sm mt-1">Registered clients and asset ledger balances</p>
+                </div>
+                <div class="glass-card rounded-[32px] overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone Number</th>
+                                <th>Jars Held</th>
+                                <th>Security Deposit</th>
+                                <th>Account</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-customers-body">
+                            <!-- Customers will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <script>
+        const ADMIN_PIN = "7483";
+        const supabase = window.supabaseClient;
+
+        function checkAdminPIN() {
+            const input = document.getElementById('admin-pin').value;
+            if (input === ADMIN_PIN) {
+                document.getElementById('admin-lock').classList.add('opacity-0');
+                setTimeout(() => {
+                    document.getElementById('admin-lock').classList.add('hidden');
+                    document.getElementById('admin-viewport').classList.remove('hidden');
+                    refreshAdminData();
+                }, 500);
+            } else {
+                alert("Incorrect Admin PIN!");
+                document.getElementById('admin-pin').value = '';
+            }
+        }
+
+        function switchAdminTab(tab) {
+            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+
+            document.querySelectorAll('aside nav button').forEach(b => {
+                b.classList.remove('active-link');
+                b.classList.add('text-slate-400');
+            });
+            const activeBtn = Array.from(document.querySelectorAll('aside nav button')).find(b => b.onclick.toString().includes(tab));
+            if (activeBtn) {
+                activeBtn.classList.add('active-link');
+                activeBtn.classList.remove('text-slate-400');
+            }
+        }
+
+        async function refreshAdminData() {
+            if (!supabase) return;
+
+            // 1. Fetch Orders
+            const { data: orders } = await supabase
+                .from('orders')
+                .select('*, customers(full_name, phone_number)')
+                .order('created_at', { ascending: false });
+            
+            const ordersBody = document.getElementById('admin-orders-body');
+            ordersBody.innerHTML = '';
+            orders?.forEach(o => {
+                ordersBody.innerHTML += `
+                    <tr>
+                        <td class="font-black text-teal-400">#${o.order_id}</td>
+                        <td>
+                            <p class="font-bold">${o.customers?.full_name}</p>
+                            <p class="text-[10px] text-slate-500">${o.customers?.phone_number}</p>
+                        </td>
+                        <td>Order Items Pending Join...</td>
+                        <td class="font-bold">₹${o.total_amount}</td>
+                        <td><span class="px-3 py-1 rounded-full text-[10px] font-black bg-teal-500/20 text-teal-400 uppercase">${o.order_status}</span></td>
+                        <td>
+                            <button class="text-teal-400 hover:text-white transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // 2. Fetch Customers
+            const { data: customers } = await supabase
+                .from('customers')
+                .select('*')
+                .order('full_name');
+            
+            const custBody = document.getElementById('admin-customers-body');
+            custBody.innerHTML = '';
+            customers?.forEach(c => {
+                custBody.innerHTML += `
+                    <tr>
+                        <td class="font-bold">${c.full_name}</td>
+                        <td>${c.phone_number}</td>
+                        <td class="font-black">${c.jars_held}</td>
+                        <td class="text-teal-400 font-bold">₹${c.security_deposit}</td>
+                        <td><span class="text-[10px] text-slate-500 font-black uppercase tracking-widest">${c.account_status}</span></td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
