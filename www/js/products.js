@@ -51,9 +51,12 @@ async function syncProductUI() {
                     <h4 class="product-name">${product.display_name}</h4>
                     <p class="product-price text-accent">₹${product.unit_price}</p>
                 </div>
-                <div class="product-action-node">
+                <div class="product-action-node flex flex-col gap-2">
                     <button class="add-to-cart-btn" onclick="AppEngine.addToCart('${product.product_key}')">
                         <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button class="w-9 h-9 border border-teal-500/30 rounded-xl flex items-center justify-center text-[10px] text-teal-400 font-bold" onclick="AppEngine.openSubscriptionFlow('${product.product_key}')">
+                        SUB
                     </button>
                 </div>
             </div>

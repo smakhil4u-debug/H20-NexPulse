@@ -39,6 +39,46 @@
             </div>
         </div>
 
+        <!-- SUBSCRIPTION SCHEDULER MODAL -->
+        <div id="sub-modal" class="fixed inset-0 bg-slate-950/95 z-[150] hidden flex items-end">
+            <div class="w-full glass-card rounded-t-[40px] p-8 space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-black font-brand">SMART <span class="text-teal-500">SCHEDULER</span></h3>
+                    <button onclick="AppEngine.closeSubscriptionFlow()" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center"><i data-lucide="x" class="w-5 h-5 text-white"></i></button>
+                </div>
+                
+                <p id="sub-product-name" class="text-sm font-bold text-teal-400">20L Pure Water Can</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-slate-500">Delivery Frequency</label>
+                        <div class="flex gap-2 mt-2">
+                            <button id="freq-daily" onclick="AppEngine.setSubFreq('daily')" class="flex-1 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400 transition">Daily</button>
+                            <button id="freq-weekly" onclick="AppEngine.setSubFreq('weekly')" class="flex-1 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400 transition">Weekly</button>
+                            <button id="freq-custom" onclick="AppEngine.setSubFreq('custom')" class="flex-1 py-3 rounded-xl border border-teal-500/50 bg-teal-500/10 text-xs font-bold text-teal-400 transition">Custom</button>
+                        </div>
+                    </div>
+
+                    <div id="day-picker" class="space-y-2">
+                        <label class="text-[10px] uppercase font-bold text-slate-500">Select Days</label>
+                        <div class="flex justify-between">
+                            <button onclick="AppEngine.toggleSubDay(1)" id="day-1" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold">M</button>
+                            <button onclick="AppEngine.toggleSubDay(2)" id="day-2" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold">T</button>
+                            <button onclick="AppEngine.toggleSubDay(3)" id="day-3" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold">W</button>
+                            <button onclick="AppEngine.toggleSubDay(4)" id="day-4" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold">T</button>
+                            <button onclick="AppEngine.toggleSubDay(5)" id="day-5" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold">F</button>
+                            <button onclick="AppEngine.toggleSubDay(6)" id="day-6" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold text-rose-400">S</button>
+                            <button onclick="AppEngine.toggleSubDay(0)" id="day-0" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold text-rose-400">S</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="AppEngine.confirmSubscription()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition">
+                    ACTIVATE SUBSCRIPTION
+                </button>
+            </div>
+        </div>
+
         <!-- GLOBAL TOP BLOCK -->
         <div id="global-top-bar">
             <div class="location-banner">
@@ -232,6 +272,51 @@
             <button class="nav-btn" onclick="navigateTo('cart')" data-target="cart"><i class="fa-solid fa-cart-shopping"></i><span>Cart</span></button>
             <button class="nav-btn" onclick="navigateTo('profile')" data-target="profile"><i class="fa-solid fa-user-gear"></i><span>Profile</span></button>
         </nav>
+
+        <!-- CHECKOUT DELIVERY INFO MODAL (Ref: Step 3) -->
+        <div id="checkout-modal" class="fixed inset-0 bg-slate-950/95 z-[160] hidden overflow-y-auto">
+            <div class="p-6 pt-12 max-w-md mx-auto space-y-8">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-black font-brand tracking-tight">DELIVERY <span class="text-teal-500">INFO</span></h3>
+                    <button onclick="AppEngine.closeCheckout()" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center"><i data-lucide="x" class="w-5 h-5 text-white"></i></button>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Full Name</label>
+                        <input type="text" id="cust-name" placeholder="Enter your name" class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 focus:border-teal-500 outline-none transition text-white">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Phone Number</label>
+                        <input type="tel" id="cust-phone" readonly class="w-full bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-slate-500 outline-none font-bold">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Delivery Address</label>
+                        <div class="flex gap-2">
+                            <textarea id="cust-address" placeholder="Flat No, Building, Street..." rows="2" class="flex-1 bg-slate-900 border border-slate-800 rounded-2xl p-4 focus:border-teal-500 outline-none transition text-sm text-white"></textarea>
+                            <button onclick="AppEngine.toggleMapPicker()" class="w-14 bg-slate-800 border border-slate-700 rounded-2xl flex items-center justify-center text-teal-400 active:bg-teal-500/10">
+                                <i data-lucide="map-pin"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GOOGLE MAPS CONTAINER -->
+                <div id="map-picker-container" class="hidden space-y-4">
+                    <div id="map-canvas" class="w-full h-48 bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden relative">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 space-y-2">
+                            <i data-lucide="map" class="w-8 h-8 text-slate-700"></i>
+                            <p class="text-[10px] text-slate-600 font-bold uppercase tracking-widest">Maps SDK Integration Pending API Key</p>
+                        </div>
+                    </div>
+                    <p class="text-[9px] text-center text-teal-500/70 font-bold uppercase tracking-widest">Drag to pinpoint your exact doorstep</p>
+                </div>
+
+                <button onclick="AppEngine.finalOrder()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition">
+                    CONFIRM & PLACE ORDER
+                </button>
+            </div>
+        </div>
 
     </div>
 
