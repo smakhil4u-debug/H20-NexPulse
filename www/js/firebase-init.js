@@ -14,9 +14,23 @@ const firebaseConfig = {
 if (window.firebase) {
     firebase.initializeApp(firebaseConfig);
     console.log("Firebase Production Instance Initialized.");
-    
-    // Create the global ReCAPTCHA verifier for OTP
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        'size': 'invisible'
-    });
+}
+
+/**
+ * Ensures the ReCAPTCHA verifier is ready for use.
+ * This MUST be called after the DOM is ready.
+ */
+function initRecaptcha() {
+    if (window.recaptchaVerifier) return window.recaptchaVerifier;
+
+    try {
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'invisible'
+        });
+        console.log("ReCAPTCHA Verifier Ready.");
+        return window.recaptchaVerifier;
+    } catch (err) {
+        console.error("Failed to init ReCAPTCHA:", err);
+        return null;
+    }
 }

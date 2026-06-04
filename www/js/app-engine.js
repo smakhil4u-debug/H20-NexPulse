@@ -26,10 +26,14 @@ const AppEngine = {
             if (phone.length < 13) return alert("Enter valid 10-digit number");
             
             try {
+                // BUG FIX: Ensure ReCAPTCHA is ready
+                const verifier = typeof initRecaptcha === 'function' ? initRecaptcha() : window.recaptchaVerifier;
+                if (!verifier) throw new Error("Security verification (ReCAPTCHA) failed to load.");
+
                 btn.innerText = "SENDING...";
                 btn.disabled = true;
 
-                this.confirmationResult = await firebase.auth().signInWithPhoneNumber(phone, window.recaptchaVerifier);
+                this.confirmationResult = await firebase.auth().signInWithPhoneNumber(phone, verifier);
                 
                 // Show OTP field
                 otpGroup.classList.remove('hidden');
