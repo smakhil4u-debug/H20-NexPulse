@@ -12,6 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
     <!-- Lucide Icons (Local) -->
     <script src="js/lucide.min.js"></script>
+    <!-- Supabase (Local) -->
+    <script src="js/supabase.js"></script>
     <style>
         :root {
             --brand-teal: #0d9488;
@@ -227,13 +229,49 @@
                 <p class="text-[10px] text-slate-500 uppercase font-bold tracking-tighter">Your Order</p>
                 <p class="text-lg font-black"><span id="cart-count">0</span> Items Selected</p>
             </div>
-            <button onclick="checkoutWhatsApp()" class="flex-1 py-4 bg-teal-600 rounded-2xl font-black text-white flex items-center justify-center gap-2 shadow-lg shadow-teal-900/40 active:scale-95 transition">
-                BOOK NOW <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            <button onclick="openCheckout()" class="flex-1 py-4 bg-teal-600 rounded-2xl font-black text-white flex items-center justify-center gap-2 shadow-lg shadow-teal-900/40 active:scale-95 transition">
+                CONTINUE <i data-lucide="arrow-right" class="w-5 h-5"></i>
             </button>
         </div>
     </div>
 
+    <!-- Checkout Details Modal -->
+    <div id="checkout-modal" class="fixed inset-0 bg-slate-950/95 z-[70] hidden overflow-y-auto">
+        <div class="p-6 pt-12 max-w-md mx-auto space-y-8">
+            <div class="flex justify-between items-center">
+                <h3 class="text-2xl font-black font-brand tracking-tight">DELIVERY <span class="text-teal-500">INFO</span></h3>
+                <button onclick="closeCheckout()" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <div class="space-y-4">
+                <div class="space-y-2">
+                    <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Full Name</label>
+                    <input type="text" id="cust-name" placeholder="Enter your name" class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 focus:border-teal-500 outline-none transition">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Phone Number</label>
+                    <input type="tel" id="cust-phone" placeholder="91XXXXXXXX" class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 focus:border-teal-500 outline-none transition">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Delivery Address</label>
+                    <textarea id="cust-address" placeholder="Flat No, Building, Street..." rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 focus:border-teal-500 outline-none transition"></textarea>
+                </div>
+            </div>
+
+            <button onclick="finalOrder()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition">
+                PLACE ORDER VIA WHATSAPP
+            </button>
+            
+            <p class="text-center text-[10px] text-slate-600 uppercase font-bold">Your details are saved for faster delivery</p>
+        </div>
+    </div>
+
     <script>
+        // Supabase Configuration
+        const SB_URL = "https://addjrmawsohthviqthvr.supabase.co";
+        const SB_KEY = "sb_publishable_WU137dy98lKMkbuwTnVcog_zwp3SF-3";
+        const supabase = window.supabase ? window.supabase.createClient(SB_URL, SB_KEY) : null;
+
         // App State
         let cart = {
             can: { qty: 0, temp: 'Normal', name: '20L Can' },
@@ -284,32 +322,77 @@
             modal.classList.toggle('hidden');
         }
 
-        function checkoutWhatsApp() {
+        function openCheckout() {
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
+
+        async function finalOrder() {
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const address = document.getElementById('cust-address').value;
+
+            if (!name || !phone || !address) {
+                alert("Please fill in all delivery details!");
+                return;
+            }
+
+            // 1. Data Persistence (Supabase)
+            if (supabase) {
+                try {
+                    // UPSERT Customer
+                    const { data: customer, error: cErr } = await supabase
+                        .from('customers')
+                        .upsert({ full_name: name, phone_number: phone }, { onConflict: 'phone_number' })
+                        .select();
+                    
+                    if (cErr) console.warn("Supabase Log failed:", cErr.message);
+                } catch (e) {
+                    console.error("Backend offline", e);
+                }
+            }
+
+            // 2. Format WhatsApp Message
             let message = `*H2O NexPulse Order Request*%0A`;
             message += `---------------------------%0A`;
-            let hasItems = false;
-
+            message += `*Customer:* ${name}%0A`;
+            message += `*Phone:* ${phone}%0A`;
+            message += `*Address:* ${address}%0A`;
+            message += `---------------------------%0A`;
+            
             for (let key in cart) {
                 if (cart[key].qty > 0) {
-                    hasItems = true;
                     message += `• ${cart[key].name}: ${cart[key].qty}`;
                     if (key === 'can') message += ` (${cart[key].temp})`;
                     message += `%0A`;
                 }
             }
 
-            if (!hasItems) return;
-
             message += `---------------------------%0A`;
             message += `Please confirm my delivery!%0A`;
             
             const whatsappUrl = `https://wa.me/917483266062?text=${message}`;
             window.open(whatsappUrl, '_blank');
+            closeCheckout();
         }
 
         window.onload = () => {
             lucide.createIcons();
+            // Load saved details if any
+            document.getElementById('cust-name').value = localStorage.getItem('h2o_name') || '';
+            document.getElementById('cust-phone').value = localStorage.getItem('h2o_phone') || '';
+            document.getElementById('cust-address').value = localStorage.getItem('h2o_address') || '';
         };
+
+        // Save details locally whenever changed
+        ['cust-name', 'cust-phone', 'cust-address'].forEach(id => {
+            document.getElementById(id).addEventListener('change', (e) => {
+                localStorage.setItem(`h2o_${id.split('-')[1]}`, e.target.value);
+            });
+        });
     </script>
 </body>
 </html>
