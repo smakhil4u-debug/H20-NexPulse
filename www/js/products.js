@@ -30,6 +30,9 @@ async function syncProductUI() {
 
     // Clear loading state
     target.innerHTML = '';
+    
+    // Store in AppEngine
+    window.AppEngine.products = products;
 
     products.forEach(product => {
         const card = document.createElement('div');
@@ -49,7 +52,7 @@ async function syncProductUI() {
                     <p class="product-price text-accent">₹${product.unit_price}</p>
                 </div>
                 <div class="product-action-node">
-                    <button class="add-to-cart-btn" onclick="addToCart('${product.product_key}')">
+                    <button class="add-to-cart-btn" onclick="AppEngine.addToCart('${product.product_key}')">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
