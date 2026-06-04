@@ -14,6 +14,7 @@
     <script src="js/lucide.min.js"></script>
     <!-- Supabase (Local) -->
     <script src="js/supabase.js"></script>
+    <script src="js/init-supabase.js"></script>
     <style>
         :root {
             --brand-teal: #0d9488;
@@ -267,10 +268,8 @@
     </div>
 
     <script>
-        // Supabase Configuration
-        const SB_URL = "https://addjrmawsohthviqthvr.supabase.co";
-        const SB_KEY = "sb_publishable_WU137dy98lKMkbuwTnVcog_zwp3SF-3";
-        const supabase = window.supabase ? window.supabase.createClient(SB_URL, SB_KEY) : null;
+        // Supabase Client is initialized in js/init-supabase.js
+        const supabase = window.supabaseClient;
 
         // App State
         let cart = {
