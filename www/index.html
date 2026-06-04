@@ -73,6 +73,26 @@
                     <div class="grid-card"><div>🍷</div><span>Glass Range</span></div>
                 </div>
             </div>
+
+            <!-- ASSET LEDGER (Ref: 1000298470.jpg) -->
+            <div class="asset-ledger-section mt-8">
+                <div class="ledger-card">
+                    <div class="ledger-header">
+                        <h4><i class="fa-solid fa-box-open"></i> Physical Account Ledger</h4>
+                    </div>
+                    <div class="ledger-metrics">
+                        <div class="metric-node">
+                            <span class="metric-val" id="ui-jars-held">0</span>
+                            <span class="metric-lbl">Jars At Home</span>
+                        </div>
+                        <div class="metric-divider"></div>
+                        <div class="metric-node">
+                            <span class="metric-val" id="ui-deposit-held">₹0.00</span>
+                            <span class="metric-lbl">Security Deposit</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- VIEW PANEL 2: PRODUCTS (Ref: 1000298514.jpg) -->
@@ -140,7 +160,10 @@
 
             <div class="menu-list-group">
                 <h4 class="group-title">Orders</h4>
-                <div class="menu-item"><span><i class="fa-solid fa-box"></i> All Orders</span><i class="fa-solid fa-chevron-right"></i></div>
+                <div id="dynamic-order-history-target">
+                    <!-- Real orders will be injected here -->
+                    <p class="p-4 text-xs text-secondary italic">Fetch orders to see history...</p>
+                </div>
                 <div class="menu-item" onclick="navigateTo('calendar')"><span><i class="fa-solid fa-calendar-days"></i> Order Calendar</span><i class="fa-solid fa-chevron-right"></i></div>
                 <div class="menu-item"><span><i class="fa-solid fa-heart"></i> Favorite Orders</span><i class="fa-solid fa-chevron-right"></i></div>
                 <div class="menu-item"><span><i class="fa-solid fa-map-location-dot"></i> Address Book</span><i class="fa-solid fa-chevron-right"></i></div>
@@ -225,6 +248,12 @@
         window.onload = () => {
             // Initial load
             if (typeof syncProductUI === 'function') syncProductUI();
+            
+            // Fetch Customer Data
+            if (window.AppEngine) {
+                window.AppEngine.fetchCustomerAssets();
+                window.AppEngine.fetchOrderHistory();
+            }
         };
     </script>
 </body>
