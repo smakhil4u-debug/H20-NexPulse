@@ -280,3 +280,4 @@ body {
 .nav-btn.active span { font-weight: 800; }
 
 .hidden { display: none !important; }
+.cursor-pointer { cursor: pointer; }
