@@ -94,7 +94,7 @@ async function syncProductUI() {
                             <button onclick="AppEngine.addToCart('${product.product_key}')" class="px-6 py-2.5 bg-teal-600 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-teal-900/20 active:scale-95 transition">ADD</button>
                         `}
                     </div>
-                    <button class="w-9 h-9 border border-teal-500/30 rounded-xl flex items-center justify-center text-[10px] text-teal-400 font-bold" onclick="AppEngine.openSubscriptionFlow('${product.product_key}')">
+                    <button class="w-9 h-9 border border-teal-500/30 rounded-xl flex items-center justify-center text-[10px] text-teal-400 font-bold" onclick="AppEngine.handleSubscriptionIntent('${product.product_key}')">
                         SUB
                     </button>
                 </div>

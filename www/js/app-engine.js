@@ -16,11 +16,88 @@ const AppEngine = {
     currentCoords: { lat: 15.1394, lng: 76.9214 }, // Default Ballari
     savedAddresses: [], // To store list of user addresses
     currentAddrCategory: 'Home',
+    systemSettings: {},
 
     // --- LOCATION LOGIC ---
     supportedZones: [
         { name: "Ballari", lat: 15.1394, lng: 76.9214, radiusKm: 30 } // 30km radius around Ballari
     ],
+
+    async fetchSystemSettings() {
+        try {
+            const { data, error } = await window.supabaseClient.from('system_settings').select('*');
+            if (!error && data) {
+                data.forEach(s => this.systemSettings[s.key] = s.value);
+                console.log("System Settings Loaded:", this.systemSettings);
+            }
+        } catch (e) {
+            console.error("Failed to fetch system settings:", e);
+        }
+    },
+
+    // --- SUBSCRIPTION GATEKEEPER ---
+    async handleSubscriptionIntent(productKey = null) {
+        if (!this.currentUser) return alert("Please login to subscribe!");
+
+        // Step 1: Check if deposit is paid
+        if (!this.currentUser.deposit_paid) {
+            this.openSubscriptionSetup(productKey);
+        } else {
+            // If already paid, go straight to plan scheduler
+            if (productKey) this.openSubscriptionFlow(productKey);
+            else navigateTo('subscriptions');
+        }
+    },
+
+    openSubscriptionSetup(productKey) {
+        const deposit = parseFloat(this.systemSettings.subscription_deposit || 2000);
+        const planName = productKey ? productKey.replace(/_/g, ' ') : "Daily H2O Plan";
+
+        document.getElementById('setup-plan-name').innerText = planName;
+        document.getElementById('setup-deposit-val').innerText = `₹${deposit.toFixed(2)}`;
+        document.getElementById('setup-total-val').innerText = `₹${deposit.toFixed(2)}`;
+        
+        navigateTo('subscription-setup');
+    },
+
+    async selectPayment(method) {
+        const deposit = parseFloat(this.systemSettings.subscription_deposit || 2000);
+        
+        if (confirm(`Process ₹${deposit} payment via ${method}?`)) {
+            try {
+                const supabase = window.supabaseClient;
+
+                // 1. Record Transaction
+                const { error: txErr } = await supabase.from('transactions').insert({
+                    customer_id: this.currentUser.customer_id,
+                    amount: deposit,
+                    type: 'deposit',
+                    payment_method: method,
+                    status: 'success'
+                });
+
+                if (txErr) throw txErr;
+
+                // 2. Update Customer Profile
+                const { error: custErr } = await supabase.from('customers')
+                    .update({ deposit_paid: true, security_deposit: deposit })
+                    .eq('customer_id', this.currentUser.customer_id);
+
+                if (custErr) throw custErr;
+
+                // 3. Update Local State
+                this.currentUser.deposit_paid = true;
+                this.currentUser.security_deposit = deposit;
+                
+                alert("Payment Successful! Your subscription is now unlocked. 🚀");
+                this.fetchCustomerAssets();
+                navigateTo('home');
+            } catch (err) {
+                console.error("Payment Process Failed:", err);
+                alert("Payment processing failed. Please try again.");
+            }
+        }
+    },
 
     initLocation() {
         if (!navigator.geolocation) {
