@@ -53,6 +53,8 @@ const AppEngine = {
         const deposit = parseFloat(this.systemSettings.subscription_deposit || 2000);
         const planName = productKey ? productKey.replace(/_/g, ' ') : "Daily H2O Plan";
 
+        this.pendingPlan = { key: productKey, name: planName, deposit: deposit };
+
         document.getElementById('setup-plan-name').innerText = planName;
         document.getElementById('setup-deposit-val').innerText = `₹${deposit.toFixed(2)}`;
         document.getElementById('setup-total-val').innerText = `₹${deposit.toFixed(2)}`;
@@ -60,43 +62,95 @@ const AppEngine = {
         navigateTo('subscription-setup');
     },
 
-    async selectPayment(method) {
-        const deposit = parseFloat(this.systemSettings.subscription_deposit || 2000);
-        
-        if (confirm(`Process ₹${deposit} payment via ${method}?`)) {
-            try {
-                const supabase = window.supabaseClient;
+    showPaymentForm(method) {
+        // Hide list, show specific form
+        document.getElementById('payment-options-list').classList.add('hidden');
+        document.getElementById('form-upi').classList.add('hidden');
+        document.getElementById('form-card').classList.add('hidden');
+        document.getElementById('form-cod').classList.add('hidden');
 
-                // 1. Record Transaction
-                const { error: txErr } = await supabase.from('transactions').insert({
-                    customer_id: this.currentUser.customer_id,
-                    amount: deposit,
-                    type: 'deposit',
-                    payment_method: method,
-                    status: 'success'
-                });
+        const formId = `form-${method.toLowerCase()}`;
+        const formEl = document.getElementById(formId);
+        if (formEl) formEl.classList.remove('hidden');
 
-                if (txErr) throw txErr;
-
-                // 2. Update Customer Profile
-                const { error: custErr } = await supabase.from('customers')
-                    .update({ deposit_paid: true, security_deposit: deposit })
-                    .eq('customer_id', this.currentUser.customer_id);
-
-                if (custErr) throw custErr;
-
-                // 3. Update Local State
-                this.currentUser.deposit_paid = true;
-                this.currentUser.security_deposit = deposit;
-                
-                alert("Payment Successful! Your subscription is now unlocked. 🚀");
-                this.fetchCustomerAssets();
-                navigateTo('home');
-            } catch (err) {
-                console.error("Payment Process Failed:", err);
-                alert("Payment processing failed. Please try again.");
-            }
+        if (method === 'Card') {
+            document.getElementById('btn-card-pay').innerText = `PAY ₹${this.pendingPlan.deposit.toFixed(2)} SECURELY`;
         }
+    },
+
+    async processPayment(method) {
+        if (method === 'COD' && !document.getElementById('cod-confirm').checked) {
+            return alert("Please check the 'I Understand' box to proceed.");
+        }
+
+        const loader = document.getElementById('global-loader');
+        loader.classList.remove('hidden');
+
+        try {
+            const supabase = window.supabaseClient;
+            const deposit = this.pendingPlan.deposit;
+
+            // 1. Record Transaction
+            const { error: txErr } = await supabase.from('transactions').insert({
+                customer_id: this.currentUser.customer_id,
+                amount: deposit,
+                type: 'deposit',
+                payment_method: method,
+                status: 'success'
+            });
+            if (txErr) throw txErr;
+
+            // 2. Update Customer Profile
+            const { error: custErr } = await supabase.from('customers')
+                .update({ deposit_paid: true, security_deposit: deposit })
+                .eq('customer_id', this.currentUser.customer_id);
+            if (custErr) throw custErr;
+
+            // 3. Register Active Subscription
+            const { error: subErr } = await supabase.from('subscriptions').insert({
+                customer_id: this.currentUser.customer_id,
+                product_key: this.pendingPlan.key || 'daily_h2o_standard',
+                frequency: 'daily',
+                selected_days: [1, 2, 3, 4, 5, 6, 0],
+                status: 'active'
+            });
+            if (subErr) throw subErr;
+
+            // Update Local State
+            this.currentUser.deposit_paid = true;
+            this.currentUser.security_deposit = deposit;
+
+            // Simulate slight delay for premium feel
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                this.showSuccessPopup();
+            }, 1500);
+
+        } catch (err) {
+            console.error("Payment Lifecycle Failed:", err);
+            loader.classList.add('hidden');
+            alert("Payment processing failed. Please try again.");
+        }
+    },
+
+    showSuccessPopup() {
+        const popup = document.getElementById('success-popup');
+        const card = document.getElementById('success-card');
+        popup.classList.remove('hidden');
+        setTimeout(() => {
+            card.classList.remove('scale-90', 'opacity-0');
+            card.classList.add('scale-100', 'opacity-100');
+        }, 100);
+    },
+
+    closeSuccess() {
+        document.getElementById('success-popup').classList.add('hidden');
+        this.fetchSubscriptions();
+        navigateTo('subscriptions');
+    },
+
+    async selectPayment(method) {
+        // Legacy method, replaced by showPaymentForm -> processPayment
     },
 
     initLocation() {
