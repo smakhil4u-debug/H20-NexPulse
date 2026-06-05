@@ -278,3 +278,5 @@ body {
 .nav-btn span { font-size: 10px; font-weight: 600; }
 .nav-btn.active { color: var(--accent-teal); }
 .nav-btn.active span { font-weight: 800; }
+
+.hidden { display: none !important; }

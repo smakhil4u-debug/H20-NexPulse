@@ -11,6 +11,91 @@ const AppEngine = {
     currentUser: null,
     subState: { productKey: null, freq: 'daily', days: [1, 2, 3, 4, 5, 6, 0] },
     confirmationResult: null,
+    map: null,
+    marker: null,
+    currentCoords: { lat: 15.1394, lng: 76.9214 }, // Default Ballari
+
+    // --- LOCATION LOGIC ---
+    supportedZones: [
+        { name: "Ballari", lat: 15.1394, lng: 76.9214, radiusKm: 30 } // 30km radius around Ballari
+    ],
+
+    initLocation() {
+        if (!navigator.geolocation) {
+            console.error("Geolocation not supported");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const { latitude, longitude } = pos.coords;
+                this.currentCoords = { lat: latitude, lng: longitude };
+                console.log("Device Location:", latitude, longitude);
+                this.checkServiceAvailability(latitude, longitude);
+                
+                // If map is already open, move it
+                if (this.map) {
+                    this.map.setView([latitude, longitude], 16);
+                    this.marker.setLatLng([latitude, longitude]);
+                }
+            },
+            (err) => {
+                console.warn("Location Access Denied or Failed:", err.message);
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    },
+
+    checkServiceAvailability(lat, lng) {
+        let isSupported = false;
+        let zoneName = "";
+        
+        this.supportedZones.forEach(zone => {
+            const distance = this.calculateDistance(lat, lng, zone.lat, zone.lng);
+            if (distance <= zone.radiusKm) {
+                isSupported = true;
+                zoneName = zone.name;
+            }
+        });
+
+        if (isSupported) {
+            console.log("Service available in:", zoneName);
+            this.toggleServiceAlerts(false);
+            this.updateLocationUI(zoneName);
+        } else {
+            console.log("Service NOT available here.");
+            this.toggleServiceAlerts(true);
+        }
+    },
+
+    updateLocationUI(name) {
+        const locTitle = document.querySelector('.location-banner h4');
+        if (locTitle) locTitle.innerHTML = `${name} <i class="fa-solid fa-chevron-down text-xs"></i>`;
+    },
+
+    toggleServiceAlerts(show) {
+        const homeAlert = document.getElementById('alert-home');
+        const productAlert = document.getElementById('alert-products');
+        
+        if (show) {
+            if (homeAlert) homeAlert.classList.remove('hidden');
+            if (productAlert) productAlert.classList.remove('hidden');
+        } else {
+            if (homeAlert) homeAlert.classList.add('hidden');
+            if (productAlert) productAlert.classList.add('hidden');
+        }
+    },
+
+    calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    },
 
     // --- AUTH LOGIC (Firebase OTP) ---
     async handleLogin() {
@@ -93,6 +178,8 @@ const AppEngine = {
                 .eq('phone_number', cleanPhone)
                 .maybeSingle();
 
+            if (error) throw error;
+
             if (!data) {
                 console.log("Creating new profile for:", cleanPhone);
                 const { data: newUser, error: createErr } = await supabase
@@ -108,9 +195,22 @@ const AppEngine = {
             }
         } catch (e) {
             console.error("Supabase Sync Failed:", e);
-            alert("Database Sync Failed. Please check internet connection.");
-            document.getElementById('btn-login-action').innerText = "RETRY SYNC";
-            document.getElementById('btn-login-action').disabled = false;
+            
+            let errorMessage = "Database Sync Failed.";
+            if (e.message && (e.message.includes("customers") || e.message.includes("schema cache"))) {
+                errorMessage += "\n\nCRITICAL: The 'customers' table was not found in Supabase.\n\nHINT: Go to your Supabase SQL Editor and run the table creation script.";
+            } else if (e.message) {
+                errorMessage += `\n\nERROR: ${e.message}`;
+            } else {
+                errorMessage += "\n\nPlease check your internet connection.";
+            }
+
+            alert(errorMessage);
+            const btn = document.getElementById('btn-login-action');
+            if (btn) {
+                btn.innerText = "RETRY SYNC";
+                btn.disabled = false;
+            }
         }
     },
 
@@ -129,6 +229,7 @@ const AppEngine = {
         
         // Start background engines
         this.initRealtime();
+        this.initLocation();
         this.fetchCustomerAssets();
         this.fetchOrderHistory();
         this.fetchSubscriptions();
@@ -316,7 +417,12 @@ const AppEngine = {
     async fetchSubscriptions() {
         if (!this.currentUser) return;
         const { data, error } = await window.supabaseClient.from('subscriptions').select('*').eq('customer_id', this.currentUser.customer_id).eq('status', 'active');
-        if (!error) { this.subscriptions = data; this.syncSubscriptionsUI(); }
+        if (!error) { 
+            this.subscriptions = data; 
+            this.syncSubscriptionsUI(); 
+        } else {
+            console.error("Fetch Subscriptions Failed:", error);
+        }
     },
 
     syncSubscriptionsUI() {
@@ -342,7 +448,12 @@ const AppEngine = {
     async fetchOrderHistory() {
         if (!this.currentUser) return;
         const { data, error } = await window.supabaseClient.from('orders').select('*, order_items(quantity, products(display_name))').eq('customer_id', this.currentUser.customer_id).order('created_at', { ascending: false });
-        if (!error) { this.orderHistory = data; this.syncOrderHistoryUI(); }
+        if (!error) { 
+            this.orderHistory = data; 
+            this.syncOrderHistoryUI(); 
+        } else {
+            console.error("Fetch Order History Failed:", error);
+        }
     },
 
     syncOrderHistoryUI() {
@@ -373,6 +484,8 @@ const AppEngine = {
             const depEl = document.getElementById('ui-deposit-held');
             if (jarsEl) jarsEl.innerText = data.jars_held; 
             if (depEl) depEl.innerText = `₹${parseFloat(data.security_deposit).toFixed(2)}`; 
+        } else if (error) {
+            console.error("Fetch Customer Assets Failed:", error);
         }
     },
 
@@ -392,9 +505,68 @@ const AppEngine = {
         if (modal) modal.classList.add('hidden');
     },
 
+    // --- MAP PICKER ENGINE ---
+    initMap() {
+        if (this.map) return;
+
+        // Initialize Leaflet Map
+        this.map = L.map('map-canvas').setView([this.currentCoords.lat, this.currentCoords.lng], 16);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(this.map);
+
+        // Center crosshair marker
+        const center = this.map.getCenter();
+        this.marker = L.marker(center, { draggable: false }).addTo(this.map);
+
+        // Update marker as map moves
+        this.map.on('move', () => {
+            this.marker.setLatLng(this.map.getCenter());
+        });
+
+        // When map stops moving, fetch the address
+        this.map.on('moveend', () => {
+            const pos = this.map.getCenter();
+            this.reverseGeocode(pos.lat, pos.lng);
+        });
+
+        // Initial address fetch
+        this.reverseGeocode(this.currentCoords.lat, this.currentCoords.lng);
+    },
+
+    async reverseGeocode(lat, lng) {
+        const addressEl = document.getElementById('cust-address');
+        if (!addressEl) return;
+
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+            const data = await response.json();
+            
+            if (data && data.display_name) {
+                // Clean up the address a bit
+                const addr = data.display_name;
+                addressEl.value = addr;
+                console.log("Auto-resolved address:", addr);
+            }
+        } catch (err) {
+            console.error("Reverse geocoding failed:", err);
+        }
+    },
+
     toggleMapPicker() {
         const container = document.getElementById('map-picker-container');
-        if (container) container.classList.toggle('hidden');
+        if (!container) return;
+
+        container.classList.toggle('hidden');
+        
+        if (!container.classList.contains('hidden')) {
+            // Wait for transition/render then init map
+            setTimeout(() => {
+                this.initMap();
+                if (this.map) this.map.invalidateSize(); // Fix gray boxes
+            }, 100);
+        }
     },
 
     async finalOrder() {
@@ -403,7 +575,8 @@ const AppEngine = {
         if (!name || !address) return alert("Please provide your name and address!");
 
         const supabase = window.supabaseClient;
-        await supabase.from('customers').update({ full_name: name }).eq('customer_id', this.currentUser.customer_id);
+        const { error: updateErr } = await supabase.from('customers').update({ full_name: name }).eq('customer_id', this.currentUser.customer_id);
+        if (updateErr) console.error("Update Customer Name Failed:", updateErr);
 
         let msg = `*H2O NexPulse Order*%0A*Customer:* ${name}%0A*Phone:* ${this.currentUser.phone_number}%0A*Address:* ${address}%0A---------------------------%0A`;
         let total = 0;

@@ -13,6 +13,10 @@
     <script src="js/firebase-auth.js"></script>
     <script src="js/firebase-init.js"></script>
     <!-- Supabase & Logic (Local) -->
+    <!-- Leaflet.js (Free Interactive Maps) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script src="js/supabase.js"></script>
     <script src="js/init-supabase.js"></script>
     <script src="js/products.js"></script>
@@ -125,7 +129,7 @@
                 <div class="cat-chip"><span>Bisleri Soda</span></div>
             </div>
 
-            <div class="service-alert-box">
+            <div class="service-alert-box" id="alert-home">
                 <div class="alert-txt">
                     <h3>Location not deliverable</h3>
                     <p>Sorry, we are not delivering at this location at the moment.</p>
@@ -180,7 +184,7 @@
                 <div class="cat-chip"><span>Fizzy Drinks</span></div>
                 <div class="cat-chip"><span>Bisleri Soda</span></div>
             </div>
-            <div class="service-alert-box">
+            <div class="service-alert-box" id="alert-products">
                 <div class="alert-txt">
                     <h3>Location not deliverable</h3>
                     <p>Sorry, we are not delivering at this location at the moment.</p>
@@ -317,13 +321,10 @@
 
                 <!-- GOOGLE MAPS CONTAINER -->
                 <div id="map-picker-container" class="hidden space-y-4">
-                    <div id="map-canvas" class="w-full h-48 bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden relative">
-                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 space-y-2">
-                            <i data-lucide="map" class="w-8 h-8 text-slate-700"></i>
-                            <p class="text-[10px] text-slate-600 font-bold uppercase tracking-widest">Maps SDK Integration Pending API Key</p>
-                        </div>
+                    <div id="map-canvas" class="w-full h-64 bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden relative z-[50]">
+                        <!-- Leaflet will mount here -->
                     </div>
-                    <p class="text-[9px] text-center text-teal-500/70 font-bold uppercase tracking-widest">Drag to pinpoint your exact doorstep</p>
+                    <p class="text-[9px] text-center text-teal-500/70 font-bold uppercase tracking-widest">Move the map to pinpoint your doorstep</p>
                 </div>
 
                 <button onclick="AppEngine.finalOrder()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition">
@@ -373,6 +374,7 @@
             // Check for logged in user
             if (window.AppEngine) {
                 window.AppEngine.checkSession();
+                window.AppEngine.initLocation();
             }
         };
     </script>
