@@ -18,8 +18,20 @@ async function fetchProductCatalog() {
     return data;
 }
 
-let activeFilter = 'Bisleri';
+let activeFilter = 'Daily Hydration';
 let searchQuery = '';
+
+window.setProductFilter = function(category) {
+    activeFilter = category;
+    
+    // Update chip UI if it exists
+    document.querySelectorAll('.cat-chip').forEach(chip => {
+        if (chip.innerText.trim() === category) chip.classList.add('active');
+        else chip.classList.remove('active');
+    });
+
+    syncProductUI();
+};
 
 async function syncProductUI() {
     const target = document.getElementById('dynamic-product-list-target');
@@ -36,7 +48,7 @@ async function syncProductUI() {
 
     // Apply Filters
     let filtered = products.filter(p => {
-        const matchesCat = activeFilter ? p.category.toLowerCase().includes(activeFilter.toLowerCase()) : true;
+        const matchesCat = activeFilter ? p.category.toLowerCase() === activeFilter.toLowerCase() : true;
         const matchesSearch = searchQuery ? p.display_name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
         return matchesCat && matchesSearch;
     });
@@ -45,7 +57,7 @@ async function syncProductUI() {
     target.innerHTML = '';
 
     if (filtered.length === 0) {
-        target.innerHTML = `<p class="p-8 text-center text-secondary text-xs italic">No products found matching your search.</p>`;
+        target.innerHTML = `<p class="p-8 text-center text-secondary text-xs italic">No products in "${activeFilter}" category yet.</p>`;
         return;
     }
 
@@ -54,8 +66,10 @@ async function syncProductUI() {
         card.className = 'product-item-card glass-surface';
         
         let icon = '🛢️';
-        if (product.product_key.includes('Bottle') || product.product_key.includes('Premium')) icon = '💎';
-        if (product.product_key.includes('500ml')) icon = '🏃';
+        if (product.category === 'On the Go') icon = '🏃';
+        if (product.category === 'Premium Hydration') icon = '💎';
+        if (product.category === 'Glass Range') icon = '🍷';
+        if (product.category === 'Refreshment') icon = '🥤';
 
         card.innerHTML = `
             <div class="product-info-row">
@@ -63,7 +77,7 @@ async function syncProductUI() {
                 <div class="product-details">
                     <span class="product-cat-tag">${product.category}</span>
                     <h4 class="product-name">${product.display_name}</h4>
-                    <p class="product-price text-accent">₹${product.unit_price}</p>
+                    <p class="product-price text-accent">₹${parseFloat(product.unit_price).toFixed(2)}</p>
                 </div>
                 <div class="product-action-node flex flex-col gap-2">
                     <button class="add-to-cart-btn" onclick="AppEngine.addToCart('${product.product_key}')">
@@ -80,14 +94,13 @@ async function syncProductUI() {
 }
 
 // UI WIRING: Categories
-document.querySelectorAll('.cat-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-        document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        activeFilter = chip.innerText.trim();
-        syncProductUI();
+function initCategoryChips() {
+    document.querySelectorAll('.cat-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            window.setProductFilter(chip.innerText.trim());
+        });
     });
-});
+}
 
 // UI WIRING: Search
 const searchInput = document.getElementById('global-search');
@@ -97,3 +110,6 @@ if (searchInput) {
         syncProductUI();
     });
 }
+
+// Initialize chips on script load
+initCategoryChips();

@@ -730,6 +730,13 @@ const AppEngine = {
         this.cart = []; this.syncCartUI(); this.closeCheckout();
     },
 
-    checkout() { this.openCheckout(); }
+    checkout() { this.openCheckout(); },
+
+    filterByCategory(category) {
+        if (typeof window.setProductFilter === 'function') {
+            window.setProductFilter(category);
+        }
+        navigateTo('products');
+    }
 };
 window.AppEngine = AppEngine;
