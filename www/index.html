@@ -168,10 +168,10 @@
             </div>
             
             <div class="quick-category-row">
-                <div class="cat-chip active"><span>Bisleri</span></div>
-                <div class="cat-chip"><span>Vedica</span></div>
-                <div class="cat-chip"><span>Fizzy Drinks</span></div>
-                <div class="cat-chip"><span>Bisleri Soda</span></div>
+                <div class="cat-chip active"><span>Daily H2O</span></div>
+                <div class="cat-chip"><span>Premium H2O</span></div>
+                <div class="cat-chip"><span>Change over</span></div>
+                <div class="cat-chip"><span>Traveling</span></div>
             </div>
 
             <div class="service-alert-box" id="alert-home">
@@ -190,12 +190,12 @@
             <div class="grid-section">
                 <h3 class="section-title">Shop by Need</h3>
                 <div class="needs-grid">
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Daily Hydration')"><div>🛢️</div><span>Daily Hydration</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Premium Hydration')"><div>💎</div><span>Premium Hydration</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Refreshment')"><div>🥤</div><span>Refreshment</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('On the Go')"><div>🏃</div><span>On the Go</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('House Party')"><div>🎉</div><span>House Party</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Glass Range')"><div>🍷</div><span>Glass Range</span></div>
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Daily H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Daily H2O</span></div>
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Premium H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Premium H2O</span></div>
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Change over')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Change over</span></div>
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Traveling')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Traveling</span></div>
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Party Mood')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Party Mood</span></div>
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Glass H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Glass H2O</span></div>
                 </div>
             </div>
 
@@ -224,10 +224,10 @@
         <section class="view-panel" id="view-products">
             <div class="view-header"><h2>Products</h2></div>
             <div class="quick-category-row">
-                <div class="cat-chip active"><span>Bisleri</span></div>
-                <div class="cat-chip"><span>Vedica</span></div>
-                <div class="cat-chip"><span>Fizzy Drinks</span></div>
-                <div class="cat-chip"><span>Bisleri Soda</span></div>
+                <div class="cat-chip active"><span>Daily H2O</span></div>
+                <div class="cat-chip"><span>Premium H2O</span></div>
+                <div class="cat-chip"><span>Change over</span></div>
+                <div class="cat-chip"><span>Traveling</span></div>
             </div>
             <div class="service-alert-box" id="alert-products">
                 <div class="alert-txt">
@@ -435,6 +435,9 @@
             // 3. Special Logic for specific views
             if (target === 'products') {
                 if (typeof syncProductUI === 'function') syncProductUI();
+            }
+            if (target === 'cart') {
+                if (window.AppEngine) window.AppEngine.syncCartUI();
             }
 
             // Scroll to top on navigation

@@ -18,7 +18,7 @@ async function fetchProductCatalog() {
     return data;
 }
 
-let activeFilter = 'Daily Hydration';
+let activeFilter = 'Daily H2O';
 let searchQuery = '';
 
 window.setProductFilter = function(category) {
@@ -46,10 +46,16 @@ async function syncProductUI() {
     // Store in AppEngine for cart mapping
     window.AppEngine.products = products;
 
-    // Apply Filters
+    // Apply Filters (Global Search Integrated)
     let filtered = products.filter(p => {
         const matchesCat = activeFilter ? p.category.toLowerCase() === activeFilter.toLowerCase() : true;
-        const matchesSearch = searchQuery ? p.display_name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+        const matchesSearch = searchQuery ? (
+            p.display_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.category.toLowerCase().includes(searchQuery.toLowerCase())
+        ) : true;
+        
+        // If there is a search query, ignore the category chip filter to allow global search
+        if (searchQuery) return matchesSearch;
         return matchesCat && matchesSearch;
     });
 
@@ -57,7 +63,7 @@ async function syncProductUI() {
     target.innerHTML = '';
 
     if (filtered.length === 0) {
-        target.innerHTML = `<p class="p-8 text-center text-secondary text-xs italic">No products in "${activeFilter}" category yet.</p>`;
+        target.innerHTML = `<p class="p-8 text-center text-secondary text-xs italic">No products found in "${activeFilter}".</p>`;
         return;
     }
 
@@ -65,15 +71,11 @@ async function syncProductUI() {
         const card = document.createElement('div');
         card.className = 'product-item-card glass-surface';
         
-        let icon = '🛢️';
-        if (product.category === 'On the Go') icon = '🏃';
-        if (product.category === 'Premium Hydration') icon = '💎';
-        if (product.category === 'Glass Range') icon = '🍷';
-        if (product.category === 'Refreshment') icon = '🥤';
+        let icon = 'fa-bottle-water'; // Unified modern bottle icon
 
         card.innerHTML = `
             <div class="product-info-row">
-                <div class="product-visual">${icon}</div>
+                <div class="product-visual"><i class="fa-solid ${icon}"></i></div>
                 <div class="product-details">
                     <span class="product-cat-tag">${product.category}</span>
                     <h4 class="product-name">${product.display_name}</h4>
@@ -107,6 +109,12 @@ const searchInput = document.getElementById('global-search');
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
         searchQuery = e.target.value;
+        
+        // If user is searching, navigate to products view to show results
+        if (searchQuery.length > 0) {
+            if (typeof navigateTo === 'function') navigateTo('products');
+        }
+        
         syncProductUI();
     });
 }
