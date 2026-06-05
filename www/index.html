@@ -135,19 +135,22 @@
                     <div class="text-teal-400 font-black text-sm tracking-wide">ADD ADDRESS</div>
                 </button>
 
-                <!-- Saved Addresses Empty State -->
-                <div class="pt-12 text-center">
-                    <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] mb-8 uppercase">Saved Addresses</div>
+                <!-- Saved Addresses Section -->
+                <div class="pt-12">
+                    <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] mb-8 uppercase text-center">Saved Addresses</div>
                     
-                    <div class="flex flex-col items-center justify-center space-y-4 opacity-80">
-                        <div class="w-40 h-40 bg-teal-500/5 rounded-full flex items-center justify-center relative">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <i class="fa-solid fa-map-location-dot text-7xl text-teal-500/20"></i>
+                    <div id="dynamic-saved-addresses-target">
+                        <!-- Content will be injected by AppEngine.renderSavedAddresses() -->
+                        <div class="flex flex-col items-center justify-center space-y-4 opacity-80">
+                            <div class="w-40 h-40 bg-teal-500/5 rounded-full flex items-center justify-center relative">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <i class="fa-solid fa-map-location-dot text-7xl text-teal-500/20"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="space-y-1">
-                            <h4 class="text-lg font-black text-white">No Saved Addresses</h4>
-                            <p class="text-xs text-slate-400 font-medium">Add an address to speed up checkout.</p>
+                            <div class="space-y-1 text-center">
+                                <h4 class="text-lg font-black text-white">No Saved Addresses</h4>
+                                <p class="text-xs text-slate-400 font-medium">Add an address to speed up checkout.</p>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -14,6 +14,7 @@ const AppEngine = {
     map: null,
     marker: null,
     currentCoords: { lat: 15.1394, lng: 76.9214 }, // Default Ballari
+    savedAddresses: [], // To store list of user addresses
 
     // --- LOCATION LOGIC ---
     supportedZones: [
@@ -71,6 +72,43 @@ const AppEngine = {
     updateLocationUI(name) {
         const locTitle = document.querySelector('.location-banner h4');
         if (locTitle) locTitle.innerHTML = `${name} <i class="fa-solid fa-chevron-down text-xs"></i>`;
+    },
+
+    renderSavedAddresses() {
+        const target = document.getElementById('dynamic-saved-addresses-target');
+        if (!target) return;
+
+        if (this.savedAddresses.length === 0) {
+            target.innerHTML = `
+                <div class="flex flex-col items-center justify-center space-y-4 opacity-80">
+                    <div class="w-40 h-40 bg-teal-500/5 rounded-full flex items-center justify-center relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fa-solid fa-map-location-dot text-7xl text-teal-500/20"></i>
+                        </div>
+                    </div>
+                    <div class="space-y-1 text-center">
+                        <h4 class="text-lg font-black text-white">No Saved Addresses</h4>
+                        <p class="text-xs text-slate-400 font-medium">Add an address to speed up checkout.</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            let html = '<div class="space-y-3">';
+            this.savedAddresses.forEach((addr, idx) => {
+                html += `
+                    <div onclick="AppEngine.selectCurrentLocation('${addr}')" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-4 cursor-pointer active:scale-95 transition">
+                        <div class="text-teal-400/50"><i class="fa-solid fa-house-user text-xl"></i></div>
+                        <div class="flex-1">
+                            <div class="text-white text-xs font-bold">Address ${idx + 1}</div>
+                            <p class="text-slate-400 text-[10px] leading-tight mt-0.5">${addr}</p>
+                        </div>
+                        <div class="text-slate-600"><i class="fa-solid fa-chevron-right text-xs"></i></div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            target.innerHTML = html;
+        }
     },
 
     selectCurrentLocation(address) {
@@ -600,6 +638,13 @@ const AppEngine = {
 
             // Update UI/State
             this.currentUser.full_name = name;
+            
+            // Add to saved addresses if not already there
+            if (!this.savedAddresses.includes(address)) {
+                this.savedAddresses.push(address);
+                this.renderSavedAddresses();
+            }
+
             this.selectCurrentLocation(address); // Reuse logic to update header and return home
             this.closeCheckout();
             
