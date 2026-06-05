@@ -76,16 +76,64 @@ const AppEngine = {
         if (method === 'Card') {
             document.getElementById('btn-card-pay').innerText = `PAY ₹${this.pendingPlan.deposit.toFixed(2)} SECURELY`;
         }
+
+        if (method === 'UPI') {
+            this.resetUPIStatus();
+        }
+    },
+
+    quickFillUPI(val) {
+        const input = document.getElementById('upi-id');
+        if (input) {
+            input.value = val;
+            this.resetUPIStatus();
+        }
+    },
+
+    resetUPIStatus() {
+        const statusBox = document.getElementById('upi-status-icon');
+        const tick = document.getElementById('upi-valid-tick');
+        const cross = document.getElementById('upi-invalid-cross');
+        const btnVerify = document.getElementById('btn-upi-verify');
+        const btnConfirm = document.getElementById('btn-upi-confirm-pay');
+
+        if (statusBox) statusBox.classList.add('hidden');
+        if (tick) tick.classList.add('hidden');
+        if (cross) cross.classList.add('hidden');
+        if (btnVerify) btnVerify.classList.remove('hidden');
+        if (btnConfirm) btnConfirm.classList.add('hidden');
+    },
+
+    verifyUPI() {
+        const input = document.getElementById('upi-id');
+        const upiId = input.value.trim();
+        const statusBox = document.getElementById('upi-status-icon');
+        const tick = document.getElementById('upi-valid-tick');
+        const cross = document.getElementById('upi-invalid-cross');
+        const btnVerify = document.getElementById('btn-upi-verify');
+        const btnConfirm = document.getElementById('btn-upi-confirm-pay');
+
+        if (!upiId || !upiId.includes('@')) {
+            // SHOW RED CROSS
+            statusBox.classList.remove('hidden');
+            cross.classList.remove('hidden');
+            tick.classList.add('hidden');
+            alert("Invalid UPI ID. Please try again.");
+            return;
+        }
+
+        // SHOW GREEN TICK
+        statusBox.classList.remove('hidden');
+        tick.classList.remove('hidden');
+        cross.classList.add('hidden');
+
+        // Toggle Buttons
+        btnVerify.classList.add('hidden');
+        btnConfirm.classList.remove('hidden');
+        btnConfirm.innerText = `CONFIRM & PAY ₹${this.pendingPlan.deposit.toFixed(2)}`;
     },
 
     async processPayment(method) {
-        if (method === 'UPI') {
-            const upiId = document.getElementById('upi-id').value.trim();
-            if (!upiId || !upiId.includes('@')) {
-                return alert("Please enter a valid UPI ID (e.g., name@okaxis)");
-            }
-        }
-
         if (method === 'COD' && !document.getElementById('cod-confirm').checked) {
             return alert("Please check the 'I Understand' box to proceed.");
         }
@@ -99,10 +147,12 @@ const AppEngine = {
             const deposit = this.pendingPlan.deposit;
 
             if (method === 'UPI') {
-                loaderText.innerText = "VERIFYING UPI ID...";
+                loaderText.innerText = "VERIFYING TRANSACTION...";
                 await new Promise(r => setTimeout(r, 1500));
-                loaderText.innerText = "AWAITING PAYMENT APPROVAL IN YOUR UPI APP...";
-                await new Promise(r => setTimeout(r, 2000));
+                loaderText.innerText = "DEDUCTING AMOUNT...";
+                await new Promise(r => setTimeout(r, 1500));
+                loaderText.innerText = "PAYMENT COMPLETED SUCCESSFULLY";
+                await new Promise(r => setTimeout(r, 1000));
             } else {
                 loaderText.innerText = "PROCESSING TRANSACTION...";
                 await new Promise(r => setTimeout(r, 1500));
