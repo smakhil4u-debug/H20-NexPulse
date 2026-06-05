@@ -121,7 +121,7 @@
             
             <div class="p-6 space-y-4">
                 <!-- Current Location Card -->
-                <div class="border-2 border-[#00bfa5] rounded-2xl p-4 flex items-center gap-4 bg-white shadow-sm">
+                <div onclick="AppEngine.selectCurrentLocation('36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India')" class="border-2 border-[#00bfa5] rounded-2xl p-4 flex items-center gap-4 bg-white shadow-sm cursor-pointer active:scale-95 transition">
                     <div class="text-[#00bfa5] text-2xl"><i class="fa-solid fa-crosshairs"></i></div>
                     <div class="flex-1">
                         <div class="text-[#00bfa5] font-black text-sm tracking-wide">CURRENT LOCATION</div>
@@ -338,7 +338,9 @@
             <div class="p-6 pt-12 max-w-md mx-auto space-y-8">
                 <div class="flex justify-between items-center">
                     <h3 class="text-2xl font-black font-brand tracking-tight">DELIVERY <span class="text-teal-500">INFO</span></h3>
-                    <button onclick="AppEngine.closeCheckout()" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center"><i data-lucide="x" class="w-5 h-5 text-white"></i></button>
+                    <button onclick="AppEngine.closeCheckout()" class="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center">
+                        <i class="fa-solid fa-xmark text-white"></i>
+                    </button>
                 </div>
 
                 <div class="space-y-4">
@@ -355,7 +357,7 @@
                         <div class="flex gap-2">
                             <textarea id="cust-address" placeholder="Flat No, Building, Street..." rows="2" class="flex-1 bg-slate-900 border border-slate-800 rounded-2xl p-4 focus:border-teal-500 outline-none transition text-sm text-white"></textarea>
                             <button onclick="AppEngine.toggleMapPicker()" class="w-14 bg-slate-800 border border-slate-700 rounded-2xl flex items-center justify-center text-teal-400 active:bg-teal-500/10">
-                                <i data-lucide="map-pin"></i>
+                                <i class="fa-solid fa-map-pin"></i>
                             </button>
                         </div>
                     </div>
@@ -369,8 +371,8 @@
                     <p class="text-[9px] text-center text-teal-500/70 font-bold uppercase tracking-widest">Move the map to pinpoint your doorstep</p>
                 </div>
 
-                <button onclick="AppEngine.finalOrder()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition">
-                    CONFIRM & PLACE ORDER
+                <button onclick="AppEngine.saveAddress()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition">
+                    CONFIRM ADDRESS
                 </button>
             </div>
         </div>

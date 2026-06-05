@@ -73,6 +73,21 @@ const AppEngine = {
         if (locTitle) locTitle.innerHTML = `${name} <i class="fa-solid fa-chevron-down text-xs"></i>`;
     },
 
+    selectCurrentLocation(address) {
+        // Update the header display
+        const locTitle = document.querySelector('.location-banner h4');
+        const locSub = document.querySelector('.location-banner p');
+        if (locTitle) locTitle.innerHTML = `Ballari <i class="fa-solid fa-chevron-down text-xs"></i>`;
+        if (locSub) locSub.innerText = address;
+
+        // Save address in state/localStorage
+        localStorage.setItem('h2o_last_address', address);
+        
+        // Return to home
+        navigateTo('home');
+        console.log("Location set to:", address);
+    },
+
     toggleServiceAlerts(show) {
         const homeAlert = document.getElementById('alert-home');
         const productAlert = document.getElementById('alert-products');
@@ -566,6 +581,32 @@ const AppEngine = {
                 this.initMap();
                 if (this.map) this.map.invalidateSize(); // Fix gray boxes
             }, 100);
+        }
+    },
+
+    async saveAddress() {
+        const name = document.getElementById('cust-name').value;
+        const address = document.getElementById('cust-address').value;
+        if (!name || !address) return alert("Please provide your name and address!");
+
+        try {
+            const supabase = window.supabaseClient;
+            const { error: updateErr } = await supabase
+                .from('customers')
+                .update({ full_name: name })
+                .eq('customer_id', this.currentUser.customer_id);
+
+            if (updateErr) throw updateErr;
+
+            // Update UI/State
+            this.currentUser.full_name = name;
+            this.selectCurrentLocation(address); // Reuse logic to update header and return home
+            this.closeCheckout();
+            
+            alert("Address Saved Successfully! ✅");
+        } catch (err) {
+            console.error("Save Address Failed:", err);
+            alert("Failed to save address. Please try again.");
         }
     },
 
