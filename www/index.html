@@ -106,11 +106,41 @@
                     <p>36, Sri Rampura Colony, Bandimot, Ballari, ...</p>
                 </div>
             </div>
-            <div class="search-container">
+            <div class="search-container cursor-pointer" onclick="navigateTo('search')">
                 <i class="fa-solid fa-magnifying-glass search-ico"></i>
-                <input type="text" placeholder="Search..." id="global-search">
+                <input type="text" placeholder="Search..." id="global-search" readonly>
             </div>
         </div>
+
+        <!-- VIEW PANEL: SEARCH (New) -->
+        <section class="view-panel p-0 bg-slate-950" id="view-search">
+            <div class="p-6 space-y-6">
+                <div class="flex items-center gap-4">
+                    <button onclick="navigateTo('home')" class="text-white text-xl"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="flex-1 bg-slate-900 border border-slate-800 rounded-2xl flex items-center px-4 gap-3 focus-within:border-teal-500 transition">
+                        <i class="fa-solid fa-magnifying-glass text-slate-500 text-sm"></i>
+                        <input type="text" id="main-search-input" placeholder="Search products..." class="flex-1 bg-transparent border-none outline-none py-4 text-sm text-white font-medium">
+                        <button onclick="AppEngine.clearSearch()" id="btn-clear-search" class="hidden text-slate-500 hover:text-white"><i class="fa-solid fa-circle-xmark"></i></button>
+                    </div>
+                </div>
+
+                <!-- Popular Searches -->
+                <div id="popular-searches-box" class="space-y-4">
+                    <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1">Popular Searches</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="AppEngine.execPopularSearch('20 Ltr Cold Water Jar')" class="px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-bold text-slate-300 active:bg-teal-500/10 active:border-teal-500/50 transition">20 Ltr Cold Water Jar</button>
+                        <button onclick="AppEngine.execPopularSearch('20 Ltr Normal Water Jar')" class="px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-bold text-slate-300 active:bg-teal-500/10 active:border-teal-500/50 transition">20 Ltr Normal Water Jar</button>
+                        <button onclick="AppEngine.execPopularSearch('2 Ltr Water Bottle')" class="px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-bold text-slate-300 active:bg-teal-500/10 active:border-teal-500/50 transition">2 Ltr Water Bottle</button>
+                        <button onclick="AppEngine.execPopularSearch('1 Ltr Water Bottle')" class="px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-bold text-slate-300 active:bg-teal-500/10 active:border-teal-500/50 transition">1 Ltr Water Bottle</button>
+                    </div>
+                </div>
+
+                <!-- Search Results Target -->
+                <div id="search-results-target" class="space-y-4">
+                    <!-- Dynamic search results here -->
+                </div>
+            </div>
+        </section>
 
         <!-- VIEW PANEL: SELECT LOCATION (New) -->
         <section class="view-panel p-0 bg-slate-950" id="view-select-location">
@@ -452,6 +482,7 @@
             if (window.AppEngine) {
                 window.AppEngine.checkSession();
                 window.AppEngine.initLocation();
+                window.AppEngine.initSearch();
             }
         };
     </script>

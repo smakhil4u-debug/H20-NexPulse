@@ -72,6 +72,7 @@ async function syncProductUI() {
         card.className = 'product-item-card glass-surface';
         
         let icon = 'fa-bottle-water'; // Unified modern bottle icon
+        const qty = window.AppEngine.getQty(product.product_key);
 
         card.innerHTML = `
             <div class="product-info-row">
@@ -81,10 +82,18 @@ async function syncProductUI() {
                     <h4 class="product-name">${product.display_name}</h4>
                     <p class="product-price text-accent">₹${parseFloat(product.unit_price).toFixed(2)}</p>
                 </div>
-                <div class="product-action-node flex flex-col gap-2">
-                    <button class="add-to-cart-btn" onclick="AppEngine.addToCart('${product.product_key}')">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
+                <div class="product-action-node flex flex-col gap-2 items-end">
+                    <div class="cart-control-node">
+                        ${qty > 0 ? `
+                            <div class="flex items-center gap-3 bg-slate-900 rounded-xl p-1 border border-slate-800">
+                                <button onclick="AppEngine.removeFromCart('${product.product_key}')" class="w-8 h-8 flex items-center justify-center text-slate-400"><i class="fa-solid fa-minus text-[10px]"></i></button>
+                                <span class="font-bold text-xs text-white min-w-[12px] text-center">${qty}</span>
+                                <button onclick="AppEngine.addToCart('${product.product_key}')" class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                            </div>
+                        ` : `
+                            <button onclick="AppEngine.addToCart('${product.product_key}')" class="px-6 py-2.5 bg-teal-600 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-teal-900/20 active:scale-95 transition">ADD</button>
+                        `}
+                    </div>
                     <button class="w-9 h-9 border border-teal-500/30 rounded-xl flex items-center justify-center text-[10px] text-teal-400 font-bold" onclick="AppEngine.openSubscriptionFlow('${product.product_key}')">
                         SUB
                     </button>

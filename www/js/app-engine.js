@@ -415,7 +415,7 @@ const AppEngine = {
         } else {
             this.cart.push({ ...product, qty: 1 });
         }
-        this.syncCartUI();
+        this.updateCartGlobalState();
     },
 
     removeFromCart(productKey) {
@@ -427,52 +427,111 @@ const AppEngine = {
                 this.cart.splice(index, 1);
             }
         }
+        this.updateCartGlobalState();
+    },
+
+    getQty(productKey) {
+        const item = this.cart.find(i => i.product_key === productKey);
+        return item ? item.qty : 0;
+    },
+
+    updateCartGlobalState() {
+        // Recalculate totals
+        let totalQty = 0;
+        let totalPrice = 0;
+        this.cart.forEach(item => {
+            totalQty += item.qty;
+            totalPrice += item.unit_price * item.qty;
+        });
+
+        console.log(`Cart Updated: Qty=${totalQty}, Total=₹${totalPrice}`);
+
+        // Trigger UI refreshes
+        if (typeof syncProductUI === 'function') syncProductUI();
+        if (this.renderSearchResults) this.renderSearchResults();
         this.syncCartUI();
     },
 
-    syncCartUI() {
-        const cartTarget = document.getElementById('view-cart');
-        if (!cartTarget) return;
+    // --- SEARCH ENGINE ---
+    initSearch() {
+        const input = document.getElementById('main-search-input');
+        if (!input) return;
 
-        if (this.cart.length === 0) {
-            cartTarget.innerHTML = `
-                <div class="view-header"><h2>Cart</h2></div>
-                <div class="empty-state-view">
-                    <div class="empty-vector">🛒❗</div>
-                    <h3>Don't leave your cart high & dry</h3>
-                    <p>Add some bottles to quench your thirst</p>
-                    <button class="action-accent-button" onclick="navigateTo('products')">BROWSE PRODUCTS</button>
-                </div>
-            `;
+        input.addEventListener('input', (e) => {
+            const val = e.target.value.trim();
+            const clearBtn = document.getElementById('btn-clear-search');
+            const popularBox = document.getElementById('popular-searches-box');
+            
+            if (val.length > 0) {
+                clearBtn.classList.remove('hidden');
+                popularBox.classList.add('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+                popularBox.classList.remove('hidden');
+            }
+            this.renderSearchResults(val);
+        });
+    },
+
+    clearSearch() {
+        const input = document.getElementById('main-search-input');
+        if (input) {
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+            input.focus();
+        }
+    },
+
+    execPopularSearch(term) {
+        const input = document.getElementById('main-search-input');
+        if (input) {
+            input.value = term;
+            input.dispatchEvent(new Event('input'));
+        }
+    },
+
+    renderSearchResults(query = "") {
+        const target = document.getElementById('search-results-target');
+        if (!target) return;
+
+        if (!query) {
+            target.innerHTML = "";
             return;
         }
 
-        let total = 0;
-        let cartHTML = `<div class="view-header"><h2>Cart</h2></div><div class="cart-list space-y-4">`;
-        this.cart.forEach(item => {
-            total += item.unit_price * item.qty;
-            cartHTML += `
-                <div class="product-item-card glass-surface">
-                    <div class="product-info-row flex justify-between items-center">
-                        <div class="product-details">
-                            <h4 class="product-name font-bold text-sm">${item.display_name}</h4>
-                            <p class="product-price text-accent text-xs">₹${item.unit_price} x ${item.qty}</p>
-                        </div>
-                        <div class="flex items-center gap-3 bg-slate-900 rounded-xl p-1 border border-slate-800">
-                            <button onclick="AppEngine.removeFromCart('${item.product_key}')" class="w-8 h-8 flex items-center justify-center text-slate-400"><i class="fa-solid fa-minus text-[10px]"></i></button>
-                            <span class="font-bold w-4 text-center text-xs">${item.qty}</span>
-                            <button onclick="AppEngine.addToCart('${item.product_key}')" class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center"><i class="fa-solid fa-plus text-[10px] text-white"></i></button>
-                        </div>
+        const filtered = this.products.filter(p => 
+            p.display_name.toLowerCase().includes(query.toLowerCase()) ||
+            p.category.toLowerCase().includes(query.toLowerCase())
+        );
+
+        if (filtered.length === 0) {
+            target.innerHTML = `<p class="p-8 text-center text-slate-500 text-xs italic">No results for "${query}"</p>`;
+            return;
+        }
+
+        target.innerHTML = filtered.map(p => {
+            const qty = this.getQty(p.product_key);
+            return `
+                <div class="product-item-card glass-surface flex items-center gap-4 p-4 rounded-2xl bg-slate-900/50 border border-slate-800">
+                    <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-2xl"><i class="fa-solid fa-bottle-water text-teal-400"></i></div>
+                    <div class="flex-1">
+                        <h4 class="text-white font-bold text-sm">${p.display_name}</h4>
+                        <p class="text-teal-400 font-black text-xs">₹${parseFloat(p.unit_price).toFixed(2)}</p>
                     </div>
-                </div>`;
-        });
-        cartHTML += `
-            <div class="cart-summary mt-8 p-6 bg-slate-900/50 rounded-3xl border border-white/5">
-                <div class="flex justify-between mb-4"><span class="text-secondary font-bold text-sm">Total</span><span class="text-xl font-black">₹${total.toFixed(2)}</span></div>
-                <button class="action-accent-button" onclick="AppEngine.checkout()">PLACE ORDER VIA WHATSAPP</button>
-            </div>
-        </div>`;
-        cartTarget.innerHTML = cartHTML;
+                    <div class="cart-control-node">
+                        ${qty > 0 ? `
+                            <div class="flex items-center gap-3 bg-slate-900 rounded-xl p-1 border border-slate-800">
+                                <button onclick="AppEngine.removeFromCart('${p.product_key}')" class="w-8 h-8 flex items-center justify-center text-slate-400"><i class="fa-solid fa-minus text-[10px]"></i></button>
+                                <span class="font-bold text-xs text-white min-w-[12px] text-center">${qty}</span>
+                                <button onclick="AppEngine.addToCart('${p.product_key}')" class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                            </div>
+                        ` : `
+                            <button onclick="AppEngine.addToCart('${p.product_key}')" class="px-6 py-2.5 bg-teal-600 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-teal-900/20 active:scale-95 transition">ADD</button>
+                        `}
+                    </div>
+                </div>
+            `;
+        }).join('');
     },
 
     // --- SUBSCRIPTION LOGIC ---
