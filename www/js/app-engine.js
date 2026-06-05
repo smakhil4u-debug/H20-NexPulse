@@ -79,16 +79,36 @@ const AppEngine = {
     },
 
     async processPayment(method) {
+        if (method === 'UPI') {
+            const upiId = document.getElementById('upi-id').value.trim();
+            if (!upiId || !upiId.includes('@')) {
+                return alert("Please enter a valid UPI ID (e.g., name@okaxis)");
+            }
+        }
+
         if (method === 'COD' && !document.getElementById('cod-confirm').checked) {
             return alert("Please check the 'I Understand' box to proceed.");
         }
 
         const loader = document.getElementById('global-loader');
+        const loaderText = loader.querySelector('p');
         loader.classList.remove('hidden');
 
         try {
             const supabase = window.supabaseClient;
             const deposit = this.pendingPlan.deposit;
+
+            if (method === 'UPI') {
+                loaderText.innerText = "VERIFYING UPI ID...";
+                await new Promise(r => setTimeout(r, 1500));
+                loaderText.innerText = "AWAITING PAYMENT APPROVAL IN YOUR UPI APP...";
+                await new Promise(r => setTimeout(r, 2000));
+            } else {
+                loaderText.innerText = "PROCESSING TRANSACTION...";
+                await new Promise(r => setTimeout(r, 1500));
+            }
+
+            const txnId = "TXN" + Math.floor(Math.random() * 900000 + 100000);
 
             // 1. Record Transaction
             const { error: txErr } = await supabase.from('transactions').insert({
@@ -96,7 +116,8 @@ const AppEngine = {
                 amount: deposit,
                 type: 'deposit',
                 payment_method: method,
-                status: 'success'
+                status: 'success',
+                transaction_id: txnId
             });
             if (txErr) throw txErr;
 
@@ -120,11 +141,8 @@ const AppEngine = {
             this.currentUser.deposit_paid = true;
             this.currentUser.security_deposit = deposit;
 
-            // Simulate slight delay for premium feel
-            setTimeout(() => {
-                loader.classList.add('hidden');
-                this.showSuccessPopup();
-            }, 1500);
+            loader.classList.add('hidden');
+            this.showSuccessPopup();
 
         } catch (err) {
             console.error("Payment Lifecycle Failed:", err);
