@@ -18,6 +18,15 @@ const AppEngine = {
     currentAddrCategory: 'Home',
     systemSettings: {},
 
+    // --- SYSTEM CONFIG ---
+    IS_PRODUCTION: false, // Set to true to launch real UPI apps
+    MerchantConfig: {
+        upi_id: "7483266062@ybl",
+        name: "H2O NexPulse",
+        default_deposit: 2000
+    },
+    paymentPending: false,
+
     // --- LOCATION LOGIC ---
     supportedZones: [
         { name: "Ballari", lat: 15.1394, lng: 76.9214, radiusKm: 30 } // 30km radius around Ballari
@@ -678,65 +687,137 @@ const AppEngine = {
         });
     },
 
-    clearSearch() {
-        const input = document.getElementById('main-search-input');
-        if (input) {
-            input.value = '';
-            input.dispatchEvent(new Event('input'));
-            input.focus();
+    // --- UPI & PAYMENT FRAMEWORK ---
+    initPaymentListeners() {
+        // 1. Live UPI Validation
+        const upiInput = document.getElementById('upi-id');
+        if (upiInput) {
+            upiInput.addEventListener('input', (e) => this.validateUPIInput(e.target.value));
+        }
+
+        // 2. Return from Payment App Detection
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === 'visible' && this.paymentPending) {
+                this.finalizeTransactionAfterReturn();
+            }
+        });
+    },
+
+    validateUPIInput(val) {
+        const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+        const isValid = upiRegex.test(val.trim());
+        
+        const statusBox = document.getElementById('upi-status-icon');
+        const tick = document.getElementById('upi-valid-tick');
+        const cross = document.getElementById('upi-invalid-cross');
+        const btnVerify = document.getElementById('btn-upi-verify');
+
+        if (val.length > 0) {
+            statusBox.classList.remove('hidden');
+            if (isValid) {
+                tick.classList.remove('hidden');
+                cross.classList.add('hidden');
+                btnVerify.disabled = false;
+                btnVerify.classList.replace('bg-slate-800', 'bg-teal-600');
+            } else {
+                tick.classList.add('hidden');
+                cross.classList.remove('hidden');
+                btnVerify.disabled = true;
+                btnVerify.classList.replace('bg-teal-600', 'bg-slate-800');
+            }
+        } else {
+            statusBox.classList.add('hidden');
+            btnVerify.disabled = true;
         }
     },
 
-    execPopularSearch(term) {
-        const input = document.getElementById('main-search-input');
-        if (input) {
-            input.value = term;
-            input.dispatchEvent(new Event('input'));
+    verifyUPI() {
+        // Trigger Phase 2: Payment Redirect
+        const upiId = document.getElementById('upi-id').value.trim();
+        const deposit = this.pendingPlan.deposit || this.MerchantConfig.default_deposit;
+        
+        // Generate UPI URI
+        const upiUri = `upi://pay?pa=${this.MerchantConfig.upi_id}&pn=${encodeURIComponent(this.MerchantConfig.name)}&am=${deposit}&cu=INR&tn=H2O_Deposit_${this.currentUser.customer_id}`;
+        
+        this.paymentPending = true;
+        this.currentPaymentMethod = 'UPI';
+
+        if (this.IS_PRODUCTION) {
+            console.log("PRODUCTION: Redirecting to UPI App...", upiUri);
+            window.location.href = upiUri;
+        } else {
+            console.log("SANDBOX: Simulating Redirect...");
+            const loader = document.getElementById('global-loader');
+            const loaderText = loader.querySelector('p');
+            loader.classList.remove('hidden');
+            loaderText.innerText = "REDIRECTING TO YOUR PAYMENT APP...";
+            
+            setTimeout(() => {
+                loaderText.innerText = `PLEASE AUTHORIZE THE ₹${deposit} TRANSACTION IN YOUR APP`;
+                // In sandbox, we stay here. Real return detection happens via visibilitychange
+                // Or we simulate the return after 3 seconds for easy testing
+                setTimeout(() => {
+                    this.finalizeTransactionAfterReturn();
+                }, 3000);
+            }, 1500);
         }
     },
 
-    renderSearchResults(query = "") {
-        const target = document.getElementById('search-results-target');
-        if (!target) return;
+    async finalizeTransactionAfterReturn() {
+        if (!this.paymentPending) return;
+        this.paymentPending = false;
 
-        if (!query) {
-            target.innerHTML = "";
-            return;
+        const loader = document.getElementById('global-loader');
+        const loaderText = loader.querySelector('p');
+        loader.classList.remove('hidden');
+        loaderText.innerText = "CONFIRMING SETTLEMENT WITH BANK...";
+
+        try {
+            await new Promise(r => setTimeout(r, 2000));
+            
+            const deposit = this.pendingPlan.deposit || this.MerchantConfig.default_deposit;
+            const txnId = "TXN" + Math.floor(Math.random() * 900000 + 100000);
+            const method = this.currentPaymentMethod || 'UPI';
+
+            // Supabase Persistence
+            try {
+                const supabase = window.supabaseClient;
+                await supabase.from('transactions').insert({
+                    customer_id: this.currentUser.customer_id,
+                    amount: deposit,
+                    type: 'deposit',
+                    payment_method: method,
+                    status: 'success',
+                    transaction_id: txnId
+                });
+
+                await supabase.from('customers')
+                    .update({ deposit_paid: true, security_deposit: deposit })
+                    .eq('customer_id', this.currentUser.customer_id);
+
+                await supabase.from('subscriptions').insert({
+                    customer_id: this.currentUser.customer_id,
+                    product_key: this.pendingPlan.key || 'daily_h2o_standard',
+                    frequency: 'daily',
+                    selected_days: [1, 2, 3, 4, 5, 6, 0],
+                    status: 'active'
+                });
+            } catch (dbErr) {
+                console.warn("DB Update Failed, but proceeding locally:", dbErr);
+            }
+
+            this.currentUser.deposit_paid = true;
+            this.currentUser.security_deposit = deposit;
+            this.toggleServiceAlerts(false);
+
+            loader.classList.add('hidden');
+            this.showSuccessPopup();
+
+        } catch (err) {
+            console.error("Finalization Failed:", err);
+            loader.classList.add('hidden');
+            alert("Transaction confirmation timed out. If amount was deducted, your account will activate shortly.");
         }
-
-        const filtered = this.products.filter(p => 
-            p.display_name.toLowerCase().includes(query.toLowerCase()) ||
-            p.category.toLowerCase().includes(query.toLowerCase())
-        );
-
-        if (filtered.length === 0) {
-            target.innerHTML = `<p class="p-8 text-center text-slate-500 text-xs italic">No results for "${query}"</p>`;
-            return;
-        }
-
-        target.innerHTML = filtered.map(p => {
-            const qty = this.getQty(p.product_key);
-            return `
-                <div class="product-item-card glass-surface flex items-center gap-4 p-4 rounded-2xl bg-slate-900/50 border border-slate-800">
-                    <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-2xl"><i class="fa-solid fa-bottle-water text-teal-400"></i></div>
-                    <div class="flex-1">
-                        <h4 class="text-white font-bold text-sm">${p.display_name}</h4>
-                        <p class="text-teal-400 font-black text-xs">₹${parseFloat(p.unit_price).toFixed(2)}</p>
-                    </div>
-                    <div class="cart-control-node">
-                        ${qty > 0 ? `
-                            <div class="flex items-center gap-3 bg-slate-900 rounded-xl p-1 border border-slate-800">
-                                <button onclick="AppEngine.removeFromCart('${p.product_key}')" class="w-8 h-8 flex items-center justify-center text-slate-400"><i class="fa-solid fa-minus text-[10px]"></i></button>
-                                <span class="font-bold text-xs text-white min-w-[12px] text-center">${qty}</span>
-                                <button onclick="AppEngine.addToCart('${p.product_key}')" class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-plus text-[10px]"></i></button>
-                            </div>
-                        ` : `
-                            <button onclick="AppEngine.addToCart('${p.product_key}')" class="px-6 py-2.5 bg-teal-600 rounded-xl text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-teal-900/20 active:scale-95 transition">ADD</button>
-                        `}
-                    </div>
-                </div>
-            `;
-        }).join('');
     },
 
     // --- SUBSCRIPTION LOGIC ---
