@@ -113,40 +113,40 @@
         </div>
 
         <!-- VIEW PANEL: SELECT LOCATION (New) -->
-        <section class="view-panel p-0 bg-white" id="view-select-location">
-            <div class="bg-[#00bfa5] p-6 flex items-center gap-4 text-white sticky top-0 z-[110]">
+        <section class="view-panel p-0 bg-slate-950" id="view-select-location">
+            <div class="bg-teal-600 p-6 flex items-center gap-4 text-white sticky top-0 z-[110]">
                 <button onclick="navigateTo('home')" class="text-2xl"><i class="fa-solid fa-chevron-left"></i></button>
                 <h2 class="text-xl font-bold flex-1 text-center pr-8">Select a location</h2>
             </div>
             
             <div class="p-6 space-y-4">
                 <!-- Current Location Card -->
-                <div onclick="AppEngine.selectCurrentLocation('36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India')" class="border-2 border-[#00bfa5] rounded-2xl p-4 flex items-center gap-4 bg-white shadow-sm cursor-pointer active:scale-95 transition">
-                    <div class="text-[#00bfa5] text-2xl"><i class="fa-solid fa-crosshairs"></i></div>
+                <div onclick="AppEngine.selectCurrentLocation('36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India')" class="border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm cursor-pointer active:scale-95 transition">
+                    <div class="text-teal-400 text-2xl"><i class="fa-solid fa-crosshairs"></i></div>
                     <div class="flex-1">
-                        <div class="text-[#00bfa5] font-black text-sm tracking-wide">CURRENT LOCATION</div>
-                        <p class="text-slate-600 text-[11px] font-medium leading-tight mt-1">36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India</p>
+                        <div class="text-teal-400 font-black text-sm tracking-wide">CURRENT LOCATION</div>
+                        <p class="text-slate-400 text-[11px] font-medium leading-tight mt-1">36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India</p>
                     </div>
                 </div>
 
                 <!-- Add Address Button -->
-                <button onclick="AppEngine.openCheckout()" class="w-full border-2 border-[#00bfa5] rounded-2xl p-4 flex items-center gap-4 bg-white shadow-sm active:scale-95 transition">
-                    <div class="text-[#00bfa5] text-2xl"><i class="fa-solid fa-plus"></i></div>
-                    <div class="text-[#00bfa5] font-black text-sm tracking-wide">ADD ADDRESS</div>
+                <button onclick="AppEngine.openCheckout()" class="w-full border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm active:scale-95 transition text-left">
+                    <div class="text-teal-400 text-2xl"><i class="fa-solid fa-plus"></i></div>
+                    <div class="text-teal-400 font-black text-sm tracking-wide">ADD ADDRESS</div>
                 </button>
 
                 <!-- Saved Addresses Empty State -->
                 <div class="pt-12 text-center">
-                    <div class="text-[10px] font-bold text-slate-400 tracking-[0.2em] mb-8">SAVED ADDRESSES</div>
+                    <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] mb-8 uppercase">Saved Addresses</div>
                     
                     <div class="flex flex-col items-center justify-center space-y-4 opacity-80">
-                        <div class="w-40 h-40 bg-teal-50 rounded-full flex items-center justify-center relative">
+                        <div class="w-40 h-40 bg-teal-500/5 rounded-full flex items-center justify-center relative">
                             <div class="absolute inset-0 flex items-center justify-center">
-                                <i class="fa-solid fa-map-location-dot text-7xl text-[#00bfa5]"></i>
+                                <i class="fa-solid fa-map-location-dot text-7xl text-teal-500/20"></i>
                             </div>
                         </div>
                         <div class="space-y-1">
-                            <h4 class="text-lg font-black text-slate-900">No Saved Addresses</h4>
+                            <h4 class="text-lg font-black text-white">No Saved Addresses</h4>
                             <p class="text-xs text-slate-400 font-medium">Add an address to speed up checkout.</p>
                         </div>
                     </div>
