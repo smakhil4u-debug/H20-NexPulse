@@ -15,6 +15,7 @@ const AppEngine = {
     marker: null,
     currentCoords: { lat: 15.1394, lng: 76.9214 }, // Default Ballari
     savedAddresses: [], // To store list of user addresses
+    currentAddrCategory: 'Home',
 
     // --- LOCATION LOGIC ---
     supportedZones: [
@@ -94,15 +95,23 @@ const AppEngine = {
             `;
         } else {
             let html = '<div class="space-y-3">';
-            this.savedAddresses.forEach((addr, idx) => {
+            this.savedAddresses.forEach((item, idx) => {
+                let icon = 'fa-map-pin';
+                if (item.category === 'Home') icon = 'fa-house';
+                if (item.category === 'Office') icon = 'fa-briefcase';
+
                 html += `
-                    <div onclick="AppEngine.selectCurrentLocation('${addr}')" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-4 cursor-pointer active:scale-95 transition">
-                        <div class="text-teal-400/50"><i class="fa-solid fa-house-user text-xl"></i></div>
-                        <div class="flex-1">
-                            <div class="text-white text-xs font-bold">Address ${idx + 1}</div>
-                            <p class="text-slate-400 text-[10px] leading-tight mt-0.5">${addr}</p>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition group relative">
+                        <div onclick="AppEngine.selectCurrentLocation('${item.address}')" class="flex-1 flex items-center gap-4">
+                            <div class="text-teal-400/50"><i class="fa-solid ${icon} text-xl"></i></div>
+                            <div class="flex-1">
+                                <div class="text-white text-xs font-bold">${item.category || 'Other'}</div>
+                                <p class="text-slate-400 text-[10px] leading-tight mt-0.5">${item.address}</p>
+                            </div>
                         </div>
-                        <div class="text-slate-600"><i class="fa-solid fa-chevron-right text-xs"></i></div>
+                        <button onclick="AppEngine.deleteAddress(${idx})" class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white transition">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
                     </div>
                 `;
             });
@@ -111,7 +120,31 @@ const AppEngine = {
         }
     },
 
-    selectCurrentLocation(address) {
+    deleteAddress(index) {
+        if (confirm("Remove this address?")) {
+            this.savedAddresses.splice(index, 1);
+            localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
+            this.renderSavedAddresses();
+        }
+    },
+
+    setAddrCategory(cat) {
+        this.currentAddrCategory = cat;
+        ['Home', 'Office', 'Others'].forEach(c => {
+            const el = document.getElementById(`cat-${c}`);
+            if (el) {
+                if (c === cat) {
+                    el.classList.add('bg-teal-500/10', 'text-teal-400', 'border-teal-500/50');
+                    el.classList.remove('bg-slate-900', 'text-slate-400', 'border-slate-800');
+                } else {
+                    el.classList.remove('bg-teal-500/10', 'text-teal-400', 'border-teal-500/50');
+                    el.classList.add('bg-slate-900', 'text-slate-400', 'border-slate-800');
+                }
+            }
+        });
+    },
+
+    selectCurrentLocation(address, autoSave = false) {
         // Update the header display
         const locTitle = document.querySelector('.location-banner h4');
         const locSub = document.querySelector('.location-banner p');
@@ -120,6 +153,15 @@ const AppEngine = {
 
         // Save address in state/localStorage
         localStorage.setItem('h2o_last_address', address);
+
+        if (autoSave) {
+            const exists = this.savedAddresses.some(a => a.address === address);
+            if (!exists) {
+                this.savedAddresses.push({ address: address, category: 'Others' });
+                localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
+                this.renderSavedAddresses();
+            }
+        }
         
         // Return to home
         navigateTo('home');
@@ -290,6 +332,19 @@ const AppEngine = {
 
     checkSession() {
         const savedPhone = localStorage.getItem('h2o_phone');
+        const lastAddr = localStorage.getItem('h2o_last_address');
+        const savedAddrs = localStorage.getItem('h2o_saved_addresses');
+
+        if (savedAddrs) {
+            this.savedAddresses = JSON.parse(savedAddrs);
+            this.renderSavedAddresses();
+        }
+
+        if (lastAddr) {
+            const locSub = document.querySelector('.location-banner p');
+            if (locSub) locSub.innerText = lastAddr;
+        }
+
         if (savedPhone) {
             const phoneInput = document.getElementById('login-phone');
             if (phoneInput) phoneInput.value = savedPhone;
@@ -640,8 +695,10 @@ const AppEngine = {
             this.currentUser.full_name = name;
             
             // Add to saved addresses if not already there
-            if (!this.savedAddresses.includes(address)) {
-                this.savedAddresses.push(address);
+            const exists = this.savedAddresses.some(a => a.address === address);
+            if (!exists) {
+                this.savedAddresses.push({ address: address, category: this.currentAddrCategory });
+                localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
                 this.renderSavedAddresses();
             }
 
