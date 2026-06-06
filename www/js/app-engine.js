@@ -881,6 +881,7 @@ const AppEngine = {
     syncSubscriptionsUI() {
         const target = document.getElementById('view-subscriptions');
         if (!target) return;
+
         if (this.subscriptions.length === 0) {
             target.innerHTML = `
                 <div class="view-header"><h2>Subscription</h2></div>
@@ -889,12 +890,94 @@ const AppEngine = {
             `;
             return;
         }
-        let html = `<div class="view-header"><h2>Subscription</h2></div><div class="space-y-4">`;
+
+        let html = `<div class="view-header"><h2>Subscription</h2></div><div class="space-y-6">`;
+        
         this.subscriptions.forEach(sub => {
-            const days = sub.selected_days.map(d => ['S','M','T','W','T','F','S'][d]).join(', ');
-            html += `<div class="glass-card rounded-3xl p-5 border border-teal-500/20"><h4 class="font-bold text-teal-400">${sub.product_key.replace(/_/g, ' ')}</h4><p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-1">${sub.frequency} • ${days}</p></div>`;
+            const isPaused = sub.status === 'paused';
+            const days = ['S','M','T','W','T','F','S'];
+            
+            html += `
+                <div class="glass-card rounded-[32px] p-6 border ${isPaused ? 'border-slate-800 opacity-60' : 'border-teal-500/20'} transition-all duration-300">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="space-y-1">
+                            <h4 class="font-black text-white text-lg">${sub.product_key.replace(/_/g, ' ')}</h4>
+                            <p class="text-[10px] text-teal-400 font-bold uppercase tracking-widest">${sub.frequency}</p>
+                        </div>
+                        <button onclick="AppEngine.toggleSubStatus(${sub.id}, '${sub.status}')" class="px-4 py-2 rounded-xl border ${isPaused ? 'bg-teal-600 border-teal-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-400'} text-[10px] font-black uppercase tracking-widest">
+                            ${isPaused ? 'RESUME' : 'PAUSE'}
+                        </button>
+                    </div>
+
+                    ${isPaused ? `
+                        <div class="py-4 text-center bg-slate-950/50 rounded-2xl border border-dashed border-slate-800 mb-4">
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Deliveries temporarily suspended</p>
+                        </div>
+                    ` : ''}
+
+                    <div class="space-y-6">
+                        <!-- Day Toggles -->
+                        <div class="flex justify-between items-center bg-slate-950/50 p-2 rounded-2xl border border-white/5">
+                            ${days.map((day, idx) => {
+                                const isActive = sub.selected_days.includes(idx);
+                                return `
+                                    <button onclick="AppEngine.toggleSubDayInDashboard(${sub.id}, ${idx})" class="w-8 h-8 rounded-lg text-[10px] font-black transition-all ${isActive ? 'bg-teal-600 text-white shadow-lg shadow-teal-900/40' : 'bg-slate-900 text-slate-600'}">
+                                        ${day}
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <!-- Quantity Control -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Jars per delivery</span>
+                            <div class="flex items-center gap-4 bg-slate-900 p-1 rounded-xl border border-white/5">
+                                <button onclick="AppEngine.updateSubQty(${sub.id}, ${sub.quantity || 1}, -1)" class="w-8 h-8 flex items-center justify-center text-slate-400"><i class="fa-solid fa-minus text-xs"></i></button>
+                                <span class="text-white font-black text-sm w-4 text-center">${sub.quantity || 1}</span>
+                                <button onclick="AppEngine.updateSubQty(${sub.id}, ${sub.quantity || 1}, 1)" class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-plus text-xs"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
         });
+        
         target.innerHTML = html + `</div>`;
+    },
+
+    async toggleSubStatus(subId, currentStatus) {
+        const newStatus = currentStatus === 'active' ? 'paused' : 'active';
+        const { error } = await window.supabaseClient.from('subscriptions').update({ status: newStatus }).eq('id', subId);
+        if (!error) {
+            this.fetchSubscriptions();
+        } else {
+            alert("Error: " + error.message);
+        }
+    },
+
+    async toggleSubDayInDashboard(subId, dayIdx) {
+        const sub = this.subscriptions.find(s => s.id === subId);
+        if (!sub) return;
+
+        let newDays = [...sub.selected_days];
+        const idx = newDays.indexOf(dayIdx);
+        if (idx > -1) newDays.splice(idx, 1);
+        else newDays.push(dayIdx);
+
+        const { error } = await window.supabaseClient.from('subscriptions').update({ selected_days: newDays }).eq('id', subId);
+        if (!error) {
+            this.fetchSubscriptions();
+        }
+    },
+
+    async updateSubQty(subId, currentQty, delta) {
+        const newQty = Math.max(1, currentQty + delta);
+        if (newQty === currentQty) return;
+
+        const { error } = await window.supabaseClient.from('subscriptions').update({ quantity: newQty }).eq('id', subId);
+        if (!error) {
+            this.fetchSubscriptions();
+        }
     },
 
     // --- ASSETS & HISTORY ---
