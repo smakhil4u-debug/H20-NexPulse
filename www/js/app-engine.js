@@ -883,68 +883,65 @@ const AppEngine = {
         let html = `<div class="view-header"><h2>Subscription</h2></div><div class="space-y-6">`;
         
         this.subscriptions.forEach(sub => {
-            const isPaused = sub.status === 'paused' || sub.is_paused;
-            const days = ['S','M','T','W','T','F','S'];
+            const isPaused = sub.status === 'paused';
+            const daysAbbr = ['S','M','T','W','T','F','S'];
             
-            // Generate Next 7 Days Preview
+            // Generate Next 7 Days Preview (Ref 4: Directly linked to weekday pills)
             const next7Days = [];
             const today = new Date();
-            for(let i=1; i<=7; i++) {
-                const d = new Date(); d.setDate(today.getDate() + i);
+            for(let i=0; i<7; i++) {
+                const d = new Date(); 
+                d.setDate(today.getDate() + i);
                 const dayIdx = d.getDay();
-                const willDeliver = sub.selected_days.includes(dayIdx) && !isPaused;
-                next7Days.push({ date: d.getDate(), day: days[dayIdx], active: willDeliver });
+                const isDayActive = sub.selected_days.includes(dayIdx);
+                const willDeliver = isDayActive && !isPaused;
+                next7Days.push({ date: d.getDate(), day: daysAbbr[dayIdx], active: willDeliver, possible: isDayActive });
             }
 
             html += `
-                <div class="glass-card rounded-[32px] p-6 border ${isPaused ? 'border-slate-800 opacity-60' : 'border-teal-500/20'} transition-all duration-300">
+                <div class="glass-card rounded-[32px] p-6 border ${isPaused ? 'border-white/5 opacity-40 grayscale-[0.5]' : 'border-teal-500/20'} transition-all duration-300">
                     <div class="flex justify-between items-start mb-4">
                         <div class="space-y-1">
-                            <h4 class="font-black text-white text-lg">${sub.product_key.replace(/_/g, ' ')}</h4>
+                            <h4 class="font-black text-white text-lg uppercase tracking-tight">${sub.product_key.replace(/_/g, ' ')}</h4>
                             <p class="text-[10px] text-teal-400 font-bold uppercase tracking-widest">${sub.frequency}</p>
                         </div>
-                        <button onclick="AppEngine.toggleSubStatus(${sub.id}, ${isPaused})" class="px-4 py-2 rounded-xl border ${isPaused ? 'bg-teal-600 border-teal-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-400'} text-[10px] font-black uppercase tracking-widest">
+                        <!-- Ref 1: PAUSE / RESUME Toggle Logic -->
+                        <button onclick="AppEngine.toggleSubStatus(${sub.id}, '${sub.status}')" class="px-5 py-2.5 rounded-2xl border transition-all ${isPaused ? 'bg-slate-900 border-white/5 text-slate-500' : 'bg-rose-500/10 border-rose-500/20 text-rose-500'} text-[10px] font-black uppercase tracking-widest">
                             ${isPaused ? 'RESUME' : 'PAUSE'}
                         </button>
                     </div>
 
-                    ${isPaused ? `
-                        <div class="py-4 text-center bg-slate-950/50 rounded-2xl border border-dashed border-slate-800 mb-4">
-                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Deliveries temporarily suspended</p>
-                        </div>
-                    ` : ''}
-
                     <div class="space-y-6">
-                        <!-- Day Toggles -->
+                        <!-- Ref 2: Weekday Pill Toggles -->
                         <div class="flex justify-between items-center bg-slate-950/50 p-2 rounded-2xl border border-white/5">
-                            ${days.map((day, idx) => {
+                            ${daysAbbr.map((day, idx) => {
                                 const isActive = sub.selected_days.includes(idx);
                                 return `
-                                    <button onclick="AppEngine.toggleSubDayInDashboard(${sub.id}, ${idx})" class="w-8 h-8 rounded-lg text-[10px] font-black transition-all ${isActive ? 'bg-teal-600 text-white shadow-lg shadow-teal-900/40' : 'bg-slate-900 text-slate-600'}">
+                                    <button onclick="AppEngine.toggleSubDayInDashboard(${sub.id}, ${idx})" class="w-9 h-9 rounded-xl text-[10px] font-black transition-all ${isActive ? 'bg-teal-600 text-white shadow-lg shadow-teal-900/40' : 'bg-slate-900 text-slate-500'}">
                                         ${day}
                                     </button>
                                 `;
                             }).join('')}
                         </div>
 
-                        <!-- Quantity Control -->
+                        <!-- Ref 3: Jars Per Delivery Quantity Controls -->
                         <div class="flex justify-between items-center">
                             <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Jars per delivery</span>
-                            <div class="flex items-center gap-4 bg-slate-900 p-1 rounded-xl border border-white/5">
-                                <button onclick="AppEngine.updateSubQty(${sub.id}, ${sub.quantity || 1}, -1)" class="w-8 h-8 flex items-center justify-center text-slate-400"><i class="fa-solid fa-minus text-xs"></i></button>
+                            <div class="flex items-center gap-4 bg-slate-900 p-1.5 rounded-xl border border-white/5">
+                                <button onclick="AppEngine.updateSubQty(${sub.id}, ${sub.quantity || 1}, -1)" class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-white"><i class="fa-solid fa-minus text-xs"></i></button>
                                 <span class="text-white font-black text-sm w-4 text-center">${sub.quantity || 1}</span>
-                                <button onclick="AppEngine.updateSubQty(${sub.id}, ${sub.quantity || 1}, 1)" class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-plus text-xs"></i></button>
+                                <button onclick="AppEngine.updateSubQty(${sub.id}, ${sub.quantity || 1}, 1)" class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-teal-900/20"><i class="fa-solid fa-plus text-xs"></i></button>
                             </div>
                         </div>
 
-                        <!-- Calendar Preview -->
-                        <div class="space-y-3 pt-4 border-t border-white/5">
+                        <!-- Ref 4: UPCOMING DELIVERIES Calendar Sync -->
+                        <div class="space-y-3 pt-5 border-t border-white/5">
                             <h5 class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Upcoming Deliveries</h5>
                             <div class="flex justify-between">
                                 ${next7Days.map(d => `
-                                    <div class="flex flex-col items-center gap-1">
-                                        <span class="text-[8px] font-bold text-slate-600">${d.day}</span>
-                                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold ${d.active ? 'bg-teal-500/20 text-teal-400 border border-teal-500/30' : 'text-slate-700'}">
+                                    <div class="flex flex-col items-center gap-1.5">
+                                        <span class="text-[8px] font-bold ${d.possible ? 'text-slate-400' : 'text-slate-700'}">${d.day}</span>
+                                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${d.active ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30' : 'bg-slate-900 text-slate-700 border border-white/5'}">
                                             ${d.date}
                                         </div>
                                     </div>
@@ -959,11 +956,15 @@ const AppEngine = {
         target.innerHTML = html + `</div>`;
     },
 
-    async toggleSubStatus(subId, isPaused) {
-        const newStatus = isPaused ? 'active' : 'paused';
-        const { error } = await window.supabaseClient.from('delivery_schedules').update({ status: newStatus, is_paused: !isPaused }).eq('id', subId);
-        if (error) await window.supabaseClient.from('subscriptions').update({ status: newStatus }).eq('id', subId);
-        this.fetchSubscriptions();
+    async toggleSubStatus(subId, currentStatus) {
+        const newStatus = currentStatus === 'active' ? 'paused' : 'active';
+        // Ref 1: Targeting 'subscriptions' table as primary
+        const { error } = await window.supabaseClient.from('subscriptions').update({ status: newStatus }).eq('id', subId);
+        if (!error) {
+            this.fetchSubscriptions();
+        } else {
+            console.error("Status Toggle Failed:", error);
+        }
     },
 
     async toggleSubDayInDashboard(subId, dayIdx) {
@@ -975,32 +976,28 @@ const AppEngine = {
         if (idx > -1) newDays.splice(idx, 1);
         else newDays.push(dayIdx);
 
-        const { error } = await window.supabaseClient.from('delivery_schedules').update({ selected_days: newDays }).eq('id', subId);
-        if (error) await window.supabaseClient.from('subscriptions').update({ selected_days: newDays }).eq('id', subId);
-        this.fetchSubscriptions();
+        // Ref 2: Targeting 'subscriptions' table
+        const { error } = await window.supabaseClient.from('subscriptions').update({ selected_days: newDays }).eq('id', subId);
+        if (!error) {
+            this.fetchSubscriptions();
+        }
     },
 
     async updateSubQty(subId, currentQty, delta) {
         const newQty = Math.max(1, currentQty + delta);
         if (newQty === currentQty) return;
 
-        const { error } = await window.supabaseClient.from('delivery_schedules').update({ quantity: newQty }).eq('id', subId);
-        if (error) await window.supabaseClient.from('subscriptions').update({ quantity: newQty }).eq('id', subId);
-        this.fetchSubscriptions();
+        // Ref 3: Targeting 'subscriptions' table
+        const { error } = await window.supabaseClient.from('subscriptions').update({ quantity: newQty }).eq('id', subId);
+        if (!error) {
+            this.fetchSubscriptions();
+        }
     },
 
     async fetchSubscriptions() {
         if (!this.currentUser) return;
-        // Try fetching from delivery_schedules first
-        let { data, error } = await window.supabaseClient.from('delivery_schedules').select('*').eq('customer_id', this.currentUser.customer_id);
-        
-        if (error || !data || data.length === 0) {
-            // Fallback to subscriptions
-            let { data: subData } = await window.supabaseClient.from('subscriptions').select('*').eq('customer_id', this.currentUser.customer_id);
-            data = subData;
-        }
-
-        if (data) { 
+        const { data, error } = await window.supabaseClient.from('subscriptions').select('*').eq('customer_id', this.currentUser.customer_id);
+        if (!error && data) { 
             this.subscriptions = data; 
             this.syncSubscriptionsUI(); 
         }
