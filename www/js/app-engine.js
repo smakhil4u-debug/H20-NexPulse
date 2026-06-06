@@ -970,12 +970,69 @@ const AppEngine = {
         if (!this.currentUser) return;
         const nameEl = document.getElementById('detail-name');
         const phoneEl = document.getElementById('detail-phone');
+        const emailEl = document.getElementById('detail-email');
         const createdEl = document.getElementById('detail-created');
+
         if (nameEl) nameEl.innerText = this.currentUser.full_name || "NexPulse Member";
         if (phoneEl) phoneEl.innerText = "+91 " + this.currentUser.phone_number;
+        if (emailEl) emailEl.innerText = this.currentUser.email || "Add email address";
+        
         if (createdEl) {
             const createdDate = new Date(this.currentUser.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
             createdEl.innerText = createdDate;
+        }
+
+        // Reset UI to view mode
+        this.toggleProfileEdit(false);
+    },
+
+    toggleProfileEdit(isEdit) {
+        const viewGroup = ['detail-name', 'detail-email', 'btn-edit-profile'];
+        const editGroup = ['edit-name', 'edit-email', 'btn-save-profile'];
+
+        if (isEdit) {
+            document.getElementById('edit-name').value = this.currentUser.full_name || "";
+            document.getElementById('edit-email').value = this.currentUser.email || "";
+        }
+
+        viewGroup.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) isEdit ? el.classList.add('hidden') : el.classList.remove('hidden');
+        });
+
+        editGroup.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) isEdit ? el.classList.remove('hidden') : el.classList.add('hidden');
+        });
+    },
+
+    async saveProfileDetails() {
+        const newName = document.getElementById('edit-name').value.trim();
+        const newEmail = document.getElementById('edit-email').value.trim();
+
+        // Basic Validation
+        if (!newName) return alert("Name cannot be empty!");
+        if (newEmail && !newEmail.includes('@')) return alert("Enter a valid email address!");
+
+        try {
+            const supabase = window.supabaseClient;
+            const { error } = await supabase
+                .from('customers')
+                .update({ full_name: newName, email: newEmail })
+                .eq('customer_id', this.currentUser.customer_id);
+
+            if (error) throw error;
+
+            // Update Local State
+            this.currentUser.full_name = newName;
+            this.currentUser.email = newEmail;
+
+            alert("Profile Updated Successfully! ✅");
+            this.populateProfileDetails();
+            this.syncProfileUI();
+        } catch (err) {
+            console.error("Save Profile Failed:", err);
+            alert("Failed to update profile. Please try again.");
         }
     },
 

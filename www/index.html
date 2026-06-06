@@ -537,16 +537,29 @@
                     <div class="space-y-1">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Customer Title</label>
                         <p id="detail-name" class="text-white font-bold text-lg">---</p>
+                        <input type="text" id="edit-name" class="hidden w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-teal-500">
                     </div>
                     <div class="space-y-1">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Phone Number</label>
                         <p id="detail-phone" class="text-white font-bold text-lg">---</p>
                     </div>
                     <div class="space-y-1">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Mail ID</label>
+                        <p id="detail-email" class="text-white font-bold text-lg">---</p>
+                        <input type="email" id="edit-email" class="hidden w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-teal-500">
+                    </div>
+                    <div class="space-y-1">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Account Created</label>
                         <p id="detail-created" class="text-white font-bold text-lg">---</p>
                     </div>
                 </div>
+
+                <button id="btn-edit-profile" onclick="AppEngine.toggleProfileEdit(true)" class="w-full py-5 bg-slate-800 border border-white/5 rounded-2xl font-black text-white active:scale-95 transition uppercase tracking-widest">
+                    EDIT PROFILE
+                </button>
+                <button id="btn-save-profile" onclick="AppEngine.saveProfileDetails()" class="hidden w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition uppercase tracking-widest">
+                    SAVE CHANGES
+                </button>
             </div>
         </section>
 
