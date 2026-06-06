@@ -867,17 +867,6 @@ const AppEngine = {
         else { alert("Error: " + error.message); }
     },
 
-    async fetchSubscriptions() {
-        if (!this.currentUser) return;
-        const { data, error } = await window.supabaseClient.from('subscriptions').select('*').eq('customer_id', this.currentUser.customer_id).eq('status', 'active');
-        if (!error) { 
-            this.subscriptions = data; 
-            this.syncSubscriptionsUI(); 
-        } else {
-            console.error("Fetch Subscriptions Failed:", error);
-        }
-    },
-
     syncSubscriptionsUI() {
         const target = document.getElementById('view-subscriptions');
         if (!target) return;
@@ -894,9 +883,19 @@ const AppEngine = {
         let html = `<div class="view-header"><h2>Subscription</h2></div><div class="space-y-6">`;
         
         this.subscriptions.forEach(sub => {
-            const isPaused = sub.status === 'paused';
+            const isPaused = sub.status === 'paused' || sub.is_paused;
             const days = ['S','M','T','W','T','F','S'];
             
+            // Generate Next 7 Days Preview
+            const next7Days = [];
+            const today = new Date();
+            for(let i=1; i<=7; i++) {
+                const d = new Date(); d.setDate(today.getDate() + i);
+                const dayIdx = d.getDay();
+                const willDeliver = sub.selected_days.includes(dayIdx) && !isPaused;
+                next7Days.push({ date: d.getDate(), day: days[dayIdx], active: willDeliver });
+            }
+
             html += `
                 <div class="glass-card rounded-[32px] p-6 border ${isPaused ? 'border-slate-800 opacity-60' : 'border-teal-500/20'} transition-all duration-300">
                     <div class="flex justify-between items-start mb-4">
@@ -904,7 +903,7 @@ const AppEngine = {
                             <h4 class="font-black text-white text-lg">${sub.product_key.replace(/_/g, ' ')}</h4>
                             <p class="text-[10px] text-teal-400 font-bold uppercase tracking-widest">${sub.frequency}</p>
                         </div>
-                        <button onclick="AppEngine.toggleSubStatus(${sub.id}, '${sub.status}')" class="px-4 py-2 rounded-xl border ${isPaused ? 'bg-teal-600 border-teal-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-400'} text-[10px] font-black uppercase tracking-widest">
+                        <button onclick="AppEngine.toggleSubStatus(${sub.id}, ${isPaused})" class="px-4 py-2 rounded-xl border ${isPaused ? 'bg-teal-600 border-teal-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-400'} text-[10px] font-black uppercase tracking-widest">
                             ${isPaused ? 'RESUME' : 'PAUSE'}
                         </button>
                     </div>
@@ -937,6 +936,21 @@ const AppEngine = {
                                 <button onclick="AppEngine.updateSubQty(${sub.id}, ${sub.quantity || 1}, 1)" class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-plus text-xs"></i></button>
                             </div>
                         </div>
+
+                        <!-- Calendar Preview -->
+                        <div class="space-y-3 pt-4 border-t border-white/5">
+                            <h5 class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Upcoming Deliveries</h5>
+                            <div class="flex justify-between">
+                                ${next7Days.map(d => `
+                                    <div class="flex flex-col items-center gap-1">
+                                        <span class="text-[8px] font-bold text-slate-600">${d.day}</span>
+                                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold ${d.active ? 'bg-teal-500/20 text-teal-400 border border-teal-500/30' : 'text-slate-700'}">
+                                            ${d.date}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -945,14 +959,11 @@ const AppEngine = {
         target.innerHTML = html + `</div>`;
     },
 
-    async toggleSubStatus(subId, currentStatus) {
-        const newStatus = currentStatus === 'active' ? 'paused' : 'active';
-        const { error } = await window.supabaseClient.from('subscriptions').update({ status: newStatus }).eq('id', subId);
-        if (!error) {
-            this.fetchSubscriptions();
-        } else {
-            alert("Error: " + error.message);
-        }
+    async toggleSubStatus(subId, isPaused) {
+        const newStatus = isPaused ? 'active' : 'paused';
+        const { error } = await window.supabaseClient.from('delivery_schedules').update({ status: newStatus, is_paused: !isPaused }).eq('id', subId);
+        if (error) await window.supabaseClient.from('subscriptions').update({ status: newStatus }).eq('id', subId);
+        this.fetchSubscriptions();
     },
 
     async toggleSubDayInDashboard(subId, dayIdx) {
@@ -964,19 +975,34 @@ const AppEngine = {
         if (idx > -1) newDays.splice(idx, 1);
         else newDays.push(dayIdx);
 
-        const { error } = await window.supabaseClient.from('subscriptions').update({ selected_days: newDays }).eq('id', subId);
-        if (!error) {
-            this.fetchSubscriptions();
-        }
+        const { error } = await window.supabaseClient.from('delivery_schedules').update({ selected_days: newDays }).eq('id', subId);
+        if (error) await window.supabaseClient.from('subscriptions').update({ selected_days: newDays }).eq('id', subId);
+        this.fetchSubscriptions();
     },
 
     async updateSubQty(subId, currentQty, delta) {
         const newQty = Math.max(1, currentQty + delta);
         if (newQty === currentQty) return;
 
-        const { error } = await window.supabaseClient.from('subscriptions').update({ quantity: newQty }).eq('id', subId);
-        if (!error) {
-            this.fetchSubscriptions();
+        const { error } = await window.supabaseClient.from('delivery_schedules').update({ quantity: newQty }).eq('id', subId);
+        if (error) await window.supabaseClient.from('subscriptions').update({ quantity: newQty }).eq('id', subId);
+        this.fetchSubscriptions();
+    },
+
+    async fetchSubscriptions() {
+        if (!this.currentUser) return;
+        // Try fetching from delivery_schedules first
+        let { data, error } = await window.supabaseClient.from('delivery_schedules').select('*').eq('customer_id', this.currentUser.customer_id);
+        
+        if (error || !data || data.length === 0) {
+            // Fallback to subscriptions
+            let { data: subData } = await window.supabaseClient.from('subscriptions').select('*').eq('customer_id', this.currentUser.customer_id);
+            data = subData;
+        }
+
+        if (data) { 
+            this.subscriptions = data; 
+            this.syncSubscriptionsUI(); 
         }
     },
 
