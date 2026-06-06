@@ -464,15 +464,15 @@
             <div class="profile-identity-card">
                 <div class="avatar-icon"><i class="fa-solid fa-circle-user"></i></div>
                 <div class="info">
-                    <h3>Hi, Customer</h3>
-                    <p>7483266062</p>
+                    <h3 id="profile-display-name">Hi, Customer</h3>
+                    <p id="profile-display-phone">7483266062</p>
                 </div>
             </div>
             
             <div class="menu-list-group">
-                <div class="menu-item"><span><i class="fa-solid fa-user"></i> View Profile Details</span><i class="fa-solid fa-chevron-right"></i></div>
-                <div class="menu-item"><span><i class="fa-solid fa-wallet"></i> NexPulse Wallet</span><span class="value">₹0</span></div>
-                <div class="menu-item"><span><i class="fa-solid fa-building-columns"></i> Bank Details</span><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="menu-item" onclick="navigateTo('profile-details')"><span><i class="fa-solid fa-user"></i> View Profile Details</span><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="menu-item" onclick="navigateTo('wallet')"><span><i class="fa-solid fa-wallet"></i> NexPulse Wallet</span><span class="value" id="wallet-balance-display">₹0</span></div>
+                <div class="menu-item" onclick="navigateTo('bank-details')"><span><i class="fa-solid fa-building-columns"></i> Bank Details</span><i class="fa-solid fa-chevron-right"></i></div>
             </div>
 
             <div class="menu-list-group">
@@ -483,13 +483,92 @@
                 </div>
                 <div class="menu-item" onclick="navigateTo('calendar')"><span><i class="fa-solid fa-calendar-days"></i> Order Calendar</span><i class="fa-solid fa-chevron-right"></i></div>
                 <div class="menu-item"><span><i class="fa-solid fa-heart"></i> Favorite Orders</span><i class="fa-solid fa-chevron-right"></i></div>
-                <div class="menu-item"><span><i class="fa-solid fa-map-location-dot"></i> Address Book</span><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="menu-item" onclick="navigateTo('select-location')"><span><i class="fa-solid fa-map-location-dot"></i> Address Book</span><i class="fa-solid fa-chevron-right"></i></div>
             </div>
 
             <div class="menu-list-group">
                 <h4 class="group-title">Customer Support</h4>
                 <div class="menu-item" onclick="AppEngine.openHelp('call')"><span><i class="fa-solid fa-address-book"></i> Contact Information</span><i class="fa-solid fa-chevron-right"></i></div>
                 <div class="menu-item" onclick="AppEngine.openHelp('chat')"><span><i class="fa-solid fa-comments"></i> Chat With Us</span><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+        </section>
+
+        <!-- VIEW PANEL: PROFILE DETAILS (New) -->
+        <section class="view-panel p-0 bg-slate-950" id="view-profile-details">
+            <div class="bg-slate-900 p-6 flex items-center gap-4 text-white sticky top-0 z-[110] border-b border-white/5">
+                <button onclick="navigateTo('profile')" class="text-xl"><i class="fa-solid fa-chevron-left"></i></button>
+                <h2 class="text-xl font-bold flex-1">Profile Details</h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Customer Title</label>
+                        <p id="detail-name" class="text-white font-bold text-lg">---</p>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Phone Number</label>
+                        <p id="detail-phone" class="text-white font-bold text-lg">---</p>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Account Created</label>
+                        <p id="detail-created" class="text-white font-bold text-lg">---</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW PANEL: WALLET (New) -->
+        <section class="view-panel p-0 bg-slate-950" id="view-wallet">
+            <div class="bg-teal-600 p-8 rounded-b-[40px] space-y-6 text-white shadow-2xl shadow-teal-900/20">
+                <div class="flex items-center gap-4">
+                    <button onclick="navigateTo('profile')" class="text-xl"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h2 class="text-xl font-black uppercase tracking-tighter">NexPulse <span class="opacity-60">Wallet</span></h2>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-xs font-bold uppercase tracking-widest opacity-80">Active Balance</p>
+                    <h3 class="text-5xl font-black">₹0.00</h3>
+                </div>
+            </div>
+            <div class="p-8 space-y-8">
+                <div class="space-y-4">
+                    <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Add Funds</h4>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+                        <input type="number" id="wallet-amount" placeholder="0.00" class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 pl-8 text-white text-xl font-black outline-none focus:border-teal-500 transition">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="document.getElementById('wallet-amount').value=100" class="flex-1 py-3 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">+100</button>
+                        <button onclick="document.getElementById('wallet-amount').value=500" class="flex-1 py-3 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">+500</button>
+                        <button onclick="document.getElementById('wallet-amount').value=1000" class="flex-1 py-3 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">+1000</button>
+                    </div>
+                </div>
+                <button onclick="AppEngine.addWalletFunds()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 uppercase tracking-widest">PROCEED TO PAY</button>
+            </div>
+        </section>
+
+        <!-- VIEW PANEL: BANK DETAILS (New) -->
+        <section class="view-panel p-0 bg-slate-950" id="view-bank-details">
+            <div class="bg-slate-900 p-6 flex items-center gap-4 text-white sticky top-0 z-[110] border-b border-white/5">
+                <button onclick="navigateTo('profile')" class="text-xl"><i class="fa-solid fa-chevron-left"></i></button>
+                <h2 class="text-xl font-bold flex-1">Bank Details</h2>
+            </div>
+            <div class="p-6 space-y-6">
+                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">Configure your receiving bank details for deposit refunds and settlement.</p>
+                <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Account Holder Name</label>
+                        <input type="text" placeholder="Full Name" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white outline-none focus:border-teal-500 transition">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Account Number</label>
+                        <input type="number" placeholder="Enter Account No" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white outline-none focus:border-teal-500 transition">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">IFSC Code</label>
+                        <input type="text" placeholder="SBIN00XXXXX" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white outline-none focus:border-teal-500 transition">
+                    </div>
+                </div>
+                <button onclick="alert('Bank Details Saved Successfully! ✅'); navigateTo('profile')" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 uppercase tracking-widest">SAVE DETAILS</button>
             </div>
         </section>
 
@@ -607,7 +686,9 @@
             const topBar = document.getElementById('global-top-bar');
             const bottomNav = document.getElementById('global-bottom-navigation');
             
-            if (target === 'select-location') {
+            const hideGlobalUI = ['select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search'].includes(target);
+
+            if (hideGlobalUI) {
                 if (topBar) topBar.classList.add('hidden');
                 if (bottomNav) bottomNav.classList.add('hidden');
             } else {
@@ -624,12 +705,21 @@
                 }
             });
 
-            // 3. Special Logic for specific views
+            // 4. Special Logic for specific views
             if (target === 'products') {
                 if (typeof syncProductUI === 'function') syncProductUI();
             }
             if (target === 'cart') {
                 if (window.AppEngine) window.AppEngine.syncCartUI();
+            }
+            if (target === 'profile') {
+                if (window.AppEngine) window.AppEngine.syncProfileUI();
+            }
+            if (target === 'profile-details') {
+                if (window.AppEngine) window.AppEngine.populateProfileDetails();
+            }
+            if (target === 'search') {
+                if (window.AppEngine) window.AppEngine.clearSearch();
             }
 
             // Scroll to top on navigation
