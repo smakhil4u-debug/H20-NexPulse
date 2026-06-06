@@ -615,7 +615,7 @@ const AppEngine = {
         } else if (type === 'call') {
             window.location.href = "tel:7483266062";
         } else if (type === 'email') {
-            window.location.href = "mailto:smakhil4u@gmail.com?subject=H2O NexPulse Support";
+            window.location.href = "mailto:support@nexpulse.com?subject=H2O NexPulse Support";
         }
     },
 

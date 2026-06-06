@@ -488,8 +488,41 @@
 
             <div class="menu-list-group">
                 <h4 class="group-title">Customer Support</h4>
-                <div class="menu-item" onclick="AppEngine.openHelp('call')"><span><i class="fa-solid fa-address-book"></i> Contact Information</span><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="menu-item" onclick="navigateTo('contact-info')"><span><i class="fa-solid fa-address-book"></i> Contact Information</span><i class="fa-solid fa-chevron-right"></i></div>
                 <div class="menu-item" onclick="AppEngine.openHelp('chat')"><span><i class="fa-solid fa-comments"></i> Chat With Us</span><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+        </section>
+
+        <!-- VIEW PANEL: CONTACT INFO (New) -->
+        <section class="view-panel p-0 bg-slate-950" id="view-contact-info">
+            <div class="bg-slate-900 p-6 flex items-center gap-4 text-white sticky top-0 z-[110] border-b border-white/5">
+                <button onclick="navigateTo('profile')" class="text-xl"><i class="fa-solid fa-chevron-left"></i></button>
+                <h2 class="text-xl font-bold flex-1">Contact Information</h2>
+            </div>
+            <div class="p-6 space-y-4">
+                <div onclick="AppEngine.openHelp('call')" class="p-6 bg-slate-900 border border-white/5 rounded-[24px] flex items-center gap-6 cursor-pointer active:scale-95 transition">
+                    <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-2xl text-teal-400"><i class="fa-solid fa-phone"></i></div>
+                    <div class="flex-1">
+                        <h4 class="text-white font-bold text-sm">Call Hotline</h4>
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-1">+91 7483266062</p>
+                    </div>
+                </div>
+
+                <div onclick="AppEngine.openHelp('email')" class="p-6 bg-slate-900 border border-white/5 rounded-[24px] flex items-center gap-6 cursor-pointer active:scale-95 transition">
+                    <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-2xl text-teal-400"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="flex-1">
+                        <h4 class="text-white font-bold text-sm">Mail Us</h4>
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-1">support@nexpulse.com</p>
+                    </div>
+                </div>
+
+                <div onclick="AppEngine.openHelp('chat')" class="p-6 bg-slate-900 border border-white/5 rounded-[24px] flex items-center gap-6 cursor-pointer active:scale-95 transition">
+                    <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-2xl text-teal-400"><i class="fa-solid fa-comments"></i></div>
+                    <div class="flex-1">
+                        <h4 class="text-white font-bold text-sm">WhatsApp Support</h4>
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-1">Instant Chat</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -686,7 +719,7 @@
             const topBar = document.getElementById('global-top-bar');
             const bottomNav = document.getElementById('global-bottom-navigation');
             
-            const hideGlobalUI = ['select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search'].includes(target);
+            const hideGlobalUI = ['select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search', 'contact-info'].includes(target);
 
             if (hideGlobalUI) {
                 if (topBar) topBar.classList.add('hidden');
