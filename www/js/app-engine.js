@@ -21,9 +21,9 @@ const AppEngine = {
     // --- SYSTEM CONFIG ---
     IS_PRODUCTION: false, // Set to true to launch real UPI apps
     MerchantConfig: {
-        upi_id: "7483266062@ybl",
-        name: "H2O NexPulse",
-        default_deposit: 2000
+        merchant_upi_id: "7483266062@ybl",
+        merchant_name: "H2O NexPulse",
+        default_deposit_amount: 2000
     },
     paymentPending: false,
 
@@ -734,10 +734,10 @@ const AppEngine = {
     verifyUPI() {
         // Trigger Phase 2: Payment Redirect
         const upiId = document.getElementById('upi-id').value.trim();
-        const deposit = this.pendingPlan.deposit || this.MerchantConfig.default_deposit;
+        const deposit = this.pendingPlan.deposit || this.MerchantConfig.default_deposit_amount;
         
         // Generate UPI URI
-        const upiUri = `upi://pay?pa=${this.MerchantConfig.upi_id}&pn=${encodeURIComponent(this.MerchantConfig.name)}&am=${deposit}&cu=INR&tn=H2O_Deposit_${this.currentUser.customer_id}`;
+        const upiUri = `upi://pay?pa=${this.MerchantConfig.merchant_upi_id}&pn=${encodeURIComponent(this.MerchantConfig.merchant_name)}&am=${deposit}&cu=INR`;
         
         this.paymentPending = true;
         this.currentPaymentMethod = 'UPI';
@@ -775,7 +775,7 @@ const AppEngine = {
         try {
             await new Promise(r => setTimeout(r, 2000));
             
-            const deposit = this.pendingPlan.deposit || this.MerchantConfig.default_deposit;
+            const deposit = this.pendingPlan.deposit || this.MerchantConfig.default_deposit_amount;
             const txnId = "TXN" + Math.floor(Math.random() * 900000 + 100000);
             const method = this.currentPaymentMethod || 'UPI';
 
