@@ -1049,6 +1049,85 @@
             </div>
         </section>
 
+        <!-- VIEW PANEL: FULLY INTERACTIVE MAP (React Design Translation) -->
+        <section class="view-panel p-0 bg-[#0A0E1A] flex-col" id="view-fully-interactive-map">
+            <!-- Sticky App Header Banner -->
+            <div class="bg-[#009688] text-white px-4 py-4 flex items-center gap-4 sticky top-0 z-50 shadow-md">
+                <button onclick="navigateTo('select-location')" class="p-1 active:bg-teal-800 rounded-full text-white">
+                    <i class="fa-solid fa-arrow-left text-xl"></i>
+                </button>
+                <div class="flex flex-col text-left">
+                    <h1 class="text-lg font-bold tracking-wide">Mark Delivery Spot</h1>
+                    <p class="text-[10px] text-teal-100 font-medium tracking-widest uppercase">Tap map to drop locator pin</p>
+                </div>
+            </div>
+
+            <!-- Main Full-Bleed Map Dashboard Canvas -->
+            <div id="interactive-map-canvas" onclick="AppEngine.handleMapSelection(event)" class="flex-1 w-full bg-[#0D1527] relative overflow-hidden cursor-crosshair border-b border-[#1E294B] min-h-[400px]">
+                <!-- Visual Map Grid -->
+                <div class="absolute inset-0 opacity-[0.15]" style="background-image: linear-gradient(#00BCD4 1px, transparent 1px), linear-gradient(90deg, #00BCD4 1px, transparent 1px); background-size: 24px 24px;"></div>
+                
+                <!-- SVG Roadway Vectors -->
+                <svg class="absolute inset-0 w-full h-full opacity-20 pointer-events-none">
+                    <path d="M-50,100 L600,400 M200,-50 L250,700 M0,300 C150,200 300,500 500,250" stroke="#00BCD4" stroke-width="3" fill="none" />
+                    <path d="M100,-20 L120,650 M-20,220 L550,220" stroke="#1E294B" stroke-width="1.5" stroke-dasharray="4" fill="none" />
+                </svg>
+
+                <!-- Ballari Hub Marker -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none z-10">
+                    <div class="w-4 h-4 rounded-full bg-teal-400 border-2 border-white shadow-[0_0_12px_#00BCD4] z-10"></div>
+                    <div class="w-8 h-8 rounded-full bg-teal-500/30 animate-ping absolute -top-2"></div>
+                    <span class="text-[9px] font-bold text-teal-400 bg-[#0A0E1A] border border-[#009688] px-1.5 py-0.5 rounded shadow-md mt-1.5 whitespace-nowrap uppercase tracking-wider">
+                        Ballari Hub
+                    </span>
+                </div>
+
+                <!-- 35km Geofence Ring -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] border-2 border-dashed border-[#009688]/40 rounded-full pointer-events-none flex items-center justify-center bg-teal-500/[0.02]">
+                    <span class="text-[8px] text-gray-500 font-extrabold uppercase tracking-[0.2em] mt-56">35KM Service Cutoff Bound</span>
+                </div>
+
+                <!-- Live Map Dropped Pin Interface -->
+                <div id="live-map-pin" class="absolute -translate-x-1/2 -translate-y-[90%] transition-all duration-200 pointer-events-none flex flex-col items-center z-30" style="left: 50%; top: 50%;">
+                    <i class="fa-solid fa-location-dot text-[#00BCD4] text-4xl drop-shadow-2xl"></i>
+                    <div class="w-3 h-3 rounded-full absolute bottom-0 animate-ping opacity-70 bg-cyan-400"></div>
+                </div>
+
+                <!-- Area Tags -->
+                <div class="absolute top-12 left-8 text-[10px] text-gray-600 font-bold tracking-wide pointer-events-none uppercase bg-[#0A0E1A]/40 px-2 py-0.5 rounded border border-[#1E294B]/40">Moka Sector</div>
+                <div class="absolute bottom-16 right-12 text-[10px] text-gray-600 font-bold tracking-wide pointer-events-none uppercase bg-[#0A0E1A]/40 px-2 py-0.5 rounded border border-[#1E294B]/40">Kudligi Route</div>
+                <div class="absolute top-1/3 right-6 text-[10px] text-gray-600 font-bold tracking-wide pointer-events-none uppercase bg-[#0A0E1A]/40 px-2 py-0.5 rounded border border-[#1E294B]/40">Siruguppa Zone</div>
+            </div>
+
+            <!-- Lower Details Tray -->
+            <div class="bg-[#131A30] border-t border-[#1E294B] p-4 space-y-4 shadow-2xl max-w-md mx-auto w-full z-40">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">Automated Location Signature</label>
+                    <div id="map-address-display" class="bg-[#0A0E1A] border border-[#1E294B] rounded-xl px-4 py-3.5 text-sm text-gray-200 font-medium leading-relaxed shadow-inner">
+                        Ballari Production Center, Sri Rampura Colony Core Zone
+                    </div>
+                </div>
+
+                <!-- Distance Banner -->
+                <div id="map-distance-banner" class="p-4 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400">
+                    <div class="mt-0.5 shrink-0">
+                        <i class="fa-solid fa-paper-plane transform rotate-45 text-[#00BCD4]"></i>
+                    </div>
+                    <div class="text-xs space-y-1 leading-normal">
+                        <p id="map-distance-text" class="font-extrabold tracking-wide uppercase">Distance metrics: 0.00 KM from hub</p>
+                        <p id="map-status-desc" class="text-gray-400 font-medium">Service deliverable: We are actively dispatching to this location.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button onclick="navigateTo('select-location')" class="flex-1 bg-[#1E294B] border border-[#2E3B5E] text-gray-400 font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider active:bg-slate-800">Cancel</button>
+                    <button onclick="AppEngine.saveInteractiveLocation()" id="btn-save-interactive-map" class="flex-[2] bg-[#00BCD4] text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-widest shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition">
+                        <i class="fa-solid fa-check"></i> Save Address Location
+                    </button>
+                </div>
+            </div>
+        </section>
+
         <!-- VIEW PANEL: COLLECTED COUPONS (Dark Mode Overhaul) -->
         <section class="view-panel p-0 bg-[#0A0E1A]" id="view-coupons">
             <!-- Top Application Navigation Header -->
@@ -1266,7 +1345,7 @@
             const topBar = document.getElementById('global-top-bar');
             const bottomNav = document.getElementById('global-bottom-navigation');
             
-            const hideGlobalUI = ['select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search', 'contact-info', 'terms', 'refund-policy', 'coupons'].includes(target);
+            const hideGlobalUI = ['select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search', 'contact-info', 'terms', 'refund-policy', 'coupons', 'fully-interactive-map'].includes(target);
 
             if (hideGlobalUI) {
                 if (topBar) topBar.classList.add('hidden');

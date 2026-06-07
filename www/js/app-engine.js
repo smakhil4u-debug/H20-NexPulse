@@ -209,6 +209,96 @@ const AppEngine = {
     },
 
     // --- PIN-DROP RADAR LOGIC (Overhaul: Automated Address Generation) ---
+    // --- FULLY INTERACTIVE MAP ENGINE (React Translation) ---
+    handleMapSelection(e) {
+        const mapCanvas = document.getElementById('interactive-map-canvas');
+        const pin = document.getElementById('live-map-pin');
+        const addrDisplay = document.getElementById('map-address-display');
+        const distText = document.getElementById('map-distance-text');
+        const statusDesc = document.getElementById('map-status-desc');
+        const banner = document.getElementById('map-distance-banner');
+        const saveBtn = document.getElementById('btn-save-interactive-map');
+
+        if (!mapCanvas || !pin) return;
+
+        // 1. Get percentage coordinates from click
+        const rect = mapCanvas.getBoundingClientRect();
+        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+        const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+
+        // 2. Position the visual pin
+        pin.style.left = `${xPercent}%`;
+        pin.style.top = `${yPercent}%`;
+
+        // 3. Translate to Geographic Coordinates (Scaled around Hub)
+        // Hub is at 50% / 50%
+        const latDelta = (50 - yPercent) * 0.016;
+        const lngDelta = (xPercent - 50) * 0.016;
+
+        const currentLat = (this.ProductionHub.lat + latDelta).toFixed(4);
+        const currentLng = (this.ProductionHub.lng + lngDelta).toFixed(4);
+
+        // 4. Calculate Great-Circle Distance (Haversine)
+        const exactKm = this.calculateDistance(this.ProductionHub.lat, this.ProductionHub.lng, parseFloat(currentLat), parseFloat(currentLng));
+        const distanceStr = exactKm.toFixed(2);
+        const isOutOfBounds = exactKm > this.MaxDeliveryRadiusKm;
+
+        // 5. Generate Automated Address Signature
+        let autoAddress = "";
+        if (isOutOfBounds) {
+            autoAddress = `Outer Quadrant Sector (Lat: ${currentLat}, Lng: ${currentLng}) [OUTSIDE DELIVERY AREA]`;
+            banner.className = "p-4 rounded-xl border flex items-start gap-3 transition-colors bg-red-950/30 border-red-900/50 text-red-400";
+            statusDesc.innerText = "Out of service bounds: Please select a spot within the 35km limit ring.";
+            saveBtn.disabled = true;
+            saveBtn.style.opacity = '0.1';
+        } else {
+            const northSouth = latDelta >= 0 ? 'North' : 'South';
+            const eastWest = lngDelta >= 0 ? 'East' : 'West';
+            autoAddress = `Ballari Delivery Zone (${northSouth}-${eastWest} Sector), Coordinate Block ${currentLat}°N`;
+            banner.className = "p-4 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400";
+            statusDesc.innerText = "Service deliverable: We are actively dispatching to this location.";
+            saveBtn.disabled = false;
+            saveBtn.style.opacity = '1';
+        }
+
+        // 6. Update UI & Internal State
+        if (addrDisplay) addrDisplay.innerText = autoAddress;
+        if (distText) distText.innerText = `Distance metrics: ${distanceStr} KM from center production hub`;
+        
+        this.pendingInteractiveAddress = {
+            address: autoAddress,
+            coords: `${currentLat}, ${currentLng}`,
+            distance: distanceStr
+        };
+
+        console.log(`Interactive Map Tap: ${currentLat}, ${currentLng} | ${distanceStr}km`);
+    },
+
+    saveInteractiveLocation() {
+        if (!this.pendingInteractiveAddress) return alert("Please tap the map to set a location!");
+        
+        const data = this.pendingInteractiveAddress;
+        
+        // 1. Save to state and storage
+        this.savedAddresses.push({ 
+            address: data.address, 
+            category: 'Others', 
+            coords: data.coords 
+        });
+        localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
+        localStorage.setItem('h2o_last_address', data.address);
+
+        // 2. Clear Dashboard Alerts (Ref 3: critical requirement)
+        this.toggleServiceAlerts(false);
+        this.updateLocationUI("Ballari");
+        
+        // 3. UI Sync
+        this.renderSavedAddresses();
+        this.showNotificationToast("Location Locked Successfully! 🎯", 'success');
+        
+        navigateTo('home');
+    },
+
     handleMapClick(e) {
         const canvas = document.getElementById('radar-map-canvas');
         const pin = document.getElementById('map-pin-target');
