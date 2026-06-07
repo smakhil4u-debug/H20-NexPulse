@@ -428,3 +428,33 @@ body {
     animation: fadeIn 0.4s ease-out;
 }
 
+
+/* --- HIDELITY AUTH PORTAL STYLES --- */
+#auth-overlay {
+    background-color: #0A0E1A !important;
+}
+
+#auth-overlay .bg-\[#131A30\] {
+    background-color: #131A30;
+}
+
+#auth-overlay .border-\[#1E294B\] {
+    border-color: #1E294B;
+}
+
+#auth-overlay .text-\[#00BCD4\] {
+    color: #00BCD4;
+}
+
+#auth-overlay .bg-\[#00BCD4\] {
+    background-color: #00BCD4;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease forwards;
+}

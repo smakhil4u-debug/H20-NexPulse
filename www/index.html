@@ -48,50 +48,99 @@
 
     <div id="app-viewport">
 
-        <!-- AUTH OVERLAY: Phone Login (Ref: 1000300965.jpg Fix) -->
-        <div id="auth-overlay" class="fixed inset-0 bg-[#0A0E1A] z-[200] flex flex-col items-center justify-center p-8 transition-transform translate-y-0">
-            <div class="w-full max-w-xs space-y-10 text-center">
-                <div class="space-y-2">
-                    <h1 class="text-3xl font-black font-brand tracking-tighter text-white">H2O <span class="text-[#00BCD4]">NEXPULSE</span></h1>
-                    <p class="text-[10px] text-slate-500 uppercase tracking-[0.3em] font-bold">Secure Access Portal</p>
+        <!-- AUTH OVERLAY: Secure Access Portal (React Design Translation) -->
+        <div id="auth-overlay" class="fixed inset-0 bg-[#0A0E1A] z-[500] flex flex-col justify-between transition-transform translate-y-0 pb-6 overflow-y-auto">
+            
+            <!-- Top Section / Centered Branding -->
+            <div class="flex-1 flex flex-col items-center justify-center px-6 max-w-md mx-auto w-full space-y-8">
+                
+                <div class="text-center space-y-1">
+                    <h1 class="text-3xl font-extrabold tracking-wider text-white uppercase font-brand">
+                        H2O NEXPULSE
+                    </h1>
+                    <p class="text-[10px] font-bold tracking-[0.4em] text-gray-500 uppercase">
+                        Secure Access Portal
+                    </p>
                 </div>
 
-                <div class="space-y-6 text-left">
-                    <!-- STEP 1: PHONE ENTRY -->
-                    <div id="login-step-phone" class="space-y-4">
-                        <div class="space-y-2">
-                            <label class="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">Mobile Number</label>
-                            <div class="flex gap-2">
-                                <div class="bg-[#131A30] border border-slate-800 rounded-2xl p-4 text-slate-400 font-bold text-sm">+91</div>
-                                <input type="tel" id="login-phone" placeholder="7483266062" class="flex-1 bg-[#131A30] border border-slate-800 rounded-2xl p-4 focus:border-[#00BCD4] outline-none transition font-black tracking-widest text-white text-sm">
+                <!-- Step 1: Phone Entry Interface -->
+                <div id="login-step-phone" class="w-full space-y-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">
+                            Phone Number
+                        </label>
+                        
+                        <div class="flex gap-3">
+                            <!-- Country Code Block -->
+                            <div class="bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-4 font-semibold text-gray-300 text-base flex items-center justify-center min-w-[64px]">
+                                +91
+                            </div>
+                            <!-- Number Input Field -->
+                            <div class="flex-1 bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-1 flex items-center gap-2 focus-within:border-[#00BCD4] transition-all">
+                                <input type="tel" id="login-phone" placeholder="Enter phone number" class="w-full bg-transparent border-none text-white font-medium placeholder-gray-600 focus:outline-none tracking-wide text-base py-3" maxlength="10">
                             </div>
                         </div>
-                        <button onclick="AppEngine.goToOtpStep()" class="w-full py-5 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl shadow-teal-900/20 active:scale-95 transition uppercase tracking-[0.2em] text-xs">
-                            Get Start Code
-                        </button>
                     </div>
 
-                    <!-- STEP 2: OTP ENTRY (Hidden by default) -->
-                    <div id="login-step-otp" class="hidden space-y-6 animate-fadeIn">
-                        <div class="space-y-2">
-                            <label class="text-[10px] uppercase font-black text-[#00BCD4] ml-1 tracking-widest">Enter Verification Code</label>
-                            <input type="number" id="login-otp" placeholder="• • • • • •" class="w-full bg-[#131A30] border border-[#00BCD4]/50 rounded-2xl p-5 focus:border-[#00BCD4] outline-none transition font-black tracking-[0.8em] text-center text-white text-lg">
+                    <button onclick="AppEngine.goToOtpStep()" class="w-full bg-[#00BCD4] text-white font-bold py-4 rounded-xl transition-all active:scale-[0.99] shadow-[0_4px_20px_rgba(0,188,212,0.25)] text-center text-sm tracking-widest uppercase">
+                        GET START CODE
+                    </button>
+                </div>
+
+                <!-- Step 2: OTP Verification Interface (Hidden initially) -->
+                <div id="login-step-otp" class="hidden w-full space-y-6 animate-fadeIn">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center px-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">
+                                Enter Verification Code
+                            </label>
+                            <span id="otp-phone-display" class="text-[10px] text-gray-400 font-medium">Sent to +91 00000 00000</span>
                         </div>
                         
-                        <div class="space-y-4">
-                            <button onclick="AppEngine.handleMockLogin()" class="w-full py-5 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl shadow-teal-900/20 active:scale-95 transition uppercase tracking-[0.2em] text-xs">
-                                Verify & Login
-                            </button>
-                            
-                            <div class="flex justify-between px-2">
-                                <button onclick="AppEngine.goToPhoneStep()" class="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white">Change Number</button>
-                                <button onclick="alert('New code sent!')" class="text-[10px] font-black text-[#00BCD4] uppercase tracking-widest">Resend Code</button>
-                            </div>
+                        <div class="bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-1 flex items-center focus-within:border-[#00BCD4] transition-all">
+                            <input type="text" id="login-otp" placeholder="• • • • • •" class="w-full bg-transparent border-none text-white font-bold tracking-[0.5em] text-center placeholder-gray-600 focus:outline-none text-lg py-3" maxlength="6">
                         </div>
                     </div>
 
-                    <!-- Firebase ReCAPTCHA Container -->
-                    <div id="recaptcha-container" class="mt-4"></div>
+                    <div class="space-y-3">
+                        <button onclick="AppEngine.handleMockLogin()" class="w-full bg-[#00BCD4] text-white font-bold py-4 rounded-xl transition-all active:scale-[0.99] shadow-[0_4px_20px_rgba(0,188,212,0.25)] text-center text-sm tracking-widest uppercase">
+                            VERIFY & LOGIN
+                        </button>
+
+                        <div class="flex justify-between items-center px-1 pt-1">
+                            <button onclick="AppEngine.goToPhoneStep()" class="text-xs font-semibold text-gray-500 hover:text-white flex items-center gap-1 transition-colors">
+                                <i class="fa-solid fa-arrow-left text-[10px]"></i> Edit Number
+                            </button>
+                            <button onclick="alert('New code sent!')" class="text-xs font-semibold text-[#00BCD4] hover:text-cyan-400 flex items-center gap-1 transition-colors">
+                                <i class="fa-solid fa-rotate text-[10px]"></i> Resend Code
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Global Navigation Tray Layer -->
+            <div class="max-w-md mx-auto w-full border-t border-[#1E294B] bg-[#0A0E1A] flex justify-around py-3 text-[10px] font-bold text-gray-500">
+                <div class="flex flex-col items-center text-[#00BCD4]">
+                    <i class="fa-solid fa-house mb-1 text-sm"></i>
+                    <span>Home</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-bottle-water mb-1 text-sm"></i>
+                    <span>Products</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-calendar-check mb-1 text-sm"></i>
+                    <span>Subscriptions</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-cart-shopping mb-1 text-sm"></i>
+                    <span>Cart</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-user-gear mb-1 text-sm"></i>
+                    <span>Profile</span>
                 </div>
             </div>
         </div>
