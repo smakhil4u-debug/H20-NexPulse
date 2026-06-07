@@ -355,7 +355,7 @@ body {
 
 
 
-/* --- COUPON DASHBOARD STYLES --- */
+/* --- COUPON DASHBOARD STYLES (Dark Mode Overhaul) --- */
 .coupon-empty-state {
     display: flex;
     flex-direction: column;
@@ -375,28 +375,12 @@ body {
     margin-bottom: 24px;
 }
 
-.city-silhouette-sim {
-    position: absolute;
-    inset: 0;
-    opacity: 0.1;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-around;
-    pointer-events: none;
-    border-bottom: 1px dashed #6B7280;
-}
-
-.city-silhouette-sim div {
-    background-color: #9CA3AF;
-    border-radius: 4px 4px 0 0;
-}
-
 .ticket-icon-container {
-    padding: 20px;
-    background: white;
+    padding: 24px;
+    background: #131A30;
     border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border: 1px solid #F9FAFB;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border: 1px solid #1E294B;
     color: #00BCD4;
 }
 
@@ -413,16 +397,16 @@ body {
 }
 
 .coupon-card {
-    background-color: white;
+    background-color: #131A30;
     border-radius: 20px;
-    border: 1px solid #F1F3F5;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    border: 1px solid #1E294B;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     overflow: hidden;
     margin-bottom: 16px;
 }
 
 .ticket-divider {
-    border-top: 1px dashed #F1F3F5;
+    border-top: 1px dashed #1E294B;
     position: relative;
     margin: 0 16px;
 }
@@ -433,19 +417,14 @@ body {
     top: -6px;
     width: 12px;
     height: 12px;
-    background-color: #F8F9FA;
+    background-color: #0A0E1A; /* Matches bg-coupons */
     border-radius: 50%;
 }
 
 .ticket-divider::before { left: -22px; }
 .ticket-divider::after { right: -22px; }
 
-.animate-bounceIn {
-    animation: bounceIn 0.5s ease-out;
+.animate-fadeIn {
+    animation: fadeIn 0.4s ease-out;
 }
 
-@keyframes bounceIn {
-    0% { transform: scale(0.9); opacity: 0; }
-    70% { transform: scale(1.05); }
-    100% { transform: scale(1); opacity: 1; }
-}
