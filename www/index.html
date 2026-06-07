@@ -23,10 +23,26 @@
     <script src="js/app-engine.js?v=bulletproof_999"></script>
 </head>
 <body>
-    <!-- PROMOTIONAL SPLASH SCREEN (New) -->
-    <div id="promo-splash" class="fixed inset-0 flex items-center justify-center">
-        <img src="1000300505.png" alt="Promo">
+    <!-- ABSOLUTE ROOT ENTRY ADVERTISEMENT GATE -->
+    <div id="promo-splash">
+        <img src="1000300505_2.png" alt="Promo">
     </div>
+
+    <script>
+        // High-Priority Root-Level Gate (2 Seconds)
+        (function() {
+            setTimeout(function() {
+                var splash = document.getElementById('promo-splash');
+                if (splash) {
+                    splash.classList.add('fade-out');
+                    // Completely remove from layout after fade
+                    setTimeout(function() {
+                        splash.style.display = 'none';
+                    }, 1000);
+                }
+            }, 2000);
+        })();
+    </script>
 
     <div id="app-viewport">
 
@@ -778,15 +794,6 @@
         }
 
         window.onload = () => {
-            // 1. Promotional Splash Timer (Ref: 1000300505.png)
-            setTimeout(() => {
-                const splash = document.getElementById('promo-splash');
-                if (splash) {
-                    splash.classList.add('fade-out');
-                    setTimeout(() => splash.classList.add('hidden'), 1000); 
-                }
-            }, 2000);
-
             // Initial load
             if (typeof syncProductUI === 'function') syncProductUI();
             
