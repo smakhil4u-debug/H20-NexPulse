@@ -904,6 +904,119 @@
             </div>
         </section>
 
+        <!-- VIEW PANEL: CANCELLATION & REFUNDS (New) -->
+        <section class="view-panel p-0 bg-[#F8F9FA]" id="view-refund-policy">
+            <!-- Top Sticky Navigation Header -->
+            <div class="sticky top-0 bg-white border-b border-gray-100 px-4 py-4 flex items-center gap-3 z-50 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                <button onclick="navigateTo('profile')" class="p-1 rounded-full hover:bg-gray-100 transition-colors active:bg-gray-200 text-gray-700">
+                    <i class="fa-solid fa-arrow-left text-xl"></i>
+                </button>
+                <h1 class="text-lg font-bold tracking-tight text-gray-900">Cancellation & Refunds</h1>
+            </div>
+
+            <div class="max-w-md mx-auto p-4 space-y-6">
+                <!-- Policy Highlights Card -->
+                <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-start gap-4">
+                    <div class="p-3 bg-teal-50 rounded-lg text-[#00A896] shrink-0">
+                        <i class="fa-solid fa-rotate-left text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-gray-900">Our Service Commitment</h2>
+                        <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                            At H2ONEXPULSE, we aim to provide reliable deliveries. Review our guidelines below regarding order adjustments, delivery limits, and refund processing.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Vertically Scrolling Policy Content Box -->
+                <div class="bg-white rounded-xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden">
+                    <div class="h-[60vh] overflow-y-auto p-5 space-y-6 text-[14px] leading-relaxed text-gray-700">
+                        
+                        <!-- Section 1: Delivery Terms -->
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-truck text-gray-500"></i> 1. Delivery Terms & Conditions
+                            </h3>
+                            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                                <li><strong>H2ONEXPULSE</strong> operates and delivers products exclusively within selected operational city zones.</li>
+                                <li>All dispatches are subject to real-time stock and inventory availability. Large orders may occasionally be split across multiple delivery slots.</li>
+                                <li>Customers are required to inspect products for sealing integrity, structural damage, or quantity discrepancies immediately upon delivery.</li>
+                                <li><strong>Multi-Story Delivery Rule:</strong> To ensure the safety of our logistics partners, if your building does not have a functional service elevator, deliveries will be completed at the main security gate or up to the 2nd floor maximum.</li>
+                                <li><strong>Force Majeure:</strong> H2ONEXPULSE is not liable for structural delays or fulfillment failures caused by extreme weather conditions, labor strikes, regulatory adjustments, or local technical network disruptions.</li>
+                            </ul>
+                        </div>
+
+                        <hr class="border-gray-100" />
+
+                        <!-- Section 2: Delivery TAT -->
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-clock text-gray-500"></i> 2. Delivery Turnaround Time (TAT)
+                            </h3>
+                            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                                <li>Orders confirmed before 4:00 PM are scheduled for fulfillment on the next immediate working day. Orders completed after 4:00 PM will be processed for delivery on the day following the next working day.</li>
+                                <li>Our standard timeline window for processing empty jar returns or collecting standalone containers runs between 7 to 10 active working days from the initial request log.</li>
+                            </ul>
+                        </div>
+
+                        <hr class="border-gray-100" />
+
+                        <!-- Section 3: Return & Refund Policy -->
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-rotate-left text-gray-500"></i> 3. Return & Refund Policy
+                            </h3>
+                            <p>
+                                Water products are generally non-returnable once accepted. However, product replacement pipelines are initialized if verified issues occur:
+                            </p>
+                            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                                <li>Defective or physically compromised items will be replaced within 3 to 5 business days. Issues must be reported to support within 3 days of delivery alongside clear photo documentation.</li>
+                                <li>Approved order cancellations or balance returns will be credited directly back to your original mode of payment or app wallet within 7 working days.</li>
+                            </ul>
+                        </div>
+
+                        <hr class="border-gray-100" />
+
+                        <!-- Section 4: One-Time Orders -->
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-xmark text-gray-500"></i> 4. One-Time Order Adjustments
+                            </h3>
+                            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                                <li>Users can seamlessly cancel or adjust a one-time order up to 4 hours after initial placement without penalty.</li>
+                                <li>Any delivery disputes or complaints can be filed by contacting our support channel at <strong>support@h2onexpulse.com</strong> or calling our toll-free assistance line at <strong>1800-XXX-XXXX</strong> between 9:00 AM and 6:00 PM.</li>
+                            </ul>
+                        </div>
+
+                        <hr class="border-gray-100" />
+
+                        <!-- Section 5: Subscriptions & Empty Jars -->
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-circle-exclamation text-gray-500"></i> 5. Subscriptions & Empty Jar Guidelines
+                            </h3>
+                            <ul class="list-disc pl-5 space-y-2 text-gray-600">
+                                <li>Upon terminating a subscription tier, your remaining unserved prepaid balance will be calculated and refunded within 7 working days, minus any early-termination promotional discounts.</li>
+                                <li><strong>Jar Quality Enforcement:</strong> Empty jars returned during delivery cycles must be clean, unadulterated, and reusable. Jars previously used to store chemicals, oils, or non-potable liquids will be rejected, and the user will forfeit their corresponding container security deposit.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Bottom Accent Policy Strip -->
+                    <div class="bg-gray-50 px-5 py-3 border-t border-gray-100 flex justify-between items-center text-xs text-gray-400 font-bold">
+                        <span>Version 1.0.2 (2026)</span>
+                        <span>© H2ONEXPULSE Logistics</span>
+                    </div>
+                </div>
+
+                <!-- Back/Close Option Wrapper -->
+                <button onclick="navigateTo('profile')" class="w-full bg-[#00A896] text-white font-black py-4 rounded-xl transition-all active:scale-[0.99] shadow-md text-center text-sm tracking-widest uppercase">
+                    GO BACK TO PROFILE
+                </button>
+            </div>
+        </section>
+
         <!-- SUB-VIEW PANEL 6: ORDER CALENDAR (Ref: 1000298516.jpg) -->
         <section class="view-panel" id="view-calendar">
             <div class="sub-view-navigation">
@@ -1018,7 +1131,7 @@
             const topBar = document.getElementById('global-top-bar');
             const bottomNav = document.getElementById('global-bottom-navigation');
             
-            const hideGlobalUI = ['select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search', 'contact-info', 'terms'].includes(target);
+            const hideGlobalUI = ['select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search', 'contact-info', 'terms', 'refund-policy'].includes(target);
 
             if (hideGlobalUI) {
                 if (topBar) topBar.classList.add('hidden');
