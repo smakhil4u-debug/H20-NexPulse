@@ -70,6 +70,51 @@ const AppEngine = {
     },
 
     // --- SUBSCRIPTION GATEKEEPER ---
+    // --- TWO-STEP AUTH LOGIC (Ref: 1000300965.jpg Fix) ---
+    goToOtpStep() {
+        const phone = document.getElementById('login-phone').value;
+        if (phone.length < 10) return alert("Enter valid 10-digit number");
+        
+        document.getElementById('login-step-phone').classList.add('hidden');
+        document.getElementById('login-step-otp').classList.remove('hidden');
+        
+        this.showNotificationToast(`Verification code sent to +91 ${phone} 📱`, 'success');
+        console.log("Auth Step Switch: OTP Entry Active");
+    },
+
+    goToPhoneStep() {
+        document.getElementById('login-step-phone').classList.remove('hidden');
+        document.getElementById('login-step-otp').classList.add('hidden');
+        console.log("Auth Step Switch: Phone Entry Active");
+    },
+
+    async handleMockLogin() {
+        const code = document.getElementById('login-otp').value;
+        if (code.length < 4) return alert("Enter valid verification code");
+
+        const loader = document.getElementById('global-loader');
+        const loaderText = loader.querySelector('p');
+        loader.classList.remove('hidden');
+        loaderText.innerText = "VERIFYING CODE...";
+
+        // Simulate network delay
+        await new Promise(r => setTimeout(r, 1500));
+
+        // Mock Success
+        const phone = document.getElementById('login-phone').value;
+        const mockUser = {
+            customer_id: 1,
+            phone_number: phone,
+            full_name: 'Jayalakshmi',
+            created_at: new Date().toISOString(),
+            deposit_paid: true
+        };
+
+        this.loginSuccess(mockUser);
+        loader.classList.add('hidden');
+        this.showNotificationToast("Welcome back, Jayalakshmi! 🚀", 'success');
+    },
+
     async handleSubscriptionIntent(productKey = null) {
         if (!this.currentUser) return alert("Please login to subscribe!");
 
@@ -1102,6 +1147,51 @@ const AppEngine = {
     },
 
     // --- SUBSCRIPTION GATEKEEPER ---
+    // --- TWO-STEP AUTH LOGIC (Ref: 1000300965.jpg Fix) ---
+    goToOtpStep() {
+        const phone = document.getElementById('login-phone').value;
+        if (phone.length < 10) return alert("Enter valid 10-digit number");
+        
+        document.getElementById('login-step-phone').classList.add('hidden');
+        document.getElementById('login-step-otp').classList.remove('hidden');
+        
+        this.showNotificationToast(`Verification code sent to +91 ${phone} 📱`, 'success');
+        console.log("Auth Step Switch: OTP Entry Active");
+    },
+
+    goToPhoneStep() {
+        document.getElementById('login-step-phone').classList.remove('hidden');
+        document.getElementById('login-step-otp').classList.add('hidden');
+        console.log("Auth Step Switch: Phone Entry Active");
+    },
+
+    async handleMockLogin() {
+        const code = document.getElementById('login-otp').value;
+        if (code.length < 4) return alert("Enter valid verification code");
+
+        const loader = document.getElementById('global-loader');
+        const loaderText = loader.querySelector('p');
+        loader.classList.remove('hidden');
+        loaderText.innerText = "VERIFYING CODE...";
+
+        // Simulate network delay
+        await new Promise(r => setTimeout(r, 1500));
+
+        // Mock Success
+        const phone = document.getElementById('login-phone').value;
+        const mockUser = {
+            customer_id: 1,
+            phone_number: phone,
+            full_name: 'Jayalakshmi',
+            created_at: new Date().toISOString(),
+            deposit_paid: true
+        };
+
+        this.loginSuccess(mockUser);
+        loader.classList.add('hidden');
+        this.showNotificationToast("Welcome back, Jayalakshmi! 🚀", 'success');
+    },
+
     async handleSubscriptionIntent(productKey = null) {
         if (!this.currentUser) return alert("Please login to subscribe!");
 

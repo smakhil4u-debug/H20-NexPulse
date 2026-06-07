@@ -48,34 +48,50 @@
 
     <div id="app-viewport">
 
-        <!-- AUTH OVERLAY: Phone Login (Ref: Next Step 1) -->
-        <div id="auth-overlay" class="fixed inset-0 bg-slate-950 z-[200] flex flex-col items-center justify-center p-8 transition-transform translate-y-0">
-            <div class="w-full max-w-xs space-y-8 text-center">
+        <!-- AUTH OVERLAY: Phone Login (Ref: 1000300965.jpg Fix) -->
+        <div id="auth-overlay" class="fixed inset-0 bg-[#0A0E1A] z-[200] flex flex-col items-center justify-center p-8 transition-transform translate-y-0">
+            <div class="w-full max-w-xs space-y-10 text-center">
                 <div class="space-y-2">
-                    <h1 class="text-3xl font-black font-brand tracking-tighter">H2O <span class="gradient-text">NEXPULSE</span></h1>
-                    <p class="text-xs text-slate-500 uppercase tracking-widest font-bold">Secure Access Portal</p>
+                    <h1 class="text-3xl font-black font-brand tracking-tighter text-white">H2O <span class="text-[#00BCD4]">NEXPULSE</span></h1>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-[0.3em] font-bold">Secure Access Portal</p>
                 </div>
-                <div class="space-y-4 text-left">
-                    <div class="space-y-2">
-                        <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Phone Number</label>
-                        <div class="flex gap-2">
-                            <span class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-slate-400 font-bold">+91</span>
-                            <input type="tel" id="login-phone" placeholder="7483266062" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl p-4 focus:border-teal-500 outline-none transition font-bold tracking-widest text-white">
+
+                <div class="space-y-6 text-left">
+                    <!-- STEP 1: PHONE ENTRY -->
+                    <div id="login-step-phone" class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">Mobile Number</label>
+                            <div class="flex gap-2">
+                                <div class="bg-[#131A30] border border-slate-800 rounded-2xl p-4 text-slate-400 font-bold text-sm">+91</div>
+                                <input type="tel" id="login-phone" placeholder="7483266062" class="flex-1 bg-[#131A30] border border-slate-800 rounded-2xl p-4 focus:border-[#00BCD4] outline-none transition font-black tracking-widest text-white text-sm">
+                            </div>
                         </div>
+                        <button onclick="AppEngine.goToOtpStep()" class="w-full py-5 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl shadow-teal-900/20 active:scale-95 transition uppercase tracking-[0.2em] text-xs">
+                            Get Start Code
+                        </button>
                     </div>
 
-                    <!-- OTP Input (Hidden initially) -->
-                    <div id="otp-group" class="hidden space-y-2">
-                        <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Verification Code</label>
-                        <input type="number" id="login-otp" placeholder="XXXXXX" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 focus:border-teal-500 outline-none transition font-black tracking-[0.5em] text-center text-teal-400">
+                    <!-- STEP 2: OTP ENTRY (Hidden by default) -->
+                    <div id="login-step-otp" class="hidden space-y-6 animate-fadeIn">
+                        <div class="space-y-2">
+                            <label class="text-[10px] uppercase font-black text-[#00BCD4] ml-1 tracking-widest">Enter Verification Code</label>
+                            <input type="number" id="login-otp" placeholder="• • • • • •" class="w-full bg-[#131A30] border border-[#00BCD4]/50 rounded-2xl p-5 focus:border-[#00BCD4] outline-none transition font-black tracking-[0.8em] text-center text-white text-lg">
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <button onclick="AppEngine.handleMockLogin()" class="w-full py-5 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl shadow-teal-900/20 active:scale-95 transition uppercase tracking-[0.2em] text-xs">
+                                Verify & Login
+                            </button>
+                            
+                            <div class="flex justify-between px-2">
+                                <button onclick="AppEngine.goToPhoneStep()" class="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white">Change Number</button>
+                                <button onclick="alert('New code sent!')" class="text-[10px] font-black text-[#00BCD4] uppercase tracking-widest">Resend Code</button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Firebase ReCAPTCHA Container -->
                     <div id="recaptcha-container" class="mt-4"></div>
-
-                    <button id="btn-login-action" onclick="AppEngine.handleLogin()" class="w-full py-4 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition uppercase tracking-widest text-xs">
-                        Get Start Code
-                    </button>
                 </div>
             </div>
         </div>
