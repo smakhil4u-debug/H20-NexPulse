@@ -24,8 +24,8 @@
 </head>
 <body>
     <!-- PROMOTIONAL SPLASH SCREEN (New) -->
-    <div id="promo-splash" class="fixed inset-0 z-[5000] bg-slate-950 flex items-center justify-center transition-opacity duration-1000">
-        <img src="image.png" alt="Promo" class="max-w-full max-h-full object-contain">
+    <div id="promo-splash" class="fixed inset-0 flex items-center justify-center">
+        <img src="image.png" alt="Promo">
     </div>
 
     <div id="app-viewport">
@@ -782,8 +782,8 @@
             setTimeout(() => {
                 const splash = document.getElementById('promo-splash');
                 if (splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(() => splash.classList.add('hidden'), 1000); // Wait for fade out
+                    splash.classList.add('fade-out');
+                    setTimeout(() => splash.classList.add('hidden'), 1000); 
                 }
             }, 2000);
 
