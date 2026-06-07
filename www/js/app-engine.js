@@ -74,15 +74,7 @@ const AppEngine = {
         const code = otpInput.value.trim();
         if (code.length < 4) return alert("Enter valid verification code");
 
-        const loader = document.getElementById('global-loader');
-        const loaderText = loader ? loader.querySelector('p') : null;
-        if (loader) loader.classList.remove('hidden');
-        if (loaderText) loaderText.innerText = "VERIFYING CODE...";
-
-        // Simulate authentication delay
-        await new Promise(r => setTimeout(r, 1200));
-
-        // Mock Success State
+        // 1. Instant Success (Stripped all setTimeout/loader delays)
         const phoneInput = document.getElementById('login-phone');
         const phone = phoneInput ? phoneInput.value : "7483266062";
         const mockUser = {
@@ -94,9 +86,10 @@ const AppEngine = {
             email: 'jayalakshmi@example.com'
         };
 
+        // 2. Immediate Handover
         this.loginSuccess(mockUser);
-        if (loader) loader.classList.add('hidden');
         this.showNotificationToast("Access Granted. Welcome back! 🚀", 'success');
+        console.log("Bulletproof Instant Login Executed");
     },
 
     // --- LOCATION LOGIC ---
@@ -640,8 +633,24 @@ const AppEngine = {
 
     loginSuccess(user) {
         this.currentUser = user;
+        
+        // 1. Force Instant Overlay Unmount (Ref: 1000300987.jpg Fix)
         const overlay = document.getElementById('auth-overlay');
-        if (overlay) overlay.classList.add('translate-y-full');
+        if (overlay) {
+            overlay.classList.add('translate-y-full'); // Slide down
+            overlay.style.opacity = '0'; // Instant transparency
+            overlay.style.pointerEvents = 'none'; // Disable all interactions
+            overlay.style.visibility = 'hidden'; // Remove from render tree
+            
+            // Completely remove from DOM after transition to save resources
+            setTimeout(() => {
+                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            }, 500);
+        }
+        
+        console.log("LOGIN COMPLETE. Welcome:", user.phone_number);
+        
+        // 2. Start background engines
         this.initRealtime();
         this.initLocation();
         this.syncProfileUI();
