@@ -482,37 +482,113 @@
             </div>
         </section>
 
-        <!-- VIEW PANEL 5: PROFILE (Ref: 1000298519.jpg) -->
+        <!-- VIEW PANEL 5: PROFILE (Ref: 1000300522.jpg Overhaul) -->
         <section class="view-panel" id="view-profile">
-            <div class="profile-identity-card">
-                <div class="avatar-icon"><i class="fa-solid fa-circle-user"></i></div>
+            <div class="profile-identity-card-light">
+                <div class="avatar-circle"><i class="fa-solid fa-circle-user"></i></div>
                 <div class="info">
-                    <h3 id="profile-display-name">Hi, Customer</h3>
-                    <p id="profile-display-phone">7483266062</p>
+                    <h3 id="profile-greeting">Hi, <span id="profile-display-phone">7483266062</span></h3>
+                    <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">Premium Member</p>
                 </div>
             </div>
             
-            <div class="menu-list-group">
-                <div class="menu-item" onclick="navigateTo('profile-details')"><span><i class="fa-solid fa-user"></i> View Profile Details</span><i class="fa-solid fa-chevron-right"></i></div>
-                <div class="menu-item" onclick="navigateTo('wallet')"><span><i class="fa-solid fa-wallet"></i> NexPulse Wallet</span><span class="value" id="wallet-balance-display">₹0</span></div>
-                <div class="menu-item" onclick="navigateTo('bank-details')"><span><i class="fa-solid fa-building-columns"></i> Bank Details</span><i class="fa-solid fa-chevron-right"></i></div>
+            <!-- Card 1: Main Details -->
+            <div class="light-menu-group">
+                <button class="light-menu-item" onclick="navigateTo('profile-details')">
+                    <div class="left-node"><i class="fa-solid fa-user-gear"></i> View Profile Details</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+                <button class="light-menu-item" onclick="navigateTo('wallet')">
+                    <div class="left-node"><i class="fa-solid fa-wallet"></i> Bisleri Wallet</div>
+                    <div class="right-node">
+                        <span class="value-label" id="wallet-balance-display">₹0</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </button>
+                <button class="light-menu-item" onclick="navigateTo('bank-details')">
+                    <div class="left-node"><i class="fa-solid fa-building-columns"></i> Bank Details</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
             </div>
 
-            <div class="menu-list-group">
-                <h4 class="group-title">Orders</h4>
-                <div id="dynamic-order-history-target">
-                    <!-- Real orders will be injected here -->
-                    <p class="p-4 text-xs text-secondary italic">Fetch orders to see history...</p>
-                </div>
-                <div class="menu-item" onclick="navigateTo('calendar')"><span><i class="fa-solid fa-calendar-days"></i> Order Calendar</span><i class="fa-solid fa-chevron-right"></i></div>
-                <div class="menu-item"><span><i class="fa-solid fa-heart"></i> Favorite Orders</span><i class="fa-solid fa-chevron-right"></i></div>
-                <div class="menu-item" onclick="navigateTo('select-location')"><span><i class="fa-solid fa-map-location-dot"></i> Address Book</span><i class="fa-solid fa-chevron-right"></i></div>
+            <!-- Card 2: Orders Section -->
+            <div class="light-menu-group">
+                <h4 class="light-group-title">Orders</h4>
+                <button class="light-menu-item" onclick="navigateTo('all-orders')">
+                    <div class="left-node"><i class="fa-solid fa-box"></i> All Orders</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+                <button class="light-menu-item" onclick="navigateTo('calendar')">
+                    <div class="left-node"><i class="fa-solid fa-calendar-days"></i> Order Calendar</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+                <button class="light-menu-item" onclick="navigateTo('favorites')">
+                    <div class="left-node"><i class="fa-solid fa-heart"></i> Favorite Orders</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+                <button class="light-menu-item" onclick="navigateTo('select-location')">
+                    <div class="left-node"><i class="fa-solid fa-map-location-dot"></i> Address Book</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+                <button class="light-menu-item" onclick="navigateTo('transaction-history')">
+                    <div class="left-node"><i class="fa-solid fa-receipt"></i> Transaction History</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+                <button class="light-menu-item" onclick="navigateTo('return-jar')">
+                    <div class="left-node"><i class="fa-solid fa-recycle"></i> Return Empty Jar</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
             </div>
 
-            <div class="menu-list-group">
-                <h4 class="group-title">Customer Support</h4>
-                <div class="menu-item" onclick="navigateTo('contact-info')"><span><i class="fa-solid fa-address-book"></i> Contact Information</span><i class="fa-solid fa-chevron-right"></i></div>
-                <div class="menu-item" onclick="AppEngine.openHelp('chat')"><span><i class="fa-solid fa-comments"></i> Chat With Us</span><i class="fa-solid fa-chevron-right"></i></div>
+            <!-- Card 3: Customer Support -->
+            <div class="light-menu-group">
+                <h4 class="light-group-title">Customer Support</h4>
+                <button class="light-menu-item" onclick="navigateTo('contact-info')">
+                    <div class="left-node"><i class="fa-solid fa-headset"></i> Contact Information</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+                <button class="light-menu-item" onclick="AppEngine.openHelp('chat')">
+                    <div class="left-node"><i class="fa-solid fa-comments"></i> Chat With Us</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+                <button class="light-menu-item" onclick="navigateTo('faq')">
+                    <div class="left-node"><i class="fa-solid fa-circle-question"></i> FAQ</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+                <button class="light-menu-item" onclick="navigateTo('locate-us')">
+                    <div class="left-node"><i class="fa-solid fa-location-crosshairs"></i> Locate Us</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+            </div>
+
+            <!-- Card 4: Rewards -->
+            <div class="light-menu-group">
+                <h4 class="light-group-title">Rewards</h4>
+                <button class="light-menu-item" onclick="navigateTo('coupons')">
+                    <div class="left-node"><i class="fa-solid fa-ticket"></i> Collected Coupons</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+            </div>
+
+            <!-- Card 5: Legal -->
+            <div class="light-menu-group">
+                <h4 class="light-group-title">Legal</h4>
+                <button class="light-menu-item" onclick="navigateTo('about')">
+                    <div class="left-node"><i class="fa-solid fa-circle-info"></i> About us</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+                <button class="light-menu-item" onclick="navigateTo('terms')">
+                    <div class="left-node"><i class="fa-solid fa-file-contract"></i> Terms & Conditions</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+                <button class="light-menu-item" onclick="navigateTo('refund-policy')">
+                    <div class="left-node"><i class="fa-solid fa-hand-holding-dollar"></i> Cancellation & Refunds Policy</div>
+                    <div class="right-node"><i class="fa-solid fa-chevron-right"></i></div>
+                </button>
+            </div>
+            
+            <div class="px-5 pb-8">
+                <button onclick="location.reload()" class="w-full py-4 bg-slate-100 rounded-2xl text-slate-500 font-bold text-xs uppercase tracking-widest">Logout Session</button>
             </div>
         </section>
 
@@ -763,6 +839,13 @@
             } else {
                 if (topBar) topBar.classList.remove('hidden');
                 if (bottomNav) bottomNav.classList.remove('hidden');
+            }
+
+            // Theme Toggle for Bottom Nav
+            if (target === 'profile') {
+                bottomNav.classList.add('profile-active');
+            } else {
+                bottomNav.classList.remove('profile-active');
             }
 
             // 3. Update Bottom Nav Buttons

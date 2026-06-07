@@ -963,7 +963,10 @@ const AppEngine = {
         const nameEls = document.querySelectorAll('#profile-display-name');
         const phoneEls = document.querySelectorAll('#profile-display-phone');
         nameEls.forEach(el => el.innerText = this.currentUser.full_name || "NexPulse Member");
-        phoneEls.forEach(el => el.innerText = "+91 " + this.currentUser.phone_number);
+        phoneEls.forEach(el => el.innerText = this.currentUser.phone_number);
+        
+        const greetingPhone = document.getElementById('profile-display-phone');
+        if (greetingPhone) greetingPhone.innerText = this.currentUser.phone_number;
     },
 
     populateProfileDetails() {

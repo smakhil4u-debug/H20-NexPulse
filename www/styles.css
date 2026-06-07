@@ -311,3 +311,126 @@ body {
     visibility: hidden;
     pointer-events: none;
 }
+
+/* --- LIGHT MODE PROFILE OVERHAUL --- */
+#view-profile {
+    background-color: #F8F9FA !important;
+    min-height: calc(100vh - 90px);
+    padding: 0;
+}
+
+.profile-identity-card-light {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 30px 20px;
+    background-color: #F8F9FA;
+}
+
+.profile-identity-card-light .avatar-circle {
+    width: 60px;
+    height: 60px;
+    background-color: #E0F2F1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00BFA5;
+    font-size: 30px;
+}
+
+.profile-identity-card-light .info h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1A2035;
+}
+
+.profile-identity-card-light .info p {
+    font-size: 14px;
+    color: #8E9AA8;
+    font-weight: 600;
+}
+
+.light-menu-group {
+    background-color: white;
+    border-radius: 24px;
+    margin: 0 20px 20px;
+    padding: 8px 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.light-group-title {
+    padding: 12px 20px 8px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #8E9AA8;
+    letter-spacing: 1px;
+}
+
+.light-menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #F1F3F5;
+    background: none;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.light-menu-item:last-child {
+    border-bottom: none;
+}
+
+.light-menu-item .left-node {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #1A2035;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.light-menu-item .left-node i {
+    width: 24px;
+    font-size: 18px;
+    color: #00BFA5;
+    text-align: center;
+}
+
+.light-menu-item .right-node {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #CED4DA;
+}
+
+.light-menu-item .value-label {
+    color: #1A2035;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+/* --- OVERHAULED BOTTOM NAV --- */
+#global-bottom-navigation.profile-active {
+    background-color: white;
+    border-top: 1px solid #F1F3F5;
+}
+
+#global-bottom-navigation.profile-active .nav-btn {
+    color: #8E9AA8;
+}
+
+#global-bottom-navigation.profile-active .nav-btn.active {
+    background-color: #00BFA5;
+    color: white;
+    border-radius: 20px;
+    margin: 0 5px;
+    height: 48px;
+    align-self: center;
+}
