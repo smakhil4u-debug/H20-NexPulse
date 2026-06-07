@@ -786,9 +786,9 @@
 
         <!-- VIEW PANEL: TERMS & CONDITIONS (Dark Mode Overhaul) -->
         <section class="view-panel p-0 bg-[#0A0E1A]" id="view-terms">
-            <!-- Sticky Dark Navigation Header -->
+            <!-- Top Sticky Dark Navigation Header -->
             <div class="sticky top-0 bg-[#0B132B] border-b border-[#1E294B] px-4 py-4 flex items-center gap-3 z-50 shadow-lg">
-                <button onclick="navigateTo('profile')" class="p-1 rounded-full hover:bg-[#1E294B] text-gray-300">
+                <button onclick="navigateTo('profile')" class="p-1 rounded-full hover:bg-[#1E294B] transition-colors text-gray-300" aria-label="Go back">
                     <i class="fa-solid fa-arrow-left text-xl text-[#00BCD4]"></i>
                 </button>
                 <h1 class="text-lg font-bold tracking-tight text-white">Terms & Conditions</h1>
@@ -796,8 +796,8 @@
 
             <div class="max-w-md mx-auto p-4 space-y-6">
                 <!-- Brand Acknowledgment Card -->
-                <div class="bg-[#131A30] p-5 rounded-xl border border-[#1E294B] flex items-start gap-4 shadow-xl">
-                    <div class="p-3 bg-[#1E294B] text-[#00BCD4] rounded-lg shrink-0">
+                <div class="bg-[#131A30] p-5 rounded-xl border border-[#1E294B] shadow-xl flex items-start gap-4">
+                    <div class="p-3 bg-[#1E294B] rounded-lg text-[#00BCD4] shrink-0">
                         <i class="fa-solid fa-shield-check text-xl"></i>
                     </div>
                     <div>
@@ -809,16 +809,16 @@
                 </div>
 
                 <!-- Vertically Scrolling Terms Policy Box -->
-                <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
+                <div class="bg-[#131A30] rounded-xl border border-[#1E294B] shadow-xl overflow-hidden">
                     <div class="h-[60vh] overflow-y-auto p-5 space-y-6 text-[14px] leading-relaxed text-gray-300">
                         
                         <!-- Section 1 -->
                         <div class="space-y-2">
                             <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                <i class="fa-solid fa-user-check text-[#00BCD4]"></i> 1. Account Registration & Eligibility
+                                1. Account Registration & Eligibility
                             </h3>
                             <p class="text-gray-400">
-                                To access the water delivery features provided by <strong>H2ONEXPULSE</strong>, you must register a valid account using an active mobile phone number.
+                                To access the water delivery features provided by <strong>H2ONEXPULSE</strong>, you must register a valid account using an active mobile phone number. You are solely responsible for ensuring that all account details, credentials, and profile information remain updated and accurate.
                             </p>
                         </div>
 
@@ -830,8 +830,13 @@
                                 <i class="fa-solid fa-calendar text-[#00BCD4]"></i> 2. Subscription Plans & Scheduled Deliveries
                             </h3>
                             <p class="text-gray-400">
-                                Deliveries are processed and automated entirely based on the selection arrays specified in your active app calendar.
+                                <strong>H2ONEXPULSE</strong> offers custom subscription tiers and scheduled options to fit your lifestyle requirements:
                             </p>
+                            <ul class="list-disc pl-5 space-y-1.5 text-gray-400">
+                                <li>Deliveries are processed, fulfilled, and automated entirely based on the selection arrays specified in your active app calendar.</li>
+                                <li>Users can seamlessly cycle between our premium water categories, including <strong>Daily H2O</strong> and <strong>Premium H2O</strong> packages.</li>
+                                <li>Any modifications, pauses, or immediate cancellations to scheduled deliveries must be executed in the application before the designated daily calendar cutoff time to avoid automatic dispatch.</li>
+                            </ul>
                         </div>
 
                         <hr class="border-[#1E294B]" />
@@ -842,18 +847,60 @@
                                 <i class="fa-solid fa-arrows-rotate text-[#00BCD4]"></i> 3. The Empty Jar Exchange Policy
                             </h3>
                             <p class="text-gray-400">
-                                Customers must return a clean, undamaged empty water jar of the identical volume for every fresh jar delivered.
+                                Our commercial operations rely strictly on an exact container lifecycle network. By accepting delivery services from <strong>H2ONEXPULSE</strong>, you explicitly acknowledge and consent to the empty jar clause:
                             </p>
+                            <ul class="list-disc pl-5 space-y-1.5 text-gray-400">
+                                <li>Customers must return a clean, undamaged empty water jar of the identical volume segment for every fresh water jar delivered by our logistics partners.</li>
+                                <li>If an empty jar is unavailable, damaged, or unreturned at the designated moment of delivery, the customer shall be liable to immediately forfeit their established jar security deposit.</li>
+                                <li>Additional delivery dispatches may be restricted or paused if the customer accumulates an unbalanced jar deficit or outstanding container debt.</li>
+                            </ul>
+                        </div>
+
+                        <hr class="border-[#1E294B]" />
+
+                        <!-- Section 4 -->
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-map-pin text-[#00BCD4]"></i> 4. Service Area & Location Deliverability
+                            </h3>
+                            <p class="text-gray-400">
+                                Service availability is determined strictly by defined geographic delivery sectors and municipal boundaries:
+                            </p>
+                            <ul class="list-disc pl-5 space-y-1.5 text-gray-400">
+                                <li>Orders and recurring deliveries will only execute if your structural address coordinates fall within active <strong>H2ONEXPULSE</strong> geo-coverage blocks.</li>
+                                <li>The application reserves the absolute right to restrict checkouts, cancel active plans, or mark a user coordinate block as "Location non-deliverable" if access routes are blocked or fall outside operations.</li>
+                            </ul>
+                        </div>
+
+                        <hr class="border-[#1E294B]" />
+
+                        <!-- Section 5 -->
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-wallet text-[#00BCD4]"></i> 5. App Wallet, Payments & Fees
+                            </h3>
+                            <p class="text-gray-400">
+                                All balances, secure transactions, and individual order invoices are managed directly using the integrated digital platform portal:
+                            </p>
+                            <ul class="list-disc pl-5 space-y-1.5 text-gray-400">
+                                <li>Charges for water orders and jar deposits are deducted systematically from your active <strong>H2ONEXPULSE</strong> wallet balance or processed via approved digital gateways.</li>
+                                <li>Any balance discrepancies, refund applications, or billing queries must be raised with our Customer Support division within 7 business days of invoice compilation.</li>
+                            </ul>
                         </div>
 
                     </div>
                     
-                    <!-- Subtle Bottom Accent Strip -->
+                    <!-- Bottom Dark Accent Strip -->
                     <div class="bg-[#0B132B] px-5 py-3 border-t border-[#1E294B] flex justify-between items-center text-xs text-gray-500 font-bold">
                         <span>Version 2.1.0 (2026)</span>
                         <span>© H2ONEXPULSE Inc.</span>
                     </div>
                 </div>
+
+                <!-- Accept / Acknowledge Action Button Container -->
+                <button onclick="navigateTo('profile')" class="w-full bg-[#00A896] text-white font-black py-4 rounded-xl transition-all active:scale-[0.99] shadow-md text-center text-sm tracking-widest uppercase">
+                    I ACKNOWLEDGE & AGREE
+                </button>
             </div>
         </section>
 
