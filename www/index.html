@@ -904,6 +904,38 @@
             </div>
         </section>
 
+        <!-- VIEW PANEL: COLLECTED COUPONS (New) -->
+        <section class="view-panel p-0 bg-[#F8F9FA]" id="view-coupons">
+            <!-- 1. Header Layout (Matching React Design) -->
+            <div class="bg-[#00BCD4] text-white px-4 py-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
+                <div class="flex items-center gap-3">
+                    <button onclick="navigateTo('profile')" class="p-1 active:bg-white/20 rounded-full transition-colors">
+                        <i class="fa-solid fa-arrow-left text-xl"></i>
+                    </button>
+                    <h1 class="text-xl font-semibold tracking-wide">Collected Coupons</h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="p-1 active:bg-white/20 rounded-full transition-colors"><i class="fa-solid fa-magnifying-glass text-xl"></i></button>
+                    <button onclick="navigateTo('cart')" class="p-1 active:bg-white/20 rounded-full transition-colors"><i class="fa-solid fa-cart-shopping text-xl"></i></button>
+                </div>
+            </div>
+
+            <!-- 2. Two-State Tab Control System -->
+            <div class="bg-white border-b border-gray-100 flex shadow-sm">
+                <button id="tab-coupons-collected" onclick="AppEngine.setCouponTab('collected')" class="flex-1 py-3.5 text-center font-bold text-sm transition-all border-b-2 border-[#00BCD4] text-[#00BCD4]">
+                    My Coupons (0)
+                </button>
+                <button id="tab-coupons-offers" onclick="AppEngine.setCouponTab('offers')" class="flex-1 py-3.5 text-center font-bold text-sm transition-all border-b-2 border-transparent text-gray-400">
+                    Active Offers (3)
+                </button>
+            </div>
+
+            <!-- Main Content Area Container -->
+            <div id="coupons-content-target" class="max-w-md mx-auto p-4">
+                <!-- Dynamic Content will be injected here -->
+            </div>
+        </section>
+
         <!-- VIEW PANEL: CANCELLATION & REFUNDS (New) -->
         <section class="view-panel p-0 bg-[#F8F9FA]" id="view-refund-policy">
             <!-- Top Sticky Navigation Header -->
@@ -1131,7 +1163,7 @@
             const topBar = document.getElementById('global-top-bar');
             const bottomNav = document.getElementById('global-bottom-navigation');
             
-            const hideGlobalUI = ['select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search', 'contact-info', 'terms', 'refund-policy'].includes(target);
+            const hideGlobalUI = ['select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search', 'contact-info', 'terms', 'refund-policy', 'coupons'].includes(target);
 
             if (hideGlobalUI) {
                 if (topBar) topBar.classList.add('hidden');
@@ -1172,6 +1204,9 @@
             }
             if (target === 'search') {
                 if (window.AppEngine) window.AppEngine.clearSearch();
+            }
+            if (target === 'coupons') {
+                if (window.AppEngine) window.AppEngine.renderCouponsUI();
             }
 
             // Scroll to top on navigation

@@ -354,3 +354,98 @@ body {
 }
 
 
+
+/* --- COUPON DASHBOARD STYLES --- */
+.coupon-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+    text-align: center;
+}
+
+.ticket-visual-wrapper {
+    position: relative;
+    width: 128px;
+    height: 128px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.city-silhouette-sim {
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    pointer-events: none;
+    border-bottom: 1px dashed #6B7280;
+}
+
+.city-silhouette-sim div {
+    background-color: #9CA3AF;
+    border-radius: 4px 4px 0 0;
+}
+
+.ticket-icon-container {
+    padding: 20px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #F9FAFB;
+    color: #00BCD4;
+}
+
+.badge-percent {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background-color: #00BCD4;
+    color: white;
+    border-radius: 50%;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+    font-size: 10px;
+}
+
+.coupon-card {
+    background-color: white;
+    border-radius: 20px;
+    border: 1px solid #F1F3F5;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.ticket-divider {
+    border-top: 1px dashed #F1F3F5;
+    position: relative;
+    margin: 0 16px;
+}
+
+.ticket-divider::before, .ticket-divider::after {
+    content: '';
+    position: absolute;
+    top: -6px;
+    width: 12px;
+    height: 12px;
+    background-color: #F8F9FA;
+    border-radius: 50%;
+}
+
+.ticket-divider::before { left: -22px; }
+.ticket-divider::after { right: -22px; }
+
+.animate-bounceIn {
+    animation: bounceIn 0.5s ease-out;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    70% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+}

@@ -26,6 +26,31 @@ const AppEngine = {
         default_deposit_amount: 2000
     },
     paymentPending: false,
+    activeCouponTab: 'collected',
+    expandedCouponCode: null,
+    activeOffers: [
+        {
+            code: 'FIRSTJARFREE',
+            discount: 'FREE 20L Water Jar',
+            description: 'Get your first 20L daily H2O water jar completely free on your initial order.',
+            expiry: 'Valid till 31st July 2026',
+            terms: 'Applicable for new accounts only. This offer applies strictly to the water contents and does not cover the refundable 20L empty jar security deposit. Standard empty jar exchange rules apply upon drop-off.'
+        },
+        {
+            code: 'FREEJARDEPOSIT',
+            discount: 'Waived Initial Deposit',
+            description: 'Zero upfront security fee on your first two delivery jars.',
+            expiry: 'Valid till 31st August 2026',
+            terms: 'Requires a commitment to an active multi-month subscription plan. Clean, undamaged original functional containers must be systematically exchanged on every recurring delivery run.'
+        },
+        {
+            code: 'NEXPULSE20',
+            discount: '20% Off Subscriptions',
+            description: 'Enjoy 20% off on all monthly or weekly recurring premium water packages.',
+            expiry: 'Valid till 15th July 2026',
+            terms: 'Maximum discount value capped at ₹200 per order cycle. Valid exclusively for active digital wallet transactions via the app portal.'
+        }
+    ],
 
     // --- LOCATION LOGIC ---
     supportedZones: [
@@ -1040,6 +1065,112 @@ const AppEngine = {
         this.pendingPlan = { name: 'Wallet Top-up', deposit: parseFloat(amt) };
         this.currentPaymentMethod = 'UPI'; 
         navigateTo('payment-selection');
+    },
+
+    // --- COUPON LOGIC ---
+    setCouponTab(tab) {
+        this.activeCouponTab = tab;
+        const colTab = document.getElementById('tab-coupons-collected');
+        const offTab = document.getElementById('tab-coupons-offers');
+        
+        if (tab === 'collected') {
+            colTab.classList.add('border-[#00BCD4]', 'text-[#00BCD4]');
+            colTab.classList.remove('border-transparent', 'text-gray-400');
+            offTab.classList.add('border-transparent', 'text-gray-400');
+            offTab.classList.remove('border-[#00BCD4]', 'text-[#00BCD4]');
+        } else {
+            offTab.classList.add('border-[#00BCD4]', 'text-[#00BCD4]');
+            offTab.classList.remove('border-transparent', 'text-gray-400');
+            colTab.classList.add('border-transparent', 'text-gray-400');
+            colTab.classList.remove('border-[#00BCD4]', 'text-[#00BCD4]');
+        }
+        this.renderCouponsUI();
+    },
+
+    renderCouponsUI() {
+        const target = document.getElementById('coupons-content-target');
+        if (!target) return;
+
+        if (this.activeCouponTab === 'collected') {
+            target.innerHTML = `
+                <div class="coupon-empty-state animate-bounceIn">
+                    <div class="ticket-visual-wrapper">
+                        <div class="city-silhouette-sim">
+                            <div style="width: 16px; height: 40px;"></div>
+                            <div style="width: 24px; height: 48px;"></div>
+                            <div style="width: 12px; height: 28px;"></div>
+                            <div style="width: 20px; height: 36px;"></div>
+                        </div>
+                        <div class="ticket-icon-container">
+                            <i class="fa-solid fa-ticket text-5xl rotate-12"></i>
+                        </div>
+                        <div class="badge-percent animate-pulse">
+                            <i class="fa-solid fa-percent"></i>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <h2 class="text-lg font-bold text-gray-900">No Coupons Collected</h2>
+                        <p class="text-sm text-gray-500 max-w-xs leading-relaxed">
+                            You haven't collected any coupons yet. Keep an eye out for upcoming offers!
+                        </p>
+                    </div>
+                    <button onclick="AppEngine.setCouponTab('offers')" class="mt-8 text-sm font-black text-[#00BCD4] uppercase tracking-widest">
+                        Browse Launch Discounts
+                    </button>
+                </div>
+            `;
+        } else {
+            let html = '<div class="space-y-4">';
+            this.activeOffers.forEach(offer => {
+                const isExpanded = this.expandedCouponCode === offer.code;
+                html += `
+                    <div class="coupon-card">
+                        <div class="p-4 flex items-center justify-between gap-3">
+                            <div class="flex items-start gap-4">
+                                <div class="p-3 bg-teal-50 text-[#00BCD4] rounded-xl shrink-0 mt-0.5 border border-teal-100/30">
+                                    <i class="fa-solid fa-percent text-xl"></i>
+                                </div>
+                                <div class="space-y-1">
+                                    <span class="inline-block bg-teal-50 text-[#00BCD4] text-[10px] font-black px-2 py-0.5 rounded border border-teal-100 uppercase tracking-wider">
+                                        ${offer.code}
+                                    </span>
+                                    <h3 class="text-[15px] font-black text-gray-900">${offer.discount}</h3>
+                                    <p class="text-[11px] text-gray-500 leading-normal">${offer.description}</p>
+                                </div>
+                            </div>
+                            <button onclick="AppEngine.toggleCouponTerms('${offer.code}')" class="p-2 text-gray-400">
+                                <i class="fa-solid fa-chevron-down transition-transform duration-300 ${isExpanded ? 'rotate-180 text-[#00BCD4]' : ''}"></i>
+                            </button>
+                        </div>
+
+                        <div class="ticket-divider"></div>
+
+                        <div class="px-4 py-2.5 bg-gray-50 flex items-center justify-between text-[10px] text-gray-500">
+                            <span class="font-bold text-gray-400 uppercase tracking-widest">${offer.expiry}</span>
+                            <button onclick="AppEngine.toggleCouponTerms('${offer.code}')" class="text-[#00BCD4] font-black uppercase tracking-widest flex items-center gap-1">
+                                <i class="fa-solid fa-circle-info text-xs"></i> T&C Apply
+                            </button>
+                        </div>
+
+                        ${isExpanded ? `
+                            <div class="bg-teal-50/20 border-t border-gray-100 p-5 text-[11px] text-gray-600 space-y-3 animate-fadeIn">
+                                <div class="flex items-center gap-1.5 font-black text-gray-700 uppercase tracking-widest text-[9px]">
+                                    <i class="fa-solid fa-shield-halved text-teal-600"></i> Operational Regulations:
+                                </div>
+                                <p class="leading-relaxed text-gray-500">${offer.terms}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            html += '</div>';
+            target.innerHTML = html;
+        }
+    },
+
+    toggleCouponTerms(code) {
+        this.expandedCouponCode = (this.expandedCouponCode === code) ? null : code;
+        this.renderCouponsUI();
     },
 
     async toggleSubStatus(subId, currentStatus) {
