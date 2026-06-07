@@ -23,27 +23,32 @@
     <script src="js/app-engine.js?v=bulletproof_999"></script>
 </head>
 <body>
-    <!-- ABSOLUTE ROOT ENTRY ADVERTISEMENT GATE: VISUAL TEST MODE -->
-    <div id="promo-splash" style="background: #00ffcc !important; display: flex !important; flex-direction: column; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999999;">
-        <h1 style="color: white; font-family: sans-serif; font-weight: 900; font-size: 24px; text-align: center;">TESTING NEXPULSE AD CLOCK</h1>
-        <div style="margin-top: 20px; width: 40px; height: 40px; border: 4px solid white; border-top-color: transparent; border-radius: 50%; animate: spin 1s linear infinite;"></div>
+    <!-- ABSOLUTE ROOT ENTRY ADVERTISEMENT GATE: 5-SECOND VISUAL TEST MODE -->
+    <div id="promo-splash" style="background: #00ffff !important; display: flex !important; flex-direction: column; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999999;">
+        <!-- Fallback Image (Ref 3) -->
+        <img src="1000300505_2.png" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -1;" alt="">
+        
+        <h1 style="color: black; font-family: sans-serif; font-weight: 900; font-size: 24px; text-align: center; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            5-SECOND NEXPULSE AD CLOCK TEST RUNNING...
+        </h1>
+        <div style="margin-top: 20px; width: 50px; height: 50px; border: 6px solid black; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
     </div>
 
     <script>
-        // High-Priority Root-Level Gate (2 Seconds)
+        // High-Priority Root-Level Gate (5 Seconds)
         (function() {
-            console.log("AD GATE STARTED...");
+            console.log("5-SECOND AD GATE STARTED...");
             setTimeout(function() {
                 var splash = document.getElementById('promo-splash');
                 if (splash) {
                     console.log("AD GATE ENDED. REMOVING SPLASH.");
                     splash.style.opacity = '0';
-                    splash.style.transition = 'opacity 0.5s ease';
+                    splash.style.transition = 'opacity 0.8s ease';
                     setTimeout(function() {
                         splash.style.display = 'none';
-                    }, 500);
+                    }, 800);
                 }
-            }, 2000);
+            }, 5000);
         })();
     </script>
 
