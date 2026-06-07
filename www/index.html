@@ -23,6 +23,11 @@
     <script src="js/app-engine.js?v=bulletproof_999"></script>
 </head>
 <body>
+    <!-- PROMOTIONAL SPLASH SCREEN (New) -->
+    <div id="promo-splash" class="fixed inset-0 z-[5000] bg-slate-950 flex items-center justify-center transition-opacity duration-1000">
+        <img src="image.png" alt="Promo" class="max-w-full max-h-full object-contain">
+    </div>
+
     <div id="app-viewport">
 
         <!-- AUTH OVERLAY: Phone Login (Ref: Next Step 1) -->
@@ -773,6 +778,15 @@
         }
 
         window.onload = () => {
+            // 1. Promotional Splash Timer (Ref: image.png)
+            setTimeout(() => {
+                const splash = document.getElementById('promo-splash');
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.classList.add('hidden'), 1000); // Wait for fade out
+                }
+            }, 2000);
+
             // Initial load
             if (typeof syncProductUI === 'function') syncProductUI();
             
