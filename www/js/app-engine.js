@@ -192,13 +192,15 @@ const AppEngine = {
     // --- PROFILE & WALLET LOGIC ---
     syncProfileUI() {
         if (!this.currentUser) return;
-        const nameEls = document.querySelectorAll('#profile-display-name');
         const phoneEls = document.querySelectorAll('#profile-display-phone');
-        nameEls.forEach(el => el.innerText = this.currentUser.full_name || "NexPulse Member");
         phoneEls.forEach(el => el.innerText = this.currentUser.phone_number);
         
-        const greetingPhone = document.getElementById('profile-display-phone');
-        if (greetingPhone) greetingPhone.innerText = this.currentUser.phone_number;
+        const zoneEl = document.getElementById('profile-current-zone');
+        const lastAddr = localStorage.getItem('h2o_last_address');
+        if (zoneEl && lastAddr) {
+            // Extract city from address if possible, or use full string
+            zoneEl.innerText = lastAddr.split(',')[0].trim(); 
+        }
     },
 
     populateProfileDetails() {

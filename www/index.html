@@ -547,171 +547,179 @@
             </div>
         </section>
 
-        <!-- VIEW PANEL 5: PROFILE (React Design Translation) -->
-        <section class="view-panel" id="view-profile">
-            <!-- Identity Profile Ribbon -->
-            <div class="flex items-center gap-4 px-5 py-4 mb-2">
-                <div class="w-16 h-16 rounded-full bg-[#E0F2F1] flex items-center justify-center text-[#00BCD4] shadow-sm">
-                    <i class="fa-solid fa-user text-3xl"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-xl font-bold text-gray-800">Hi,</span>
-                    <span id="profile-display-phone" class="text-sm font-medium text-gray-500 tracking-wide">7483266062</span>
+        <!-- VIEW PANEL 5: PROFILE (Premium Dark Design) -->
+        <section class="view-panel p-0 bg-[#0A0E1A]" id="view-profile">
+            <!-- Top Application Header -->
+            <div class="px-5 pt-6 pb-2 flex items-center justify-between">
+                <h1 class="text-2xl font-bold tracking-tight text-white">Profile</h1>
+                <div class="flex items-center gap-1.5 text-[#00BCD4] text-[10px] font-black tracking-widest uppercase bg-[#131A30] px-3 py-1.5 rounded-full border border-[#1E294B]">
+                    <i class="fa-solid fa-map-pin"></i> <span id="profile-current-zone">Ballari</span>
                 </div>
             </div>
 
-            <!-- Content Action Cards Dynamic Block -->
-            <div class="px-4 space-y-6">
+            <!-- Identity User Ribbon -->
+            <div class="flex items-center gap-4 px-5 py-4 mb-2">
+                <div class="w-14 h-14 rounded-full bg-[#1E294B] flex items-center justify-center text-[#00BCD4] shadow-md border border-[#2E3B5E]">
+                    <i class="fa-solid fa-user text-2xl"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold text-white">Hi,</span>
+                    <span id="profile-display-phone" class="text-sm font-medium text-gray-400 tracking-wide">7483266062</span>
+                </div>
+            </div>
+
+            <!-- Content Action Cards Block -->
+            <div class="px-4 space-y-5">
                 <!-- MAIN DETAILS -->
-                <div class="space-y-2">
-                    <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden">
-                        <button onclick="navigateTo('profile-details')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-user"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">View Profile Details</span>
+                <div class="space-y-1.5">
+                    <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
+                        <button onclick="navigateTo('profile-details')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-user"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">View Profile Details</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
-                        <button onclick="navigateTo('wallet')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-wallet"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Bisleri Wallet</span>
+                        <button onclick="navigateTo('wallet')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-wallet"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">H2ONEXPULSE Wallet</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="text-[15px] font-bold text-gray-900" id="wallet-balance-display">₹0</span>
-                                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                                <span class="text-[14px] font-bold text-white" id="wallet-balance-display">₹0</span>
+                                <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                             </div>
                         </button>
-                        <button onclick="navigateTo('bank-details')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-building-columns"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Bank Details</span>
+                        <button onclick="navigateTo('bank-details')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-landmark"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Bank Details</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- ORDERS -->
-                <div class="space-y-2">
-                    <h2 class="px-2 text-xs font-bold tracking-wider text-gray-400 uppercase">ORDERS</h2>
-                    <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden">
-                        <button onclick="navigateTo('all-orders')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-shopping-bag"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">All Orders</span>
+                <div class="space-y-1.5">
+                    <h2 class="px-2 text-[11px] font-bold tracking-wider text-gray-500 uppercase">ORDERS</h2>
+                    <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
+                        <button onclick="navigateTo('all-orders')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-bag-shopping"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">All Orders</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
-                        <button onclick="navigateTo('calendar')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-calendar"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Order Calendar</span>
+                        <button onclick="navigateTo('calendar')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-calendar"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Order Calendar</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
-                        <button onclick="navigateTo('favorites')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-heart"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Favorite Orders</span>
+                        <button onclick="navigateTo('favorites')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-heart"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Favorite Orders</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
-                        <button onclick="navigateTo('select-location')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-location-dot"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Address Book</span>
+                        <button onclick="navigateTo('select-location')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-map-pin"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Address Book</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
-                        <button onclick="navigateTo('transaction-history')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-history"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Transaction History</span>
+                        <button onclick="navigateTo('transaction-history')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Transaction History</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
-                        <button onclick="navigateTo('return-jar')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-arrows-rotate"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Return Empty Jar</span>
+                        <button onclick="navigateTo('return-jar')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-rotate"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Return Empty Jar</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- CUSTOMER SUPPORT -->
-                <div class="space-y-2">
-                    <h2 class="px-2 text-xs font-bold tracking-wider text-gray-400 uppercase">CUSTOMER SUPPORT</h2>
-                    <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden">
-                        <button onclick="navigateTo('contact-info')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-phone"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Contact Information</span>
+                <div class="space-y-1.5">
+                    <h2 class="px-2 text-[11px] font-bold tracking-wider text-gray-500 uppercase">CUSTOMER SUPPORT</h2>
+                    <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
+                        <button onclick="navigateTo('contact-info')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-headset"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Contact Information</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
-                        <button onclick="AppEngine.openHelp('chat')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-message"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Chat With Us</span>
+                        <button onclick="AppEngine.openHelp('chat')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-message"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Chat With Us</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
-                        <button onclick="navigateTo('faq')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-circle-question"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">FAQ</span>
+                        <button onclick="navigateTo('faq')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-circle-question"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">FAQ</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
-                        <button onclick="navigateTo('locate-us')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-location-crosshairs"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Locate Us</span>
+                        <button onclick="navigateTo('locate-us')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-location-crosshairs"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Locate Us</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- REWARDS -->
-                <div class="space-y-2">
-                    <h2 class="px-2 text-xs font-bold tracking-wider text-gray-400 uppercase">REWARDS</h2>
-                    <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden">
-                        <button onclick="navigateTo('coupons')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-ticket"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Collected Coupons</span>
+                <div class="space-y-1.5">
+                    <h2 class="px-2 text-[11px] font-bold tracking-wider text-gray-500 uppercase">REWARDS</h2>
+                    <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
+                        <button onclick="navigateTo('coupons')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-ticket"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Collected Coupons</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- LEGAL -->
-                <div class="space-y-2">
-                    <h2 class="px-2 text-xs font-bold tracking-wider text-gray-400 uppercase">LEGAL</h2>
-                    <div class="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden">
-                        <button onclick="navigateTo('about')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-circle-info"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">About us</span>
+                <div class="space-y-1.5">
+                    <h2 class="px-2 text-[11px] font-bold tracking-wider text-gray-500 uppercase">LEGAL</h2>
+                    <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
+                        <button onclick="navigateTo('about')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-circle-info"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">About us</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
-                        <button onclick="navigateTo('terms')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-file-contract"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Terms & Conditions</span>
+                        <button onclick="navigateTo('terms')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-file-contract"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Terms & Conditions</span>
                             </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
                         </button>
-                        <button onclick="navigateTo('refund-policy')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <div class="text-gray-700 w-5 text-center"><i class="fa-solid fa-shield-halved"></i></div>
-                                <span class="text-[15px] font-medium text-gray-800">Cancellation & Refunds Policy</span>
+                        <button onclick="navigateTo('refund-policy')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-shield-halved"></i></div>
+                                <span class="text-[14px] font-semibold text-gray-200">Cancellation & Refunds Policy</span>
                             </div>
                             <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
                         </button>
@@ -719,8 +727,8 @@
                 </div>
             </div>
             
-            <div class="px-5 py-8">
-                <button onclick="location.reload()" class="w-full py-4 bg-gray-100 rounded-2xl text-gray-500 font-bold text-xs uppercase tracking-widest">Logout Session</button>
+            <div class="px-5 py-10">
+                <button onclick="location.reload()" class="w-full py-4 bg-[#131A30] border border-[#1E294B] rounded-2xl text-gray-500 font-bold text-xs uppercase tracking-widest active:scale-95 transition">Logout Session</button>
             </div>
         </section>
 
@@ -1084,12 +1092,27 @@
         </section>
 
         <!-- GLOBAL STICKY ROUTING NAVIGATION FOOTER -->
-        <nav id="global-bottom-navigation">
-            <button class="nav-btn active" onclick="navigateTo('home')" data-target="home"><i class="fa-solid fa-house"></i><span>Home</span></button>
-            <button class="nav-btn" onclick="navigateTo('products')" data-target="products"><i class="fa-solid fa-bottle-water"></i><span>Products</span></button>
-            <button class="nav-btn" onclick="navigateTo('subscriptions')" data-target="subscriptions"><i class="fa-solid fa-calendar-check"></i><span>Subscriptions</span></button>
-            <button class="nav-btn" onclick="navigateTo('cart')" data-target="cart"><i class="fa-solid fa-cart-shopping"></i><span>Cart</span></button>
-            <button class="nav-btn" onclick="navigateTo('profile')" data-target="profile"><i class="fa-solid fa-user-gear"></i><span>Profile</span></button>
+        <nav id="global-bottom-navigation" class="fixed bottom-0 left-0 right-0 h-16 bg-[#0B132B] border-t border-[#1E294B] flex items-center justify-around px-2 z-50 shadow-2xl">
+            <button class="nav-btn active flex flex-col items-center" onclick="navigateTo('home')" data-target="home">
+                <i class="fa-solid fa-house mb-1"></i>
+                <span class="text-[10px] font-bold">Home</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center" onclick="navigateTo('products')" data-target="products">
+                <i class="fa-solid fa-bottle-water mb-1"></i>
+                <span class="text-[10px] font-bold">Products</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center" onclick="navigateTo('subscriptions')" data-target="subscriptions">
+                <i class="fa-solid fa-calendar-check mb-1"></i>
+                <span class="text-[10px] font-bold">Subscriptions</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center" onclick="navigateTo('cart')" data-target="cart">
+                <i class="fa-solid fa-cart-shopping mb-1"></i>
+                <span class="text-[10px] font-bold">Cart</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center" onclick="navigateTo('profile')" data-target="profile">
+                <i class="fa-solid fa-user-gear mb-1"></i>
+                <span class="text-[10px] font-bold">Profile</span>
+            </button>
         </nav>
 
         <!-- CHECKOUT DELIVERY INFO MODAL (Ref: Step 3) -->
@@ -1179,13 +1202,6 @@
             } else {
                 if (topBar) topBar.classList.remove('hidden');
                 if (bottomNav) bottomNav.classList.remove('hidden');
-            }
-
-            // Theme Toggle for Bottom Nav
-            if (target === 'profile') {
-                bottomNav.classList.add('profile-active');
-            } else {
-                bottomNav.classList.remove('profile-active');
             }
 
             // 3. Update Bottom Nav Buttons
