@@ -208,17 +208,18 @@ const AppEngine = {
         }
     },
 
-    // --- PIN-DROP RADAR LOGIC (Ref: 1000301002.jpg Fix) ---
+    // --- PIN-DROP RADAR LOGIC (Overhaul: Automated Address Generation) ---
     handleMapClick(e) {
         const canvas = document.getElementById('radar-map-canvas');
         const pin = document.getElementById('map-pin-target');
         const latInput = document.getElementById('new-address-lat');
         const lngInput = document.getElementById('new-address-lng');
+        const addrTextDisplay = document.getElementById('generated-address-text');
+        const hiddenInput = document.getElementById('new-address-input');
         const errorMsg = document.getElementById('geofence-error');
 
         if (!canvas || !pin) return;
 
-        // 1. Get click position relative to canvas center
         const rect = canvas.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const clickY = e.clientY - rect.top;
@@ -229,72 +230,66 @@ const AppEngine = {
         const offsetX = clickX - centerX;
         const offsetY = clickY - centerY;
 
-        // 2. Map to Coordinates (Scale around Hub)
-        // Approx: 0.001 degree is ~111 meters. 
-        // Let's set scale: 1 pixel = 200 meters (~0.0018 degrees)
+        // Map to Coordinates (Scale around Hub)
         const scale = 0.0018; 
-        const newLat = this.ProductionHub.lat - (offsetY * (scale / 10)); // Vertical offset
-        const newLng = this.ProductionHub.lng + (offsetX * (scale / 10)); // Horizontal offset
+        const newLat = this.ProductionHub.lat - (offsetY * (scale / 10));
+        const newLng = this.ProductionHub.lng + (offsetX * (scale / 10));
 
-        // 3. Update Inputs
-        latInput.value = newLat.toFixed(6);
-        lngInput.value = newLng.toFixed(6);
+        if (latInput) latInput.value = newLat.toFixed(6);
+        if (lngInput) lngInput.value = newLng.toFixed(6);
 
-        // 4. Move Visual Pin
+        // Move Visual Pin
         pin.style.left = `${clickX}px`;
         pin.style.top = `${clickY}px`;
         pin.style.transform = `translate(-50%, -100%) scale(1.2)`;
         setTimeout(() => pin.style.transform = `translate(-50%, -100%) scale(1)`, 200);
 
-        // 5. Real-time Geofence Check
+        // Calculate Distance
         const distance = this.calculateDistance(newLat, newLng, this.ProductionHub.lat, this.ProductionHub.lng);
-        if (distance > this.MaxDeliveryRadiusKm) {
-            errorMsg.classList.remove('hidden');
+        const isSupported = distance <= this.MaxDeliveryRadiusKm;
+
+        // AUTOMATED ADDRESS GENERATION (Ref 2)
+        let sector = "Outer Perimeter";
+        if (distance < 5) sector = "Sri Rampura Hub Sector";
+        else if (distance < 15) sector = "Ballari City Center Block";
+        else if (distance < 25) sector = "Cantonment Zone Loop";
+        else if (distance <= 35) sector = "Perimeter Loop Zone";
+
+        const generatedAddress = `${sector}, within 35km delivery loop, Ballari, Karnataka`;
+        if (addrTextDisplay) addrTextDisplay.innerText = generatedAddress;
+        if (hiddenInput) hiddenInput.value = generatedAddress;
+
+        if (!isSupported) {
+            if (errorMsg) errorMsg.classList.remove('hidden');
             document.getElementById('btn-save-new-address').disabled = true;
             document.getElementById('btn-save-new-address').style.opacity = '0.3';
         } else {
-            errorMsg.classList.add('hidden');
+            if (errorMsg) errorMsg.classList.add('hidden');
             document.getElementById('btn-save-new-address').disabled = false;
             document.getElementById('btn-save-new-address').style.opacity = '1';
         }
-        
-        console.log(`Pin Dropped: ${newLat}, ${newLng} | Distance: ${distance.toFixed(2)}km`);
     },
 
     async addNewAddress() {
-        const input = document.getElementById('new-address-input');
-        const latInput = document.getElementById('new-address-lat');
-        const lngInput = document.getElementById('new-address-lng');
-        const errorMsg = document.getElementById('geofence-error');
+        const addrText = document.getElementById('new-address-input').value;
+        const lat = parseFloat(document.getElementById('new-address-lat').value);
+        const lng = parseFloat(document.getElementById('new-address-lng').value);
         
-        const addrText = input.value.trim();
-        const lat = parseFloat(latInput.value);
-        const lng = parseFloat(lngInput.value);
-        
-        if (!addrText) return alert("Please enter an address!");
-        if (isNaN(lat) || isNaN(lng)) return alert("Please enter valid Latitude and Longitude!");
-
-        // GEOFENCE CHECK (Ref: Haversine)
-        const distance = this.calculateDistance(lat, lng, this.ProductionHub.lat, this.ProductionHub.lng);
-        console.log(`Geofence Verification: ${distance.toFixed(2)} km from Hub`);
-
-        if (distance > this.MaxDeliveryRadiusKm) {
-            if (errorMsg) errorMsg.classList.remove('hidden');
-            return; // Block save
-        } else {
-            if (errorMsg) errorMsg.classList.add('hidden');
-        }
+        if (!addrText) return alert("Please tap the map to set a location!");
 
         // Add to array state
         this.savedAddresses.push({ address: addrText, category: 'Others', lat, lng });
-        
-        // Persist to storage
         localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
         
         // UI Refresh
         this.renderSavedAddresses();
         this.toggleAddAddressForm(false);
         this.showNotificationToast("Address Added Successfully! 📍", 'success');
+
+        // INSTANT ALERT DISMISSAL (Ref 3)
+        this.toggleServiceAlerts(false); 
+        localStorage.setItem('h2o_last_address', addrText);
+        this.updateLocationUI("Ballari");
     },
 
     deleteAddress(index) {
@@ -312,6 +307,9 @@ const AppEngine = {
         if (locSub) locSub.innerText = address;
 
         localStorage.setItem('h2o_last_address', address);
+
+        // Force clear red alerts if valid address selected (Ref 3)
+        this.toggleServiceAlerts(false);
 
         if (autoSave) {
             const exists = this.savedAddresses.some(a => a.address === address);

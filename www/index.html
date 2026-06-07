@@ -430,23 +430,64 @@
                     <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Mark Location on Radar Map</label>
                         
-                        <!-- INTERACTIVE PIN-DROP CANVAS (New) -->
-                        <div id="radar-map-canvas" onclick="AppEngine.handleMapClick(event)" class="w-full h-[220px] bg-[#111827] border border-[#1E294B] rounded-2xl relative overflow-hidden cursor-crosshair shadow-inner group">
-                            <!-- Hub Indicator (Center) -->
-                            <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-teal-500/20 rounded-full border border-teal-500/40 animate-pulse"></div>
+                        <!-- INTERACTIVE VECTOR MAP INTERFACE (Overhaul) -->
+                        <div id="radar-map-canvas" onclick="AppEngine.handleMapClick(event)" class="w-full h-[260px] bg-[#0A0E1A] border border-[#1E294B] rounded-[32px] relative overflow-hidden cursor-crosshair shadow-2xl">
+                            <!-- SVG VECTOR LAYER -->
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <!-- Geofence Zones -->
+                                <circle cx="50" cy="50" r="35" fill="rgba(0, 188, 212, 0.05)" stroke="rgba(0, 188, 212, 0.2)" stroke-width="0.5" stroke-dasharray="2" />
+                                <circle cx="50" cy="50" r="50" fill="rgba(244, 63, 94, 0.03)" stroke="none" />
+                                
+                                <!-- Concentric Rings -->
+                                <circle cx="50" cy="50" r="10" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.2" />
+                                <circle cx="50" cy="50" r="20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.2" />
+                                
+                                <!-- Roadway Vectors (Simulated) -->
+                                <path d="M 0 50 L 100 50" stroke="rgba(30, 41, 75, 0.5)" stroke-width="0.5" />
+                                <path d="M 50 0 L 50 100" stroke="rgba(30, 41, 75, 0.5)" stroke-width="0.5" />
+                                <path d="M 20 20 L 80 80" stroke="rgba(30, 41, 75, 0.3)" stroke-width="0.3" />
+                                <path d="M 80 20 L 20 80" stroke="rgba(30, 41, 75, 0.3)" stroke-width="0.3" />
+                            </svg>
+
+                            <!-- LANDMARK MARKERS -->
+                            <!-- Sri Rampura Colony (Hub) -->
+                            <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                                <div class="w-2 h-2 bg-[#00BCD4] rounded-full shadow-[0_0_10px_#00BCD4]"></div>
+                                <span class="text-[6px] font-bold text-[#00BCD4] mt-1 uppercase tracking-tighter">Production Hub</span>
+                            </div>
                             
-                            <!-- Radar Grid -->
-                            <div class="absolute inset-0 opacity-[0.05] pointer-events-none" style="background-image: radial-gradient(#00BCD4 1px, transparent 1px); background-size: 30px 30px;"></div>
-                            
-                            <!-- DYNAMIC MAP PIN -->
-                            <div id="map-pin-target" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full text-[#00BCD4] transition-all duration-300 pointer-events-none drop-shadow-[0_5px_15px_rgba(0,188,212,0.4)]">
-                                <i class="fa-solid fa-map-pin text-3xl"></i>
+                            <!-- City Center -->
+                            <div class="absolute left-[55%] top-[45%] flex flex-col items-center opacity-40">
+                                <div class="w-1 h-1 bg-slate-500 rounded-full"></div>
+                                <span class="text-[5px] font-bold text-slate-500 mt-1 uppercase">City Center</span>
                             </div>
 
-                            <p class="absolute bottom-3 left-0 right-0 text-center text-[8px] font-black text-slate-600 uppercase tracking-[0.2em] pointer-events-none group-hover:text-teal-500 transition">Tap anywhere to drop pin</p>
+                            <!-- Cantonment -->
+                            <div class="absolute left-[42%] top-[58%] flex flex-col items-center opacity-40">
+                                <div class="w-1 h-1 bg-slate-500 rounded-full"></div>
+                                <span class="text-[5px] font-bold text-slate-500 mt-1 uppercase">Cantonment</span>
+                            </div>
+                            
+                            <!-- DYNAMIC MAP PIN -->
+                            <div id="map-pin-target" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full text-[#00BCD4] transition-all duration-300 pointer-events-none drop-shadow-[0_5px_15px_rgba(0,188,212,0.4)] z-50">
+                                <i class="fa-solid fa-location-dot text-4xl"></i>
+                            </div>
+
+                            <!-- Zone Warning Labels -->
+                            <div class="absolute top-4 right-4 bg-rose-500/10 border border-rose-500/20 px-2 py-1 rounded-md">
+                                <span class="text-[7px] font-black text-rose-500 uppercase tracking-widest">Off Limits</span>
+                            </div>
+                            <div class="absolute top-4 left-4 bg-teal-500/10 border border-teal-500/20 px-2 py-1 rounded-md">
+                                <span class="text-[7px] font-black text-teal-500 uppercase tracking-widest">Delivery Safe</span>
+                            </div>
                         </div>
 
-                        <textarea id="new-address-input" rows="2" placeholder="Enter building name, flat number, etc..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition"></textarea>
+                        <!-- Automated Address Preview Display (Ref 2) -->
+                        <div class="bg-slate-950/50 border border-[#1E294B] rounded-2xl p-4 space-y-1">
+                            <label class="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">Auto-Generated Address</label>
+                            <p id="generated-address-text" class="text-slate-400 text-xs italic">Tap the map to set location...</p>
+                            <input type="hidden" id="new-address-input">
+                        </div>
                         
                         <div class="flex gap-4">
                             <div class="flex-1 space-y-1">
