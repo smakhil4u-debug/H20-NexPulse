@@ -429,11 +429,23 @@
                 <div id="add-address-form" class="hidden space-y-6 animate-fadeIn">
                     <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Enter Address Details</label>
-                        <textarea id="new-address-input" rows="4" placeholder="Enter full street address, apartment, building number..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition"></textarea>
+                        <textarea id="new-address-input" rows="3" placeholder="Enter full street address, apartment, building number..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition"></textarea>
+                        
+                        <div class="flex gap-4">
+                            <div class="flex-1 space-y-2">
+                                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Latitude</label>
+                                <input type="number" id="new-address-lat" step="any" placeholder="15.1384" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition">
+                            </div>
+                            <div class="flex-1 space-y-2">
+                                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Longitude</label>
+                                <input type="number" id="new-address-lng" step="any" placeholder="76.9244" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition">
+                            </div>
+                        </div>
+                        <p id="geofence-error" class="text-[10px] text-rose-500 font-bold uppercase hidden">Out of Service Zone: Location falls outside our 35km delivery radius</p>
                     </div>
                     <div class="flex gap-4">
                         <button onclick="AppEngine.toggleAddAddressForm(false)" class="flex-1 py-4 bg-slate-800 rounded-2xl font-bold text-slate-400 text-xs uppercase">Cancel</button>
-                        <button onclick="AppEngine.addNewAddress()" class="flex-[2] py-4 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl shadow-teal-900/20 text-xs uppercase tracking-widest">Save Address</button>
+                        <button onclick="AppEngine.addNewAddress()" id="btn-save-new-address" class="flex-[2] py-4 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl shadow-teal-900/20 text-xs uppercase tracking-widest">Save Address</button>
                     </div>
                 </div>
             </div>

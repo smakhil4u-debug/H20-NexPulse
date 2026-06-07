@@ -25,6 +25,8 @@ const AppEngine = {
         merchant_name: "H2O NexPulse",
         default_deposit_amount: 2000
     },
+    ProductionHub: { lat: 15.1384, lng: 76.9244 }, // Sri Rampura Colony, Ballari
+    MaxDeliveryRadiusKm: 35,
     paymentPending: false,
     activeCouponTab: 'collected',
     expandedCouponCode: null,
@@ -208,12 +210,30 @@ const AppEngine = {
 
     async addNewAddress() {
         const input = document.getElementById('new-address-input');
+        const latInput = document.getElementById('new-address-lat');
+        const lngInput = document.getElementById('new-address-lng');
+        const errorMsg = document.getElementById('geofence-error');
+        
         const addrText = input.value.trim();
+        const lat = parseFloat(latInput.value);
+        const lng = parseFloat(lngInput.value);
         
         if (!addrText) return alert("Please enter an address!");
+        if (isNaN(lat) || isNaN(lng)) return alert("Please enter valid Latitude and Longitude!");
+
+        // GEOFENCE CHECK (Ref: Haversine)
+        const distance = this.calculateDistance(lat, lng, this.ProductionHub.lat, this.ProductionHub.lng);
+        console.log(`Geofence Verification: ${distance.toFixed(2)} km from Hub`);
+
+        if (distance > this.MaxDeliveryRadiusKm) {
+            if (errorMsg) errorMsg.classList.remove('hidden');
+            return; // Block save
+        } else {
+            if (errorMsg) errorMsg.classList.add('hidden');
+        }
 
         // Add to array state
-        this.savedAddresses.push({ address: addrText, category: 'Others' });
+        this.savedAddresses.push({ address: addrText, category: 'Others', lat, lng });
         
         // Persist to storage
         localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
