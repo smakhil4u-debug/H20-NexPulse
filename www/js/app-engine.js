@@ -208,6 +208,59 @@ const AppEngine = {
         }
     },
 
+    // --- PIN-DROP RADAR LOGIC (Ref: 1000301002.jpg Fix) ---
+    handleMapClick(e) {
+        const canvas = document.getElementById('radar-map-canvas');
+        const pin = document.getElementById('map-pin-target');
+        const latInput = document.getElementById('new-address-lat');
+        const lngInput = document.getElementById('new-address-lng');
+        const errorMsg = document.getElementById('geofence-error');
+
+        if (!canvas || !pin) return;
+
+        // 1. Get click position relative to canvas center
+        const rect = canvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const offsetX = clickX - centerX;
+        const offsetY = clickY - centerY;
+
+        // 2. Map to Coordinates (Scale around Hub)
+        // Approx: 0.001 degree is ~111 meters. 
+        // Let's set scale: 1 pixel = 200 meters (~0.0018 degrees)
+        const scale = 0.0018; 
+        const newLat = this.ProductionHub.lat - (offsetY * (scale / 10)); // Vertical offset
+        const newLng = this.ProductionHub.lng + (offsetX * (scale / 10)); // Horizontal offset
+
+        // 3. Update Inputs
+        latInput.value = newLat.toFixed(6);
+        lngInput.value = newLng.toFixed(6);
+
+        // 4. Move Visual Pin
+        pin.style.left = `${clickX}px`;
+        pin.style.top = `${clickY}px`;
+        pin.style.transform = `translate(-50%, -100%) scale(1.2)`;
+        setTimeout(() => pin.style.transform = `translate(-50%, -100%) scale(1)`, 200);
+
+        // 5. Real-time Geofence Check
+        const distance = this.calculateDistance(newLat, newLng, this.ProductionHub.lat, this.ProductionHub.lng);
+        if (distance > this.MaxDeliveryRadiusKm) {
+            errorMsg.classList.remove('hidden');
+            document.getElementById('btn-save-new-address').disabled = true;
+            document.getElementById('btn-save-new-address').style.opacity = '0.3';
+        } else {
+            errorMsg.classList.add('hidden');
+            document.getElementById('btn-save-new-address').disabled = false;
+            document.getElementById('btn-save-new-address').style.opacity = '1';
+        }
+        
+        console.log(`Pin Dropped: ${newLat}, ${newLng} | Distance: ${distance.toFixed(2)}km`);
+    },
+
     async addNewAddress() {
         const input = document.getElementById('new-address-input');
         const latInput = document.getElementById('new-address-lat');
