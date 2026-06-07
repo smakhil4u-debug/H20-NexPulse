@@ -147,6 +147,91 @@ const AppEngine = {
         if (locTitle) locTitle.innerHTML = `${name} <i class="fa-solid fa-chevron-down text-xs"></i>`;
     },
 
+    renderSavedAddresses() {
+        const target = document.getElementById('dynamic-saved-addresses-target');
+        if (!target) return;
+
+        if (this.savedAddresses.length === 0) {
+            target.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-10 px-6 text-center space-y-4 opacity-80">
+                    <div class="w-32 h-32 bg-teal-500/5 rounded-full flex items-center justify-center relative border border-teal-500/10">
+                        <i class="fa-solid fa-map-location-dot text-6xl text-teal-500/20"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="text-lg font-bold text-white">No Saved Addresses</h4>
+                        <p class="text-xs text-slate-400 font-medium">Add an address to speed up checkout.</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '<div class="space-y-3">';
+        this.savedAddresses.forEach((item, idx) => {
+            let icon = 'fa-map-pin';
+            if (item.category === 'Home') icon = 'fa-house';
+            if (item.category === 'Office') icon = 'fa-briefcase';
+
+            html += `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition group relative">
+                    <div onclick="AppEngine.selectCurrentLocation('${item.address}')" class="flex-1 flex items-center gap-4">
+                        <div class="text-teal-400/50"><i class="fa-solid ${icon} text-xl"></i></div>
+                        <div class="flex-1">
+                            <div class="text-white text-xs font-bold">${item.category || 'Other'}</div>
+                            <p class="text-slate-400 text-[10px] leading-tight mt-0.5">${item.address}</p>
+                        </div>
+                    </div>
+                    <button onclick="AppEngine.deleteAddress(${idx})" class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white transition">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                </div>
+            `;
+        });
+        html += '</div>';
+        target.innerHTML = html;
+    },
+
+    toggleAddAddressForm(show) {
+        const listView = document.getElementById('location-list-view');
+        const addForm = document.getElementById('add-address-form');
+        
+        if (show) {
+            listView.classList.add('hidden');
+            addForm.classList.remove('hidden');
+            document.getElementById('new-address-input').focus();
+        } else {
+            listView.classList.remove('hidden');
+            addForm.classList.add('hidden');
+            document.getElementById('new-address-input').value = "";
+        }
+    },
+
+    async addNewAddress() {
+        const input = document.getElementById('new-address-input');
+        const addrText = input.value.trim();
+        
+        if (!addrText) return alert("Please enter an address!");
+
+        // Add to array state
+        this.savedAddresses.push({ address: addrText, category: 'Others' });
+        
+        // Persist to storage
+        localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
+        
+        // UI Refresh
+        this.renderSavedAddresses();
+        this.toggleAddAddressForm(false);
+        this.showNotificationToast("Address Added Successfully! 📍", 'success');
+    },
+
+    deleteAddress(index) {
+        if (confirm("Remove this address?")) {
+            this.savedAddresses.splice(index, 1);
+            localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
+            this.renderSavedAddresses();
+        }
+    },
+
     selectCurrentLocation(address, autoSave = false) {
         const locTitle = document.querySelector('.location-banner h4');
         const locSub = document.querySelector('.location-banner p');

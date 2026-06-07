@@ -409,29 +409,31 @@
                     </div>
                 </div>
 
-                <!-- Add Address Button -->
-                <button onclick="AppEngine.openCheckout()" class="w-full border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm active:scale-95 transition text-left">
-                    <div class="text-teal-400 text-2xl"><i class="fa-solid fa-plus"></i></div>
-                    <div class="text-teal-400 font-black text-sm tracking-wide">ADD ADDRESS</div>
-                </button>
+                <!-- Add Address Section -->
+                <div id="location-list-view" class="space-y-4">
+                    <button onclick="AppEngine.toggleAddAddressForm(true)" class="w-full border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm active:scale-95 transition text-left">
+                        <div class="text-teal-400 text-2xl"><i class="fa-solid fa-plus"></i></div>
+                        <div class="text-teal-400 font-black text-sm tracking-wide">ADD ADDRESS</div>
+                    </button>
 
-                <!-- Saved Addresses Section -->
-                <div class="pt-12">
-                    <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] mb-8 uppercase text-center">Saved Addresses</div>
-                    
-                    <div id="dynamic-saved-addresses-target">
-                        <!-- Content will be injected by AppEngine.renderSavedAddresses() -->
-                        <div class="flex flex-col items-center justify-center space-y-4 opacity-80">
-                            <div class="w-40 h-40 bg-teal-500/5 rounded-full flex items-center justify-center relative">
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <i class="fa-solid fa-map-location-dot text-7xl text-teal-500/20"></i>
-                                </div>
-                            </div>
-                            <div class="space-y-1 text-center">
-                                <h4 class="text-lg font-black text-white">No Saved Addresses</h4>
-                                <p class="text-xs text-slate-400 font-medium">Add an address to speed up checkout.</p>
-                            </div>
+                    <!-- Saved Addresses Sub-Section -->
+                    <div class="pt-8">
+                        <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] mb-6 uppercase text-center">Saved Addresses</div>
+                        <div id="dynamic-saved-addresses-target">
+                            <!-- Empty State or List will be injected here -->
                         </div>
+                    </div>
+                </div>
+
+                <!-- ADD ADDRESS FORM (Hidden initially) -->
+                <div id="add-address-form" class="hidden space-y-6 animate-fadeIn">
+                    <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Enter Address Details</label>
+                        <textarea id="new-address-input" rows="4" placeholder="Enter full street address, apartment, building number..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition"></textarea>
+                    </div>
+                    <div class="flex gap-4">
+                        <button onclick="AppEngine.toggleAddAddressForm(false)" class="flex-1 py-4 bg-slate-800 rounded-2xl font-bold text-slate-400 text-xs uppercase">Cancel</button>
+                        <button onclick="AppEngine.addNewAddress()" class="flex-[2] py-4 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl shadow-teal-900/20 text-xs uppercase tracking-widest">Save Address</button>
                     </div>
                 </div>
             </div>
