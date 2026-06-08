@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>H2O NexPulse Engine</title>
-    <!-- Local Assets -->
+    <!-- Tailwind CSS (Local Fallback) -->
     <script src="js/tailwind.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Firebase SDKs (Local) -->
     <script src="js/firebase-app.js"></script>
     <script src="js/firebase-auth.js"></script>
@@ -149,38 +154,34 @@
         <div id="sub-modal" class="fixed inset-0 bg-slate-950/95 z-[150] hidden flex items-end">
             <div class="w-full glass-card rounded-t-[40px] p-8 space-y-6">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-2xl font-black font-brand">SMART <span class="text-teal-500">SCHEDULER</span></h3>
-                    <button onclick="AppEngine.closeSubscriptionFlow()" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center"><i data-lucide="x" class="w-5 h-5 text-white"></i></button>
+                    <h3 class="text-2xl font-black font-brand tracking-tighter" id="sub-prod-name">---</h3>
+                    <button onclick="AppEngine.closeSubscriptionFlow()" class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 
-                <p id="sub-product-name" class="text-sm font-bold text-teal-400">20L Pure Water Can</p>
-
                 <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] uppercase font-bold text-slate-500">Delivery Frequency</label>
-                        <div class="flex gap-2 mt-2">
-                            <button id="freq-daily" onclick="AppEngine.setSubFreq('daily')" class="flex-1 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400 transition">Daily</button>
-                            <button id="freq-weekly" onclick="AppEngine.setSubFreq('weekly')" class="flex-1 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400 transition">Weekly</button>
-                            <button id="freq-custom" onclick="AppEngine.setSubFreq('custom')" class="flex-1 py-3 rounded-xl border border-teal-500/50 bg-teal-500/10 text-xs font-bold text-teal-400 transition">Custom</button>
-                        </div>
-                    </div>
-
-                    <div id="day-picker" class="space-y-2">
-                        <label class="text-[10px] uppercase font-bold text-slate-500">Select Days</label>
-                        <div class="flex justify-between">
-                            <button onclick="AppEngine.toggleSubDay(1)" id="day-1" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold">M</button>
-                            <button onclick="AppEngine.toggleSubDay(2)" id="day-2" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold">T</button>
-                            <button onclick="AppEngine.toggleSubDay(3)" id="day-3" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold">W</button>
-                            <button onclick="AppEngine.toggleSubDay(4)" id="day-4" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold">T</button>
-                            <button onclick="AppEngine.toggleSubDay(5)" id="day-5" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold">F</button>
-                            <button onclick="AppEngine.toggleSubDay(6)" id="day-6" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold text-rose-400">S</button>
-                            <button onclick="AppEngine.toggleSubDay(0)" id="day-0" class="w-8 h-8 rounded-full border border-slate-800 text-[10px] font-bold text-rose-400">S</button>
-                        </div>
+                    <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Frequency</label>
+                    <div class="flex gap-2">
+                        <button id="freq-daily" onclick="AppEngine.setSubFreq('daily')" class="flex-1 py-3 rounded-xl border border-teal-500/50 bg-teal-500/10 text-xs font-bold text-teal-400 transition">Daily</button>
+                        <button id="freq-alt" onclick="AppEngine.setSubFreq('alt')" class="flex-1 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400 transition">Alt Days</button>
+                        <button id="freq-custom" onclick="AppEngine.setSubFreq('custom')" class="flex-1 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400 transition">Custom</button>
                     </div>
                 </div>
 
-                <button onclick="AppEngine.confirmSubscription()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition">
-                    ACTIVATE SUBSCRIPTION
+                <div class="space-y-4" id="custom-days-picker">
+                    <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Delivery Days</label>
+                    <div class="flex justify-between gap-1">
+                        <button class="day-btn" data-day="1">M</button>
+                        <button class="day-btn" data-day="2">T</button>
+                        <button class="day-btn" data-day="3">W</button>
+                        <button class="day-btn" data-day="4">T</button>
+                        <button class="day-btn" data-day="5">F</button>
+                        <button class="day-btn" data-day="6">S</button>
+                        <button class="day-btn" data-day="0">S</button>
+                    </div>
+                </div>
+
+                <button onclick="AppEngine.saveSubscription()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition uppercase tracking-widest">
+                    ACTIVATE SCHEDULE
                 </button>
             </div>
         </div>
@@ -226,6 +227,126 @@
                 <!-- Search Results Target -->
                 <div id="search-results-target" class="space-y-4">
                     <!-- Dynamic search results here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW PANEL: SELECT LOCATION (New) -->
+        <section class="view-panel p-0 bg-slate-950" id="view-select-location">
+            <div class="bg-teal-600 p-6 flex items-center gap-4 text-white sticky top-0 z-[110]">
+                <button onclick="navigateTo('home')" class="text-2xl"><i class="fa-solid fa-chevron-left"></i></button>
+                <h2 class="text-xl font-bold flex-1 text-center pr-8">Select a location</h2>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <!-- Current Location Card -->
+                <div onclick="AppEngine.selectCurrentLocation('36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India', true)" class="border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm cursor-pointer active:scale-95 transition">
+                    <div class="text-teal-400 text-2xl"><i class="fa-solid fa-crosshairs"></i></div>
+                    <div class="flex-1">
+                        <div class="text-teal-400 font-black text-sm tracking-wide">CURRENT LOCATION</div>
+                        <p class="text-slate-400 text-[11px] font-medium leading-tight mt-1">36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India</p>
+                    </div>
+                </div>
+
+                <!-- Add Address Section -->
+                <div id="location-list-view" class="space-y-4">
+                    <button onclick="navigateTo('fully-interactive-map')" class="w-full bg-[#00BCD4] rounded-2xl p-6 flex items-center gap-4 shadow-xl shadow-teal-900/20 active:scale-95 transition text-left group">
+                        <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-white text-2xl group-hover:scale-110 transition"><i class="fa-solid fa-map-location-dot"></i></div>
+                        <div class="flex-1">
+                            <div class="text-[#0A0E1A] font-black text-sm tracking-widest uppercase">Open Map Picker</div>
+                            <p class="text-[#0A0E1A]/60 text-[10px] font-bold uppercase mt-0.5">Drop pin to set doorstep delivery</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-[#0A0E1A]/40"></i>
+                    </button>
+
+                    <button onclick="AppEngine.toggleAddAddressForm(true)" class="w-full border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm active:scale-95 transition text-left">
+                        <div class="text-teal-400 text-2xl"><i class="fa-solid fa-plus"></i></div>
+                        <div class="text-teal-400 font-black text-sm tracking-wide">ADD ADDRESS MANUALLY</div>
+                    </button>
+
+                    <!-- Saved Addresses Sub-Section -->
+                    <div class="pt-8">
+                        <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] mb-6 uppercase text-center">Saved Addresses</div>
+                        <div id="dynamic-saved-addresses-target">
+                            <!-- Empty State or List will be injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADD ADDRESS FORM (Hidden initially) -->
+                <div id="add-address-form" class="hidden space-y-6 animate-fadeIn">
+                    <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Enter Address Details</label>
+                        <textarea id="new-address-input" rows="3" placeholder="Enter full street address, apartment, building number..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition"></textarea>
+                        
+                        <div class="flex gap-4">
+                            <div class="flex-1 space-y-2">
+                                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Latitude</label>
+                                <input type="number" id="new-address-lat" step="any" placeholder="15.1384" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition">
+                            </div>
+                            <div class="flex-1 space-y-2">
+                                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Longitude</label>
+                                <input type="number" id="new-address-lng" step="any" placeholder="76.9244" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition">
+                            </div>
+                        </div>
+                        <p id="geofence-error" class="text-[10px] text-rose-500 font-bold uppercase hidden">Out of Service Zone: Location falls outside our 35km delivery radius</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <button onclick="AppEngine.toggleAddAddressForm(false)" class="flex-1 py-4 bg-slate-800 rounded-2xl font-bold text-slate-400 text-xs uppercase">Cancel</button>
+                        <button onclick="AppEngine.addNewAddress()" id="btn-save-new-address" class="flex-[2] py-4 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl shadow-teal-900/20 text-xs uppercase tracking-widest">Save Address</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW PANEL: FULLY INTERACTIVE MAP (React Design Translation) -->
+        <section class="view-panel p-0 bg-[#0A0E1A] flex-col" id="view-fully-interactive-map">
+            <!-- Sticky App Header Banner -->
+            <div class="bg-[#009688] text-white px-4 py-4 flex items-center gap-4 sticky top-0 z-50 shadow-md">
+                <div class="flex items-center gap-4">
+                    <button onclick="navigateTo('select-location')" class="p-1 active:bg-teal-800 rounded-full text-white">
+                        <i class="fa-solid fa-arrow-left text-xl"></i>
+                    </button>
+                    <div class="flex flex-col text-left">
+                        <h1 class="text-lg font-bold tracking-wide">Mark Delivery Spot</h1>
+                        <p class="text-[10px] text-teal-100 font-medium tracking-widest uppercase">Tap map to drop locator pin</p>
+                    </div>
+                </div>
+                <button onclick="AppEngine.openHelp('call')" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white active:bg-white/20 transition">
+                    <i class="fa-solid fa-phone-volume"></i>
+                </button>
+            </div>
+
+            <!-- Main Full-Bleed Map Dashboard Canvas -->
+            <div id="interactive-map-canvas" class="flex-1 w-full bg-[#0D1527] relative overflow-hidden border-b border-[#1E294B] min-h-[400px] z-10">
+                <!-- Leaflet Live Map will mount here -->
+            </div>
+
+            <!-- Lower Details Tray -->
+            <div class="bg-[#131A30] border-t border-[#1E294B] p-4 space-y-4 shadow-2xl max-w-md mx-auto w-full z-40">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">Automated Location Signature</label>
+                    <div id="map-address-display" class="bg-[#0A0E1A] border border-[#1E294B] rounded-xl px-4 py-3.5 text-sm text-gray-200 font-medium leading-relaxed shadow-inner">
+                        Ballari Production Center, Sri Rampura Colony Core Zone
+                    </div>
+                </div>
+
+                <!-- Distance Banner -->
+                <div id="map-distance-banner" class="p-4 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400">
+                    <div class="mt-0.5 shrink-0">
+                        <i class="fa-solid fa-paper-plane transform rotate-45 text-[#00BCD4]"></i>
+                    </div>
+                    <div class="text-xs space-y-1 leading-normal">
+                        <p id="map-distance-text" class="font-extrabold tracking-wide uppercase">Distance metrics: 0.00 KM from hub</p>
+                        <p id="map-status-desc" class="text-gray-400 font-medium">Service deliverable: We are actively dispatching to this location.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button onclick="navigateTo('select-location')" class="flex-1 bg-[#1E294B] border border-[#2E3B5E] text-gray-400 font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider active:bg-slate-800">Cancel</button>
+                    <button onclick="AppEngine.saveInteractiveLocation()" id="btn-save-interactive-map" class="flex-[2] bg-[#00BCD4] text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-widest shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition">
+                        <i class="fa-solid fa-check"></i> Save Address Location
+                    </button>
                 </div>
             </div>
         </section>
@@ -376,259 +497,7 @@
             </div>
         </section>
 
-        <!-- GLOBAL PROCESSING LOADER -->
-        <div id="global-loader" class="fixed inset-0 bg-slate-950/80 z-[1000] hidden flex flex-col items-center justify-center space-y-4">
-            <div class="w-12 h-12 border-4 border-teal-500/20 border-t-teal-500 rounded-full animate-spin"></div>
-            <p class="text-[10px] font-black text-teal-400 uppercase tracking-[0.3em]">Processing Transaction</p>
-        </div>
-
-        <!-- SUCCESS POPUP -->
-        <div id="success-popup" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-8 bg-slate-950/90 backdrop-blur-sm">
-            <div class="bg-slate-900 border border-white/5 rounded-[40px] p-10 w-full max-w-xs text-center space-y-6 scale-90 opacity-0 transition-all duration-500" id="success-card">
-                <div class="w-24 h-24 bg-teal-500 rounded-full flex items-center justify-center mx-auto text-white text-5xl shadow-2xl shadow-teal-500/40 animate-bounce"><i class="fa-solid fa-check"></i></div>
-                <div class="space-y-2">
-                    <h3 class="text-2xl font-black text-white">Subscription Active!</h3>
-                    <p class="text-sm text-slate-400">Welcome to the H2O NexPulse family. Your daily delivery starts tomorrow.</p>
-                </div>
-                <button onclick="AppEngine.closeSuccess()" class="w-full py-4 bg-slate-800 rounded-2xl font-bold text-white text-xs uppercase tracking-widest">GO TO DASHBOARD</button>
-            </div>
-        </div>
-        <section class="view-panel p-0 bg-slate-950" id="view-select-location">
-            <div class="bg-teal-600 p-6 flex items-center gap-4 text-white sticky top-0 z-[110]">
-                <button onclick="navigateTo('home')" class="text-2xl"><i class="fa-solid fa-chevron-left"></i></button>
-                <h2 class="text-xl font-bold flex-1 text-center pr-8">Select a location</h2>
-            </div>
-            
-            <div class="p-6 space-y-4">
-                <!-- Current Location Card -->
-                <div onclick="AppEngine.selectCurrentLocation('36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India', true)" class="border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm cursor-pointer active:scale-95 transition">
-                    <div class="text-teal-400 text-2xl"><i class="fa-solid fa-crosshairs"></i></div>
-                    <div class="flex-1">
-                        <div class="text-teal-400 font-black text-sm tracking-wide">CURRENT LOCATION</div>
-                        <p class="text-slate-400 text-[11px] font-medium leading-tight mt-1">36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India</p>
-                    </div>
-                </div>
-
-                <!-- Add Address Section -->
-                <div id="location-list-view" class="space-y-4">
-                    <button onclick="navigateTo('fully-interactive-map')" class="w-full bg-[#00BCD4] rounded-2xl p-6 flex items-center gap-4 shadow-xl shadow-teal-900/20 active:scale-95 transition text-left group">
-                        <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-white text-2xl group-hover:scale-110 transition"><i class="fa-solid fa-map-location-dot"></i></div>
-                        <div class="flex-1">
-                            <div class="text-[#0A0E1A] font-black text-sm tracking-widest uppercase">Open Map Picker</div>
-                            <p class="text-[#0A0E1A]/60 text-[10px] font-bold uppercase mt-0.5">Drop pin to set doorstep delivery</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-[#0A0E1A]/40"></i>
-                    </button>
-
-                    <button onclick="AppEngine.toggleAddAddressForm(true)" class="w-full border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm active:scale-95 transition text-left">
-                        <div class="text-teal-400 text-2xl"><i class="fa-solid fa-plus"></i></div>
-                        <div class="text-teal-400 font-black text-sm tracking-wide">ADD ADDRESS MANUALLY</div>
-                    </button>
-
-                    <!-- Saved Addresses Sub-Section -->
-                    <div class="pt-8">
-                        <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] mb-6 uppercase text-center">Saved Addresses</div>
-                        <div id="dynamic-saved-addresses-target">
-                            <!-- Empty State or List will be injected here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ADD ADDRESS FORM (Hidden initially) -->
-                <div id="add-address-form" class="hidden space-y-6 animate-fadeIn">
-                    <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Mark Location on Radar Map</label>
-                        
-                        <!-- INTERACTIVE VECTOR MAP INTERFACE (Overhaul) -->
-                        <div id="radar-map-canvas" onclick="AppEngine.handleMapClick(event)" class="w-full h-[260px] bg-[#0A0E1A] border border-[#1E294B] rounded-[32px] relative overflow-hidden cursor-crosshair shadow-2xl">
-                            <!-- SVG VECTOR LAYER -->
-                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                <!-- Geofence Zones -->
-                                <circle cx="50" cy="50" r="35" fill="rgba(0, 188, 212, 0.05)" stroke="rgba(0, 188, 212, 0.2)" stroke-width="0.5" stroke-dasharray="2" />
-                                <circle cx="50" cy="50" r="50" fill="rgba(244, 63, 94, 0.03)" stroke="none" />
-                                
-                                <!-- Concentric Rings -->
-                                <circle cx="50" cy="50" r="10" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.2" />
-                                <circle cx="50" cy="50" r="20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.2" />
-                                
-                                <!-- Roadway Vectors (Simulated) -->
-                                <path d="M 0 50 L 100 50" stroke="rgba(30, 41, 75, 0.5)" stroke-width="0.5" />
-                                <path d="M 50 0 L 50 100" stroke="rgba(30, 41, 75, 0.5)" stroke-width="0.5" />
-                                <path d="M 20 20 L 80 80" stroke="rgba(30, 41, 75, 0.3)" stroke-width="0.3" />
-                                <path d="M 80 20 L 20 80" stroke="rgba(30, 41, 75, 0.3)" stroke-width="0.3" />
-                            </svg>
-
-                            <!-- LANDMARK MARKERS -->
-                            <!-- Sri Rampura Colony (Hub) -->
-                            <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-                                <div class="w-2 h-2 bg-[#00BCD4] rounded-full shadow-[0_0_10px_#00BCD4]"></div>
-                                <span class="text-[6px] font-bold text-[#00BCD4] mt-1 uppercase tracking-tighter">Production Hub</span>
-                            </div>
-                            
-                            <!-- City Center -->
-                            <div class="absolute left-[55%] top-[45%] flex flex-col items-center opacity-40">
-                                <div class="w-1 h-1 bg-slate-500 rounded-full"></div>
-                                <span class="text-[5px] font-bold text-slate-500 mt-1 uppercase">City Center</span>
-                            </div>
-
-                            <!-- Cantonment -->
-                            <div class="absolute left-[42%] top-[58%] flex flex-col items-center opacity-40">
-                                <div class="w-1 h-1 bg-slate-500 rounded-full"></div>
-                                <span class="text-[5px] font-bold text-slate-500 mt-1 uppercase">Cantonment</span>
-                            </div>
-                            
-                            <!-- DYNAMIC MAP PIN -->
-                            <div id="map-pin-target" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full text-[#00BCD4] transition-all duration-300 pointer-events-none drop-shadow-[0_5px_15px_rgba(0,188,212,0.4)] z-50">
-                                <i class="fa-solid fa-location-dot text-4xl"></i>
-                            </div>
-
-                            <!-- Zone Warning Labels -->
-                            <div class="absolute top-4 right-4 bg-rose-500/10 border border-rose-500/20 px-2 py-1 rounded-md">
-                                <span class="text-[7px] font-black text-rose-500 uppercase tracking-widest">Off Limits</span>
-                            </div>
-                            <div class="absolute top-4 left-4 bg-teal-500/10 border border-teal-500/20 px-2 py-1 rounded-md">
-                                <span class="text-[7px] font-black text-teal-500 uppercase tracking-widest">Delivery Safe</span>
-                            </div>
-                        </div>
-
-                        <!-- Automated Address Preview Display (Ref 2) -->
-                        <div class="bg-slate-950/50 border border-[#1E294B] rounded-2xl p-4 space-y-1">
-                            <label class="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">Auto-Generated Address</label>
-                            <p id="generated-address-text" class="text-slate-400 text-xs italic">Tap the map to set location...</p>
-                            <input type="hidden" id="new-address-input">
-                        </div>
-                        
-                        <div class="flex gap-4">
-                            <div class="flex-1 space-y-1">
-                                <label class="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">Latitude</label>
-                                <input type="number" id="new-address-lat" step="any" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-400 text-xs outline-none">
-                            </div>
-                            <div class="flex-1 space-y-1">
-                                <label class="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">Longitude</label>
-                                <input type="number" id="new-address-lng" step="any" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-400 text-xs outline-none">
-                            </div>
-                        </div>
-                        <p id="geofence-error" class="text-[10px] text-rose-500 font-bold uppercase hidden">Out of Service Zone: Location falls outside our 35km delivery radius</p>
-                    </div>
-                    <div class="flex gap-4">
-                        <button onclick="AppEngine.toggleAddAddressForm(false)" class="flex-1 py-4 bg-slate-800 rounded-2xl font-bold text-slate-400 text-xs uppercase">Cancel</button>
-                        <button onclick="AppEngine.addNewAddress()" id="btn-save-new-address" class="flex-[2] py-4 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl shadow-teal-900/20 text-xs uppercase tracking-widest">Save Address</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL 1: HOME (Ref: 1000298513.jpg) -->
-        <section class="view-panel active" id="view-home">
-            <div class="promo-slider">
-                <div class="slide-content">
-                    <span class="brand-badge">Bisleri vedica</span>
-                    <h3>Himalayan Spring Water</h3>
-                    <p>A life full of altitude.</p>
-                </div>
-            </div>
-            
-            <div class="quick-category-row">
-                <div class="cat-chip active"><span>Daily H2O</span></div>
-                <div class="cat-chip"><span>Premium H2O</span></div>
-                <div class="cat-chip"><span>Change over</span></div>
-                <div class="cat-chip"><span>Traveling</span></div>
-            </div>
-
-            <div class="service-alert-box" id="alert-home">
-                <div class="alert-txt">
-                    <h3>Location not deliverable</h3>
-                    <p>Sorry, we are not delivering at this location at the moment.</p>
-                </div>
-                <div class="alert-icon-circle"><i class="fa-solid fa-xmark"></i></div>
-            </div>
-
-            <div class="banner-subscribe-cta">
-                <h3>Subscribe Once. <br><span class="highlight">Stay H2O daily.</span></h3>
-                <button class="cta-btn-sm" onclick="AppEngine.handleSubscriptionIntent()">SUBSCRIBE NOW</button>
-            </div>
-
-            <div class="grid-section">
-                <h3 class="section-title">Shop by Need</h3>
-                <div class="needs-grid">
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Daily H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Daily H2O</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Premium H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Premium H2O</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Change over')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Change over</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Traveling')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Traveling</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Party Mood')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Party Mood</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Glass H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Glass H2O</span></div>
-                </div>
-            </div>
-
-            <!-- ASSET LEDGER (Ref: 1000298470.jpg) -->
-            <div class="asset-ledger-section mt-8">
-                <div class="ledger-card">
-                    <div class="ledger-header">
-                        <h4><i class="fa-solid fa-box-open"></i> Physical Account Ledger</h4>
-                    </div>
-                    <div class="ledger-metrics">
-                        <div class="metric-node">
-                            <span class="metric-val" id="ui-jars-held">0</span>
-                            <span class="metric-lbl">Jars At Home</span>
-                        </div>
-                        <div class="metric-divider"></div>
-                        <div class="metric-node">
-                            <span class="metric-val" id="ui-deposit-held">₹0.00</span>
-                            <span class="metric-lbl">Security Deposit</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL 2: PRODUCTS (Ref: 1000298514.jpg) -->
-        <section class="view-panel" id="view-products">
-            <div class="view-header"><h2>Products</h2></div>
-            <div class="quick-category-row">
-                <div class="cat-chip active"><span>Daily H2O</span></div>
-                <div class="cat-chip"><span>Premium H2O</span></div>
-                <div class="cat-chip"><span>Change over</span></div>
-                <div class="cat-chip"><span>Traveling</span></div>
-            </div>
-            <div class="service-alert-box" id="alert-products">
-                <div class="alert-txt">
-                    <h3>Location not deliverable</h3>
-                    <p>Sorry, we are not delivering at this location at the moment.</p>
-                </div>
-                <div class="alert-icon-circle"><i class="fa-solid fa-xmark"></i></div>
-            </div>
-            <div id="dynamic-product-list-target" class="product-grid">
-                <!-- Products will be injected here -->
-                 <p class="loading-msg">Loading premium products...</p>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL 3: SUBSCRIPTIONS (Ref: 1000298515.jpg) -->
-        <section class="view-panel" id="view-subscriptions">
-            <div class="view-header"><h2>Subscription</h2></div>
-            <div class="sub-toggle-tabs">
-                <button class="sub-tab-btn active">Active Subscriptions</button>
-                <button class="sub-tab-btn">Inactive Subscriptions</button>
-            </div>
-            <div class="empty-state-view">
-                <div class="empty-vector">🫙❌</div>
-                <h3>No Active Subscriptions Found</h3>
-                <p>Add items to your cart and subscribe them now.</p>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL 4: CART (Ref: 1000298517.jpg) -->
-        <section class="view-panel" id="view-cart">
-            <div class="view-header"><h2>Cart</h2></div>
-            <div class="empty-state-view">
-                <div class="empty-vector">🛒❗</div>
-                <h3>Don't leave your cart high & dry</h3>
-                <p>Add some bottles to quench your thirst</p>
-                <button class="action-accent-button" onclick="navigateTo('products')">BROWSE PRODUCTS</button>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL 5: PROFILE (Premium Dark Design) -->
+        <!-- VIEW PANEL 4: PROFILE (Premium Dark Design) -->
         <section class="view-panel p-0 bg-[#0A0E1A]" id="view-profile">
             <!-- Top Application Header -->
             <div class="px-5 pt-6 pb-2 flex items-center justify-between">
@@ -950,8 +819,8 @@
 
             <div class="max-w-md mx-auto p-4 space-y-6">
                 <!-- Brand Acknowledgment Card -->
-                <div class="bg-[#131A30] p-5 rounded-xl border border-[#1E294B] shadow-xl flex items-start gap-4">
-                    <div class="p-3 bg-[#1E294B] rounded-lg text-[#00BCD4] shrink-0">
+                <div class="bg-[#131A30] p-5 rounded-xl border border-[#1E294B] flex items-start gap-4 shadow-xl">
+                    <div class="p-3 bg-[#1E294B] text-[#00BCD4] rounded-lg shrink-0">
                         <i class="fa-solid fa-shield-check text-xl"></i>
                     </div>
                     <div>
@@ -1058,90 +927,6 @@
             </div>
         </section>
 
-        <!-- VIEW PANEL: FULLY INTERACTIVE MAP (React Design Translation) -->
-        <section class="view-panel p-0 bg-[#0A0E1A] flex-col" id="view-fully-interactive-map">
-            <!-- Sticky App Header Banner -->
-            <div class="bg-[#009688] text-white px-4 py-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
-                <div class="flex items-center gap-4">
-                    <button onclick="navigateTo('select-location')" class="p-1 active:bg-teal-800 rounded-full text-white">
-                        <i class="fa-solid fa-arrow-left text-xl"></i>
-                    </button>
-                    <div class="flex flex-col text-left">
-                        <h1 class="text-lg font-bold tracking-wide">Mark Delivery Spot</h1>
-                        <p class="text-[10px] text-teal-100 font-medium tracking-widest uppercase">Tap map to drop locator pin</p>
-                    </div>
-                </div>
-                <button onclick="AppEngine.openHelp('call')" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white active:bg-white/20 transition">
-                    <i class="fa-solid fa-phone-volume"></i>
-                </button>
-            </div>
-
-            <!-- Main Full-Bleed Map Dashboard Canvas -->
-            <div id="interactive-map-canvas" onclick="AppEngine.handleMapSelection(event)" class="flex-1 w-full bg-[#0D1527] relative overflow-hidden cursor-crosshair border-b border-[#1E294B] min-h-[400px]">
-                <!-- Visual Map Grid -->
-                <div class="absolute inset-0 opacity-[0.15]" style="background-image: linear-gradient(#00BCD4 1px, transparent 1px), linear-gradient(90deg, #00BCD4 1px, transparent 1px); background-size: 24px 24px;"></div>
-                
-                <!-- SVG Roadway Vectors -->
-                <svg class="absolute inset-0 w-full h-full opacity-20 pointer-events-none">
-                    <path d="M-50,100 L600,400 M200,-50 L250,700 M0,300 C150,200 300,500 500,250" stroke="#00BCD4" stroke-width="3" fill="none" />
-                    <path d="M100,-20 L120,650 M-20,220 L550,220" stroke="#1E294B" stroke-width="1.5" stroke-dasharray="4" fill="none" />
-                </svg>
-
-                <!-- Ballari Hub Marker -->
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none z-10">
-                    <div class="w-4 h-4 rounded-full bg-teal-400 border-2 border-white shadow-[0_0_12px_#00BCD4] z-10"></div>
-                    <div class="w-8 h-8 rounded-full bg-teal-500/30 animate-ping absolute -top-2"></div>
-                    <span class="text-[9px] font-bold text-teal-400 bg-[#0A0E1A] border border-[#009688] px-1.5 py-0.5 rounded shadow-md mt-1.5 whitespace-nowrap uppercase tracking-wider">
-                        Ballari Hub
-                    </span>
-                </div>
-
-                <!-- 35km Geofence Ring -->
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] border-2 border-dashed border-[#009688]/40 rounded-full pointer-events-none flex items-center justify-center bg-teal-500/[0.02]">
-                    <span class="text-[8px] text-gray-500 font-extrabold uppercase tracking-[0.2em] mt-56">35KM Service Cutoff Bound</span>
-                </div>
-
-                <!-- Live Map Dropped Pin Interface -->
-                <div id="live-map-pin" class="absolute -translate-x-1/2 -translate-y-[90%] transition-all duration-200 pointer-events-none flex flex-col items-center z-30" style="left: 50%; top: 50%;">
-                    <i class="fa-solid fa-location-dot text-[#00BCD4] text-4xl drop-shadow-2xl"></i>
-                    <div class="w-3 h-3 rounded-full absolute bottom-0 animate-ping opacity-70 bg-cyan-400"></div>
-                </div>
-
-                <!-- Area Tags -->
-                <div class="absolute top-12 left-8 text-[10px] text-gray-600 font-bold tracking-wide pointer-events-none uppercase bg-[#0A0E1A]/40 px-2 py-0.5 rounded border border-[#1E294B]/40">Moka Sector</div>
-                <div class="absolute bottom-16 right-12 text-[10px] text-gray-600 font-bold tracking-wide pointer-events-none uppercase bg-[#0A0E1A]/40 px-2 py-0.5 rounded border border-[#1E294B]/40">Kudligi Route</div>
-                <div class="absolute top-1/3 right-6 text-[10px] text-gray-600 font-bold tracking-wide pointer-events-none uppercase bg-[#0A0E1A]/40 px-2 py-0.5 rounded border border-[#1E294B]/40">Siruguppa Zone</div>
-            </div>
-
-            <!-- Lower Details Tray -->
-            <div class="bg-[#131A30] border-t border-[#1E294B] p-4 space-y-4 shadow-2xl max-w-md mx-auto w-full z-40">
-                <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">Automated Location Signature</label>
-                    <div id="map-address-display" class="bg-[#0A0E1A] border border-[#1E294B] rounded-xl px-4 py-3.5 text-sm text-gray-200 font-medium leading-relaxed shadow-inner">
-                        Ballari Production Center, Sri Rampura Colony Core Zone
-                    </div>
-                </div>
-
-                <!-- Distance Banner -->
-                <div id="map-distance-banner" class="p-4 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400">
-                    <div class="mt-0.5 shrink-0">
-                        <i class="fa-solid fa-paper-plane transform rotate-45 text-[#00BCD4]"></i>
-                    </div>
-                    <div class="text-xs space-y-1 leading-normal">
-                        <p id="map-distance-text" class="font-extrabold tracking-wide uppercase">Distance metrics: 0.00 KM from hub</p>
-                        <p id="map-status-desc" class="text-gray-400 font-medium">Service deliverable: We are actively dispatching to this location.</p>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <button onclick="navigateTo('select-location')" class="flex-1 bg-[#1E294B] border border-[#2E3B5E] text-gray-400 font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider active:bg-slate-800">Cancel</button>
-                    <button onclick="AppEngine.saveInteractiveLocation()" id="btn-save-interactive-map" class="flex-[2] bg-[#00BCD4] text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-widest shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition">
-                        <i class="fa-solid fa-check"></i> Save Address Location
-                    </button>
-                </div>
-            </div>
-        </section>
-
         <!-- VIEW PANEL: COLLECTED COUPONS (Dark Mode Overhaul) -->
         <section class="view-panel p-0 bg-[#0A0E1A]" id="view-coupons">
             <!-- Top Application Navigation Header -->
@@ -1230,25 +1015,107 @@
             </div>
         </section>
 
-        <!-- SUB-VIEW PANEL 6: ORDER CALENDAR (Ref: 1000298516.jpg) -->
-        <section class="view-panel" id="view-calendar">
-            <div class="sub-view-navigation">
-                <button class="back-link-btn" onclick="navigateTo('profile')"><i class="fa-solid fa-chevron-left"></i> Order Calendar</button>
-            </div>
-            <div class="calendar-interface-widget">
-                <!-- Grid layouts rendering dates mapping to June 2026 -->
-                <div class="calendar-month-header"><h4>June 2026</h4></div>
-                <div class="calendar-days-grid">
-                    <!-- Standard day matrix blocks -->
-                    <div class="day-lbl">S</div><div class="day-lbl">M</div><div class="day-lbl">T</div><div class="day-lbl">W</div><div class="day-lbl">T</div><div class="day-lbl">F</div><div class="day-lbl">S</div>
-                    <div></div><div class="day-cell">1</div><div class="day-cell">2</div><div class="day-cell">3</div><div class="day-cell today">4</div><div class="day-cell">5</div><div class="day-cell">6</div>
-                </div>
-                <div class="status-legend-row">
-                    <span><span class="dot delayed"></span> Delayed</span>
-                    <span><span class="dot delivered"></span> Delivered</span>
-                    <span><span class="dot upcoming"></span> Upcoming</span>
+        <section class="view-panel active" id="view-home">
+            <div class="promo-slider">
+                <div class="slide-content">
+                    <span class="brand-badge">Bisleri vedica</span>
+                    <h3>Himalayan Spring Water</h3>
+                    <p>A life full of altitude.</p>
                 </div>
             </div>
+            
+            <div class="quick-category-row">
+                <div class="cat-chip active"><span>Daily H2O</span></div>
+                <div class="cat-chip"><span>Premium H2O</span></div>
+                <div class="cat-chip"><span>Change over</span></div>
+                <div class="cat-chip"><span>Traveling</span></div>
+            </div>
+
+            <div class="service-alert-box" id="alert-home">
+                <div class="alert-txt">
+                    <h3>Location not deliverable</h3>
+                    <p>Sorry, we are not delivering at this location at the moment.</p>
+                </div>
+                <div class="alert-icon-circle"><i class="fa-solid fa-xmark"></i></div>
+            </div>
+
+            <div class="banner-subscribe-cta">
+                <h3>Subscribe Once. <br><span class="highlight">Stay H2O daily.</span></h3>
+                <button class="cta-btn-sm" onclick="AppEngine.handleSubscriptionIntent()">SUBSCRIBE NOW</button>
+            </div>
+
+            <div class="grid-section">
+                <h3 class="section-title">Shop by Need</h3>
+                <div class="needs-grid">
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Daily H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Daily H2O</span></div>
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Premium H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Premium H2O</span></div>
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Change over')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Change over</span></div>
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Traveling')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Traveling</span></div>
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Party Mood')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Party Mood</span></div>
+                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Glass H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Glass H2O</span></div>
+                </div>
+            </div>
+
+            <!-- ASSET LEDGER (Ref: 1000298470.jpg) -->
+            <div class="asset-ledger-section mt-8">
+                <div class="ledger-card">
+                    <div class="ledger-header">
+                        <h4><i class="fa-solid fa-box-open"></i> Physical Account Ledger</h4>
+                    </div>
+                    <div class="ledger-metrics">
+                        <div class="metric-node">
+                            <span class="metric-val" id="ui-jars-held">0</span>
+                            <span class="metric-lbl">Jars At Home</span>
+                        </div>
+                        <div class="metric-divider"></div>
+                        <div class="metric-node">
+                            <span class="metric-val" id="ui-deposit-held">₹0.00</span>
+                            <span class="metric-lbl">Security Deposit</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW PANEL 2: PRODUCTS (Ref: 1000298514.jpg) -->
+        <section class="view-panel" id="view-products">
+            <div class="view-header"><h2>Products</h2></div>
+            <div class="quick-category-row">
+                <div class="cat-chip active"><span>Daily H2O</span></div>
+                <div class="cat-chip"><span>Premium H2O</span></div>
+                <div class="cat-chip"><span>Change over</span></div>
+                <div class="cat-chip"><span>Traveling</span></div>
+            </div>
+            <div class="service-alert-box" id="alert-products">
+                <div class="alert-txt">
+                    <h3>Location not deliverable</h3>
+                    <p>Sorry, we are not delivering at this location at the moment.</p>
+                </div>
+                <div class="alert-icon-circle"><i class="fa-solid fa-xmark"></i></div>
+            </div>
+            <div id="dynamic-product-list-target" class="space-y-4">
+                <!-- Real products will be injected here -->
+            </div>
+        </section>
+
+        <!-- VIEW PANEL 3: SUBSCRIPTIONS (Ref: 1000298515.jpg) -->
+        <section class="view-panel" id="view-subscriptions">
+            <!-- Dynamic Subscriptions will be injected here -->
+        </section>
+
+        <!-- VIEW PANEL: CART -->
+        <section class="view-panel" id="view-cart">
+            <div class="view-header"><h2>Cart</h2></div>
+            <div class="empty-state-view">
+                <div class="empty-vector">🛒❗</div>
+                <h3>Don't leave your cart high & dry</h3>
+                <p>Add some bottles to quench your thirst</p>
+                <button class="action-accent-button" onclick="navigateTo('products')">BROWSE PRODUCTS</button>
+            </div>
+        </section>
+
+        <section class="view-panel" id="view-history">
+            <div class="view-header"><h2>Orders</h2></div>
             <div class="empty-state-view">
                 <div class="empty-vector">📦❌</div>
                 <h3>No Orders Yet!</h3>
@@ -1339,12 +1206,27 @@
             </div>
         </div>
 
+        <!-- GLOBAL PROCESSING LOADER -->
+        <div id="global-loader" class="fixed inset-0 bg-slate-950/80 z-[1000] hidden flex flex-col items-center justify-center space-y-4">
+            <div class="w-12 h-12 border-4 border-teal-500/20 border-t-teal-500 rounded-full animate-spin"></div>
+            <p class="text-[10px] font-black text-teal-400 uppercase tracking-[0.3em]">Processing Transaction</p>
+        </div>
+
+        <!-- SUCCESS POPUP -->
+        <div id="success-popup" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-8 bg-slate-950/90 backdrop-blur-sm">
+            <div class="bg-slate-900 border border-white/5 rounded-[40px] p-10 w-full max-w-xs text-center space-y-6 scale-90 opacity-0 transition-all duration-500" id="success-card">
+                <div class="w-24 h-24 bg-teal-500 rounded-full flex items-center justify-center mx-auto text-white text-5xl shadow-2xl shadow-teal-500/40 animate-bounce"><i class="fa-solid fa-check"></i></div>
+                <div class="space-y-2">
+                    <h3 class="text-2xl font-black text-white">Subscription Active!</h3>
+                    <p class="text-sm text-slate-400">Welcome to the H2O NexPulse family. Your daily delivery starts tomorrow.</p>
+                </div>
+                <button onclick="AppEngine.closeSuccess()" class="w-full py-4 bg-slate-800 rounded-2xl font-bold text-white text-xs uppercase tracking-widest">GO TO DASHBOARD</button>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        /**
-         * H2O NexPulse Routing Engine
-         */
         function navigateTo(target) {
             // 1. Update View Panels
             const panels = document.querySelectorAll('.view-panel');
@@ -1403,6 +1285,16 @@
         }
 
         window.onload = () => {
+            // 1. Promotional Splash Timer (Ref: 1000300505_4.png)
+            setTimeout(() => {
+                const splash = document.getElementById('promo-splash');
+                if (splash) {
+                    splash.style.opacity = '0';
+                    splash.style.transition = 'opacity 0.8s ease';
+                    setTimeout(() => splash.style.display = 'none', 800);
+                }
+            }, 5000);
+
             // Initial load
             if (typeof syncProductUI === 'function') syncProductUI();
             
