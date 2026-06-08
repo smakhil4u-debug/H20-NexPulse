@@ -18,38 +18,56 @@ const AppEngine = {
     // --- AUTH ENGINE ---
     requestStartCode() {
         const ph = document.getElementById('login-phone-input').value;
-        if(ph.length < 10) return alert("Enter valid 10-digit number");
+        if(ph.length < 10) {
+            alert("Please enter a valid 10-digit phone number.");
+            return;
+        }
+        document.getElementById('otp-sent-target').innerText = "Sent to +91 " + ph;
         document.getElementById('login-step-phone').classList.add('hidden');
         document.getElementById('login-step-otp').classList.remove('hidden');
-        document.getElementById('otp-sent-target').innerText = `Sent to +91 ${ph}`;
-        this.showNotificationToast(`Verification code sent to +91 ${ph} 📱`, 'success');
     },
     backToPhoneStep() {
-        document.getElementById('login-step-phone').classList.remove('hidden');
         document.getElementById('login-step-otp').classList.add('hidden');
+        document.getElementById('login-step-phone').classList.remove('hidden');
     },
     async verifyStartCode() {
-        if(document.getElementById('login-otp-input').value.length < 4) return alert("Invalid code");
+        const otpInput = document.getElementById('login-otp-input').value;
+        if (!otpInput) {
+            alert("Please enter the verification start code.");
+            return;
+        }
+
+        // Setup mock user state
         const ph = document.getElementById('login-phone-input').value || "7483266062";
         const user = { customer_id: 1, phone_number: ph, full_name: 'Member', created_at: new Date().toISOString(), deposit_paid: true };
         localStorage.setItem('h2o_user_cache', JSON.stringify(user));
-        this.loginSuccess(user);
-    },
-    loginSuccess(user) {
+        
+        // Init background engines silently
         this.currentUser = user;
         this.initRealtime(); this.initLocation(); this.syncProfileUI(); this.fetchCustomerAssets(); this.fetchSubscriptions();
-        this.showNotificationToast("Access Granted. Welcome back! 🚀", 'success');
-        navigateTo('home');
+
+        // Bypass instantly to the home view panel
+        if (typeof navigateTo === "function") {
+            navigateTo('home'); 
+        } else {
+            document.querySelectorAll('.view-panel').forEach(panel => panel.classList.add('hidden'));
+            document.getElementById('view-home').classList.remove('hidden');
+        }
     },
     checkSession() {
         const cache = localStorage.getItem('h2o_user_cache');
-        if(cache) { this.currentUser = JSON.parse(cache); this.loginSuccess(this.currentUser); }
-        else { navigateTo('login'); }
+        if(cache) { 
+            this.currentUser = JSON.parse(cache); 
+            this.initRealtime(); this.initLocation(); this.syncProfileUI(); this.fetchCustomerAssets(); this.fetchSubscriptions();
+            if (typeof navigateTo === "function") navigateTo('home');
+        } else { 
+            if (typeof navigateTo === "function") navigateTo('login'); 
+        }
     },
     logoutSession() {
         localStorage.removeItem('h2o_user_cache');
         this.currentUser = null;
-        navigateTo('login');
+        if (typeof navigateTo === "function") navigateTo('login');
     },
 
     // --- MULTI-VIEW LOCATION CONTROLLER ---
