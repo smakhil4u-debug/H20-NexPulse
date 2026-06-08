@@ -18,10 +18,11 @@
     <script src="js/firebase-auth.js"></script>
     <script src="js/firebase-init.js"></script>
     <!-- Supabase & Logic (Local) -->
+    
     <!-- Leaflet.js (Free Interactive Maps) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
+
     <script src="js/supabase.js"></script>
     <script src="js/init-supabase.js"></script>
     <script src="js/products.js"></script>
@@ -1278,6 +1279,9 @@
             }
             if (target === 'coupons') {
                 if (window.AppEngine) window.AppEngine.renderCouponsUI();
+            }
+            if (target === 'fully-interactive-map') {
+                if (window.AppEngine) window.AppEngine.initLeafletMap();
             }
 
             // Scroll to top on navigation

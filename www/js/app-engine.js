@@ -209,69 +209,112 @@ const AppEngine = {
     },
 
     // --- PIN-DROP RADAR LOGIC (Overhaul: Automated Address Generation) ---
-    // --- FULLY INTERACTIVE MAP ENGINE (React Translation) ---
-    handleMapSelection(e) {
-        const mapCanvas = document.getElementById('interactive-map-canvas');
-        const pin = document.getElementById('live-map-pin');
+    // --- LIVE LEAFLET MAP ENGINE ---
+    leafletMap: null,
+    leafletMarker: null,
+    geofenceCircle: null,
+
+    initLeafletMap() {
+        if (this.leafletMap) return; // Prevent double init
+
+        // Initialize Map focused on Hub
+        this.leafletMap = L.map('interactive-map-canvas', {
+            zoomControl: false,
+            attributionControl: false
+        }).setView([this.ProductionHub.lat, this.ProductionHub.lng], 13);
+
+        // Add Dark Theme Tiles (CartoDB Dark Matter)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19
+        }).addTo(this.leafletMap);
+
+        // Draw the 35km Geofence Circle
+        this.geofenceCircle = L.circle([this.ProductionHub.lat, this.ProductionHub.lng], {
+            color: '#00BCD4',
+            fillColor: '#00BCD4',
+            fillOpacity: 0.05,
+            radius: this.MaxDeliveryRadiusKm * 1000, // 35000 meters
+            dashArray: '5, 10',
+            weight: 2
+        }).addTo(this.leafletMap);
+
+        // Add Hub Marker
+        L.circleMarker([this.ProductionHub.lat, this.ProductionHub.lng], {
+            radius: 8,
+            fillColor: '#00BCD4',
+            color: '#fff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 1
+        }).addTo(this.leafletMap).bindPopup('<b>NexPulse Production Hub</b>').openPopup();
+
+        // Add Click Listener
+        this.leafletMap.on('click', (e) => this.handleLeafletMapClick(e.latlng));
+
+        // Initial default selection at Hub
+        this.handleLeafletMapClick(L.latLng(this.ProductionHub.lat, this.ProductionHub.lng));
+
+        // Ensure map renders correctly in dynamic view
+        setTimeout(() => {
+            this.leafletMap.invalidateSize();
+        }, 300);
+    },
+
+    handleLeafletMapClick(latlng) {
         const addrDisplay = document.getElementById('map-address-display');
         const distText = document.getElementById('map-distance-text');
         const statusDesc = document.getElementById('map-status-desc');
         const banner = document.getElementById('map-distance-banner');
         const saveBtn = document.getElementById('btn-save-interactive-map');
 
-        if (!mapCanvas || !pin) return;
-
-        // 1. Get percentage coordinates from click
-        const rect = mapCanvas.getBoundingClientRect();
-        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
-        const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
-
-        // 2. Position the visual pin
-        pin.style.left = `${xPercent}%`;
-        pin.style.top = `${yPercent}%`;
-
-        // 3. Translate to Geographic Coordinates (Scaled around Hub)
-        // Hub is at 50% / 50%
-        const latDelta = (50 - yPercent) * 0.016;
-        const lngDelta = (xPercent - 50) * 0.016;
-
-        const currentLat = (this.ProductionHub.lat + latDelta).toFixed(4);
-        const currentLng = (this.ProductionHub.lng + lngDelta).toFixed(4);
-
-        // 4. Calculate Great-Circle Distance (Haversine)
-        const exactKm = this.calculateDistance(this.ProductionHub.lat, this.ProductionHub.lng, parseFloat(currentLat), parseFloat(currentLng));
-        const distanceStr = exactKm.toFixed(2);
-        const isOutOfBounds = exactKm > this.MaxDeliveryRadiusKm;
-
-        // 5. Generate Automated Address Signature
-        let autoAddress = "";
-        if (isOutOfBounds) {
-            autoAddress = `Outer Quadrant Sector (Lat: ${currentLat}, Lng: ${currentLng}) [OUTSIDE DELIVERY AREA]`;
-            banner.className = "p-4 rounded-xl border flex items-start gap-3 transition-colors bg-red-950/30 border-red-900/50 text-red-400";
-            statusDesc.innerText = "Out of service bounds: Please select a spot within the 35km limit ring.";
-            saveBtn.disabled = true;
-            saveBtn.style.opacity = '0.1';
+        // 1. Move or Create Marker
+        if (this.leafletMarker) {
+            this.leafletMarker.setLatLng(latlng);
         } else {
-            const northSouth = latDelta >= 0 ? 'North' : 'South';
-            const eastWest = lngDelta >= 0 ? 'East' : 'West';
-            autoAddress = `Ballari Delivery Zone (${northSouth}-${eastWest} Sector), Coordinate Block ${currentLat}°N`;
-            banner.className = "p-4 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400";
-            statusDesc.innerText = "Service deliverable: We are actively dispatching to this location.";
-            saveBtn.disabled = false;
-            saveBtn.style.opacity = '1';
+            this.leafletMarker = L.marker(latlng, {
+                icon: L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div style='background-color:#00BCD4; width:12px; height:12px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 15px #00BCD4;'></div>`,
+                    iconSize: [12, 12],
+                    iconAnchor: [6, 6]
+                })
+            }).addTo(this.leafletMap);
         }
 
-        // 6. Update UI & Internal State
-        if (addrDisplay) addrDisplay.innerText = autoAddress;
-        if (distText) distText.innerText = `Distance metrics: ${distanceStr} KM from center production hub`;
-        
-        this.pendingInteractiveAddress = {
-            address: autoAddress,
-            coords: `${currentLat}, ${currentLng}`,
-            distance: distanceStr
-        };
+        // 2. Calculate Distance
+        const distance = this.calculateDistance(this.ProductionHub.lat, this.ProductionHub.lng, latlng.lat, latlng.lng);
+        const isSupported = distance <= this.MaxDeliveryRadiusKm;
 
-        console.log(`Interactive Map Tap: ${currentLat}, ${currentLng} | ${distanceStr}km`);
+        // 3. Automated Sector Logic
+        let sector = "Outer Perimeter";
+        if (distance < 5) sector = "Sri Rampura Hub Sector";
+        else if (distance < 15) sector = "Ballari City Center Block";
+        else if (distance < 25) sector = "Cantonment Zone Loop";
+        else if (distance <= 35) sector = "Perimeter Loop Zone";
+
+        const generatedAddress = `${sector}, within 35km delivery loop, Ballari, Karnataka`;
+        
+        // 4. Update UI
+        if (addrDisplay) addrDisplay.innerText = generatedAddress;
+        if (distText) distText.innerText = `Distance metrics: ${distance.toFixed(2)} KM from hub`;
+
+        if (isSupported) {
+            banner.className = "p-4 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400";
+            statusDesc.innerText = "Service deliverable: We are actively dispatching to this location.";
+            this.geofenceCircle.setStyle({ color: '#00BCD4', fillColor: '#00BCD4' });
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
+        } else {
+            banner.className = "p-4 rounded-xl border flex items-start gap-3 transition-colors bg-rose-950/30 border-rose-900/50 text-rose-400";
+            statusDesc.innerText = "Out of service bounds: Please select a spot within the 35km limit ring.";
+            this.geofenceCircle.setStyle({ color: '#f43f5e', fillColor: '#f43f5e' });
+            if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '0.1'; }
+        }
+
+        this.pendingInteractiveAddress = {
+            address: generatedAddress,
+            coords: `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`,
+            distance: distance.toFixed(2)
+        };
     },
 
     saveInteractiveLocation() {
@@ -279,7 +322,6 @@ const AppEngine = {
         
         const data = this.pendingInteractiveAddress;
         
-        // 1. Save to state and storage
         this.savedAddresses.push({ 
             address: data.address, 
             category: 'Others', 
@@ -288,15 +330,16 @@ const AppEngine = {
         localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
         localStorage.setItem('h2o_last_address', data.address);
 
-        // 2. Clear Dashboard Alerts (Ref 3: critical requirement)
         this.toggleServiceAlerts(false);
         this.updateLocationUI("Ballari");
-        
-        // 3. UI Sync
         this.renderSavedAddresses();
         this.showNotificationToast("Location Locked Successfully! 🎯", 'success');
         
         navigateTo('home');
+    },
+
+    handleMapSelection(e) {
+        // Redundant - replaced by leafletMap.on('click')
     },
 
     handleMapClick(e) {
