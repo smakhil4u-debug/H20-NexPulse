@@ -303,8 +303,21 @@ const AppEngine = {
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     },
     initRealtime() { if(!this.currentUser) return; window.supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'subscriptions' }, () => this.fetchSubscriptions()).subscribe(); },
-    initLocation() { if(localStorage.getItem('h2o_last_address')) { this.toggleServiceAlerts(false); this.updateLocationUI("Ballari"); } },
-    updateLocationUI(n) { const h = document.querySelector('.location-banner h4'); if(h) h.innerHTML = `${n} <i class="fa-solid fa-chevron-down"></i>`; },
+    initLocation() {
+        const lastAddr = localStorage.getItem('h2o_last_address');
+        if(lastAddr) { 
+            this.toggleServiceAlerts(false); 
+            this.updateLocationUI("Ballari", lastAddr); 
+        } else {
+            this.updateLocationUI("Ballari", "Tap to set delivery location");
+        }
+    },
+    updateLocationUI(n, addrStr) { 
+        const h = document.querySelector('.location-banner h4'); 
+        if(h) h.innerHTML = `${n} <i class="fa-solid fa-chevron-down"></i>`; 
+        const sub = document.getElementById('dashboard-address-sub');
+        if(sub && addrStr) sub.innerText = addrStr;
+    },
     toggleServiceAlerts(s) { const h = document.getElementById('alert-home'); if(h) h.classList.toggle('hidden', !s); },
     syncProfileUI() { if(this.currentUser) document.querySelectorAll('#profile-display-phone').forEach(e => e.innerText = this.currentUser.phone_number); },
     showNotificationToast(msg) { const toast = document.createElement('div'); toast.className = "fixed top-10 left-1/2 -translate-x-1/2 z-[1000] px-6 py-4 rounded-3xl bg-teal-600 text-white font-bold animate-fadeIn"; toast.innerText = msg; document.body.appendChild(toast); setTimeout(()=>toast.remove(), 3000); },
