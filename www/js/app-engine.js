@@ -15,30 +15,35 @@ const AppEngine = {
         { code: 'FREEJARDEPOSIT', discount: 'Waived Initial Deposit', description: 'Zero upfront fee on first 2 jars.', terms: 'Subscription required.' }
     ],
 
-    // --- AUTH ENGINE ---
-    requestStartCode() {
-        const ph = document.getElementById('login-phone-input').value;
+    // --- AUTH ENGINE (Independent Route Logic) ---
+    executeOtpRoutingFlow(e) {
+        if(e) e.preventDefault();
+        const ph = document.getElementById('main-phone-input-field').value;
         if(ph.length < 10) {
             alert("Please enter a valid 10-digit phone number.");
             return;
         }
-        document.getElementById('otp-sent-target').innerText = "Sent to +91 " + ph;
-        document.getElementById('login-step-phone').classList.add('hidden');
-        document.getElementById('login-step-otp').classList.remove('hidden');
+        const targetLabel = document.getElementById('target-phone-display-label');
+        if(targetLabel) targetLabel.innerText = "Sent to +91 " + ph;
+        
+        navigateTo('otp');
     },
-    backToPhoneStep() {
-        document.getElementById('login-step-otp').classList.add('hidden');
-        document.getElementById('login-step-phone').classList.remove('hidden');
+
+    returnToPhoneViewPanel(e) {
+        if(e) e.preventDefault();
+        navigateTo('login');
     },
-    async verifyStartCode() {
-        const otpInput = document.getElementById('login-otp-input').value;
-        if (!otpInput) {
+
+    async validateOtpAndLogin(e) {
+        if(e) e.preventDefault();
+        const otpInput = document.getElementById('main-otp-input-field').value;
+        if (!otpInput || otpInput.length < 4) {
             alert("Please enter the verification start code.");
             return;
         }
 
         // Setup mock user state
-        const ph = document.getElementById('login-phone-input').value || "7483266062";
+        const ph = document.getElementById('main-phone-input-field').value || "7483266062";
         const user = { customer_id: 1, phone_number: ph, full_name: 'Member', created_at: new Date().toISOString(), deposit_paid: true };
         localStorage.setItem('h2o_user_cache', JSON.stringify(user));
         
@@ -47,13 +52,9 @@ const AppEngine = {
         this.initRealtime(); this.initLocation(); this.syncProfileUI(); this.fetchCustomerAssets(); this.fetchSubscriptions();
 
         // Bypass instantly to the home view panel
-        if (typeof navigateTo === "function") {
-            navigateTo('home'); 
-        } else {
-            document.querySelectorAll('.view-panel').forEach(panel => panel.classList.add('hidden'));
-            document.getElementById('view-home').classList.remove('hidden');
-        }
+        navigateTo('home'); 
     },
+    
     checkSession() {
         const cache = localStorage.getItem('h2o_user_cache');
         if(cache) { 
