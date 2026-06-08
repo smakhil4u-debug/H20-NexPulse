@@ -16,35 +16,40 @@ const AppEngine = {
     ],
 
     // --- AUTH ENGINE ---
-    goToOtpStep() {
-        const ph = document.getElementById('login-phone').value;
+    requestStartCode() {
+        const ph = document.getElementById('login-phone-input').value;
         if(ph.length < 10) return alert("Enter valid 10-digit number");
         document.getElementById('login-step-phone').classList.add('hidden');
         document.getElementById('login-step-otp').classList.remove('hidden');
-        document.getElementById('otp-phone-display').innerText = `Sent to +91 ${ph}`;
+        document.getElementById('otp-sent-target').innerText = `Sent to +91 ${ph}`;
         this.showNotificationToast(`Verification code sent to +91 ${ph} 📱`, 'success');
     },
-    goToPhoneStep() {
+    backToPhoneStep() {
         document.getElementById('login-step-phone').classList.remove('hidden');
         document.getElementById('login-step-otp').classList.add('hidden');
     },
-    async handleMockLogin() {
-        if(document.getElementById('login-otp').value.length < 4) return alert("Invalid code");
-        const ph = document.getElementById('login-phone').value || "7483266062";
+    async verifyStartCode() {
+        if(document.getElementById('login-otp-input').value.length < 4) return alert("Invalid code");
+        const ph = document.getElementById('login-phone-input').value || "7483266062";
         const user = { customer_id: 1, phone_number: ph, full_name: 'Member', created_at: new Date().toISOString(), deposit_paid: true };
         localStorage.setItem('h2o_user_cache', JSON.stringify(user));
         this.loginSuccess(user);
     },
     loginSuccess(user) {
         this.currentUser = user;
-        const ov = document.getElementById('auth-overlay');
-        if(ov) { ov.classList.add('translate-y-full'); setTimeout(()=>ov.remove(), 500); }
         this.initRealtime(); this.initLocation(); this.syncProfileUI(); this.fetchCustomerAssets(); this.fetchSubscriptions();
         this.showNotificationToast("Access Granted. Welcome back! 🚀", 'success');
+        navigateTo('home');
     },
     checkSession() {
         const cache = localStorage.getItem('h2o_user_cache');
         if(cache) { this.currentUser = JSON.parse(cache); this.loginSuccess(this.currentUser); }
+        else { navigateTo('login'); }
+    },
+    logoutSession() {
+        localStorage.removeItem('h2o_user_cache');
+        this.currentUser = null;
+        navigateTo('login');
     },
 
     // --- MULTI-VIEW LOCATION CONTROLLER ---

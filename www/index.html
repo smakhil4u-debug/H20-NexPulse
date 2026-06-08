@@ -54,102 +54,55 @@
 
     <div id="app-viewport">
 
-        <!-- AUTH OVERLAY: Secure Access Portal (React Design Translation) -->
-        <div id="auth-overlay" class="fixed inset-0 bg-[#0A0E1A] z-[500] flex flex-col justify-between transition-transform translate-y-0 pb-6 overflow-y-auto">
-            
-            <!-- Top Section / Centered Branding -->
-            <div class="flex-1 flex flex-col items-center justify-center px-6 max-w-md mx-auto w-full space-y-8">
+        <!-- Secure Access Login View Panel -->
+        <section class="view-panel flex-col justify-between bg-[#0A0E1A] text-white min-h-screen p-0 pb-6" id="view-login">
+            <div class="flex-1 flex flex-col items-center justify-center px-6 max-w-md mx-auto w-full space-y-8 mt-12">
                 
+                <!-- Branding Header -->
                 <div class="text-center space-y-1">
-                    <h1 class="text-3xl font-extrabold tracking-wider text-white uppercase font-brand">
-                        H2O NEXPULSE
-                    </h1>
-                    <p class="text-[10px] font-bold tracking-[0.4em] text-gray-500 uppercase">
-                        Secure Access Portal
-                    </p>
+                  <h1 class="text-3xl font-extrabold tracking-wider text-white uppercase font-brand">H2O NEXPULSE</h1>
+                  <p class="text-xs font-bold tracking-widest text-gray-500 uppercase">Secure Access Portal</p>
                 </div>
 
-                <!-- Step 1: Phone Entry Interface -->
+                <!-- STEP 1: Phone Input Interface View -->
                 <div id="login-step-phone" class="w-full space-y-6">
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">
-                            Phone Number
-                        </label>
-                        
-                        <div class="flex gap-3">
-                            <!-- Country Code Block -->
-                            <div class="bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-4 font-semibold text-gray-300 text-base flex items-center justify-center min-w-[64px]">
-                                +91
-                            </div>
-                            <!-- Number Input Field -->
-                            <div class="flex-1 bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-1 flex items-center gap-2 focus-within:border-[#00BCD4] transition-all">
-                                <input type="tel" id="login-phone" placeholder="Enter phone number" class="w-full bg-transparent border-none text-white font-medium placeholder-gray-600 focus:outline-none tracking-wide text-base py-3" maxlength="10">
-                            </div>
+                      <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block px-1">Phone Number</label>
+                      <div class="flex gap-3">
+                        <div class="bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-4 font-semibold text-gray-300 text-base flex items-center justify-center min-w-[64px]">+91</div>
+                        <div class="flex-1 bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-1 flex items-center gap-2 focus-within:border-[#00BCD4] transition-all">
+                          <input type="tel" id="login-phone-input" value="7483266062" maxlength="10" placeholder="Enter phone number" class="w-full bg-transparent border-none text-white font-medium placeholder-gray-600 focus:outline-none tracking-wide text-base py-3" />
                         </div>
+                      </div>
                     </div>
-
-                    <button onclick="AppEngine.goToOtpStep()" class="w-full bg-[#00BCD4] text-white font-bold py-4 rounded-xl transition-all active:scale-[0.99] shadow-[0_4px_20px_rgba(0,188,212,0.25)] text-center text-sm tracking-widest uppercase">
-                        GET START CODE
+                    <button onclick="AppEngine.requestStartCode()" class="w-full bg-[#00BCD4] text-[#0A0E1A] font-extrabold py-4 rounded-xl transition-all shadow-[0_4px_20px_rgba(0,188,212,0.25)] text-center text-sm tracking-widest uppercase active:scale-95">
+                      GET START CODE
                     </button>
                 </div>
 
-                <!-- Step 2: OTP Verification Interface (Hidden initially) -->
-                <div id="login-step-otp" class="hidden w-full space-y-6 animate-fadeIn">
+                <!-- STEP 2: OTP Entry Interface View (Initially Hidden) -->
+                <div id="login-step-otp" class="w-full space-y-6 hidden animate-fadeIn">
                     <div class="space-y-2">
-                        <div class="flex justify-between items-center px-1">
-                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">
-                                Enter Verification Code
-                            </label>
-                            <span id="otp-phone-display" class="text-[10px] text-gray-400 font-medium">Sent to +91 00000 00000</span>
-                        </div>
-                        
-                        <div class="bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-1 flex items-center focus-within:border-[#00BCD4] transition-all">
-                            <input type="text" id="login-otp" placeholder="• • • • • •" class="w-full bg-transparent border-none text-white font-bold tracking-[0.5em] text-center placeholder-gray-600 focus:outline-none text-lg py-3" maxlength="6">
-                        </div>
+                      <div class="flex justify-between items-center px-1">
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block">Enter Verification Code</label>
+                        <span id="otp-sent-target" class="text-[10px] text-gray-400 font-medium">Sent to +91 7483266062</span>
+                      </div>
+                      <div class="bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-1 flex items-center focus-within:border-[#00BCD4] transition-all">
+                        <input type="text" id="login-otp-input" maxlength="6" placeholder="• • • • • •" class="w-full bg-transparent border-none text-white font-bold tracking-[0.5em] text-center placeholder-gray-600 focus:outline-none text-lg py-3" />
+                      </div>
                     </div>
-
                     <div class="space-y-3">
-                        <button onclick="AppEngine.handleMockLogin()" class="w-full bg-[#00BCD4] text-white font-bold py-4 rounded-xl transition-all active:scale-[0.99] shadow-[0_4px_20px_rgba(0,188,212,0.25)] text-center text-sm tracking-widest uppercase">
-                            VERIFY & LOGIN
-                        </button>
-
-                        <div class="flex justify-between items-center px-1 pt-1">
-                            <button onclick="AppEngine.goToPhoneStep()" class="text-xs font-semibold text-gray-500 hover:text-white flex items-center gap-1 transition-colors">
-                                <i class="fa-solid fa-arrow-left text-[10px]"></i> Edit Number
-                            </button>
-                            <button onclick="alert('New code sent!')" class="text-xs font-semibold text-[#00BCD4] hover:text-cyan-400 flex items-center gap-1 transition-colors">
-                                <i class="fa-solid fa-rotate text-[10px]"></i> Resend Code
-                            </button>
-                        </div>
+                      <button onclick="AppEngine.verifyStartCode()" class="w-full bg-[#00BCD4] text-[#0A0E1A] font-extrabold py-4 rounded-xl transition-all shadow-[0_4px_20px_rgba(0,188,212,0.25)] text-center text-sm tracking-widest uppercase active:scale-95">
+                        VERIFY & LOGIN
+                      </button>
+                      <div class="flex justify-between items-center px-1 pt-1">
+                        <button onclick="AppEngine.backToPhoneStep()" class="text-xs font-semibold text-gray-500 hover:text-white transition-colors"><i class="fa-solid fa-arrow-left text-[10px] mr-1"></i> Edit Number</button>
+                        <button onclick="alert('New code sent!')" class="text-xs font-semibold text-[#00BCD4] hover:text-cyan-400 transition-colors"><i class="fa-solid fa-rotate text-[10px] mr-1"></i> Resend Code</button>
+                      </div>
                     </div>
                 </div>
-
             </div>
-
-            <!-- Bottom Global Navigation Tray Layer -->
-            <div class="max-w-md mx-auto w-full border-t border-[#1E294B] bg-[#0A0E1A] flex justify-around py-3 text-[10px] font-bold text-gray-500">
-                <div class="flex flex-col items-center text-[#00BCD4]">
-                    <i class="fa-solid fa-house mb-1 text-sm"></i>
-                    <span>Home</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-bottle-water mb-1 text-sm"></i>
-                    <span>Products</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-calendar-check mb-1 text-sm"></i>
-                    <span>Subscriptions</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-cart-shopping mb-1 text-sm"></i>
-                    <span>Cart</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-user-gear mb-1 text-sm"></i>
-                    <span>Profile</span>
-                </div>
-            </div>
-        </div>
+        </section>
 
         <!-- SUBSCRIPTION SCHEDULER MODAL -->
         <div id="sub-modal" class="fixed inset-0 bg-slate-950/95 z-[150] hidden flex items-end">
@@ -671,7 +624,7 @@
             </div>
             
             <div class="px-5 py-10">
-                <button onclick="location.reload()" class="w-full py-4 bg-[#131A30] border border-[#1E294B] rounded-2xl text-gray-500 font-bold text-xs uppercase tracking-widest active:scale-95 transition">Logout Session</button>
+                <button onclick="AppEngine.logoutSession()" class="w-full py-4 bg-[#131A30] border border-[#1E294B] rounded-2xl text-gray-500 font-bold text-xs uppercase tracking-widest active:scale-95 transition">Logout Session</button>
             </div>
         </section>
 
@@ -1259,7 +1212,7 @@
             const topBar = document.getElementById('global-top-bar');
             const bottomNav = document.getElementById('global-bottom-navigation');
             
-            const hideGlobalUI = ['select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search', 'contact-info', 'terms', 'refund-policy', 'coupons', 'fully-interactive-map'].includes(target);
+            const hideGlobalUI = ['login', 'select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search', 'contact-info', 'terms', 'refund-policy', 'coupons', 'fully-interactive-map'].includes(target);
 
             if (hideGlobalUI) {
                 if (topBar) topBar.classList.add('hidden');
