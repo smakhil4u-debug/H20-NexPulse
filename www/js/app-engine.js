@@ -212,11 +212,28 @@ const AppEngine = {
     leafletMap: null,
     leafletMarker: null,
     geofenceCircle: null,
+    useMapFallback: false,
 
     initLeafletMap() {
-        if (this.leafletMap) return;
-
         const loadingState = document.getElementById('map-loading-state');
+        
+        // 1. Bulletproof Timeout (1.5 Seconds)
+        this.mapLoadTimer = setTimeout(() => {
+            if (!window.L || !this.leafletMap) {
+                console.warn("CDN HANG DETECTED: Activating Local Vector Map Fallback (Ref: 1000301198.jpg)");
+                this.useMapFallback = true;
+                if (loadingState) loadingState.classList.add('hidden');
+                this.renderFallbackMap();
+            }
+        }, 1500);
+
+        if (this.leafletMap) {
+            clearTimeout(this.mapLoadTimer);
+            if (loadingState) loadingState.classList.add('hidden');
+            return; 
+        }
+
+        if (!window.L) return; // Wait for timeout or async load
 
         // Initialize Map focused on Hub
         this.leafletMap = L.map('interactive-map-canvas', {
@@ -224,7 +241,7 @@ const AppEngine = {
             attributionControl: false
         }).setView([this.ProductionHub.lat, this.ProductionHub.lng], 12);
 
-        // Load standard OpenStreetMap map styling tiles (as per React code)
+        // Load standard OpenStreetMap map styling tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(this.leafletMap);
@@ -245,13 +262,73 @@ const AppEngine = {
         // Map events
         this.leafletMap.on('click', (e) => this.processNewLocationCoordinates(e.latlng.lat, e.latlng.lng));
         
-        // Hide loading state
+        // Success: Clear timer and hide spinner
+        clearTimeout(this.mapLoadTimer);
         if (loadingState) loadingState.classList.add('hidden');
 
         // Initial default selection
         this.processNewLocationCoordinates(this.ProductionHub.lat, this.ProductionHub.lng);
 
         setTimeout(() => this.leafletMap.invalidateSize(), 300);
+    },
+
+    renderFallbackMap() {
+        const canvas = document.getElementById('interactive-map-canvas');
+        if (!canvas) return;
+
+        canvas.innerHTML = `
+            <div onclick="AppEngine.handleFallbackMapClick(event)" class="w-full h-full relative bg-[#0D1527] overflow-hidden cursor-crosshair">
+                <!-- Visual Map Grid -->
+                <div class="absolute inset-0 opacity-[0.1]" style="background-image: linear-gradient(#00BCD4 1px, transparent 1px), linear-gradient(90deg, #00BCD4 1px, transparent 1px); background-size: 30px 30px;"></div>
+                
+                <!-- SVG VECTOR LAYER (High-Performance Fallback) -->
+                <svg class="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <circle cx="50" cy="50" r="35" fill="none" stroke="#00BCD4" stroke-width="0.5" stroke-dasharray="2" />
+                    <circle cx="50" cy="50" r="1" fill="#00BCD4" />
+                    <path d="M 0 50 L 100 50 M 50 0 L 50 100" stroke="#1E294B" stroke-width="0.2" />
+                </svg>
+
+                <div id="fallback-pin" class="absolute -translate-x-1/2 -translate-y-full text-[#00BCD4] transition-all duration-300 pointer-events-none drop-shadow-2xl" style="left: 50%; top: 50%;">
+                    <i class="fa-solid fa-location-dot text-5xl"></i>
+                    <div class="w-3 h-3 rounded-full absolute bottom-0 animate-ping opacity-70 bg-cyan-400"></div>
+                </div>
+
+                <div class="absolute top-4 right-4 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full backdrop-blur-md">
+                    <p class="text-[8px] font-black text-amber-500 uppercase tracking-widest flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-bolt animate-pulse"></i> Offline Mode: Vector Map Active
+                    </p>
+                </div>
+            </div>
+        `;
+
+        // Reset pin to center
+        this.processNewLocationCoordinates(this.ProductionHub.lat, this.ProductionHub.lng);
+    },
+
+    handleFallbackMapClick(e) {
+        const canvas = document.getElementById('interactive-map-canvas');
+        const pin = document.getElementById('fallback-pin');
+        if (!canvas || !pin) return;
+
+        // 1. Get click position percentage
+        const rect = canvas.getBoundingClientRect();
+        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+        const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+
+        // 2. Translate to Geographic Coordinates (Scaled around Hub)
+        // Match the React component's pixel-to-coord scaling (0.016 variance step)
+        const latDelta = (50 - yPercent) * 0.016;
+        const lngDelta = (xPercent - 50) * 0.016;
+
+        const currentLat = (this.ProductionHub.lat + latDelta).toFixed(4);
+        const currentLng = (this.ProductionHub.lng + lngDelta).toFixed(4);
+
+        // 3. Move Visual Pin
+        pin.style.left = `${xPercent}%`;
+        pin.style.top = `${yPercent}%`;
+
+        // 4. Trigger standard coordinate processor
+        this.processNewLocationCoordinates(parseFloat(currentLat), parseFloat(currentLng));
     },
 
     processNewLocationCoordinates(lat, lng) {
