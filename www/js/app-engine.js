@@ -15,7 +15,7 @@ const AppEngine = {
         { code: 'FREEJARDEPOSIT', discount: 'Waived Initial Deposit', description: 'Zero upfront fee on first 2 jars.', terms: 'Subscription required.' }
     ],
 
-    // --- AUTH ENGINE (Independent Route Logic) ---
+    // --- AUTH ENGINE (Explicit DOM Routing) ---
     executeOtpRoutingFlow(e) {
         if(e) e.preventDefault();
         const ph = document.getElementById('main-phone-input-field').value;
@@ -26,19 +26,39 @@ const AppEngine = {
         const targetLabel = document.getElementById('target-phone-display-label');
         if(targetLabel) targetLabel.innerText = "Sent to +91 " + ph;
         
-        navigateTo('otp');
+        // Force hide all layouts and display the standalone OTP page view
+        document.querySelectorAll('.view-panel').forEach(panel => {
+            panel.classList.add('hidden');
+            panel.style.display = 'none';
+        });
+
+        const otpPanel = document.getElementById('view-otp');
+        if (otpPanel) {
+            otpPanel.classList.remove('hidden');
+            otpPanel.style.setProperty('display', 'flex', 'important');
+        }
     },
 
     returnToPhoneViewPanel(e) {
         if(e) e.preventDefault();
-        navigateTo('login');
+        
+        document.querySelectorAll('.view-panel').forEach(panel => {
+            panel.classList.add('hidden');
+            panel.style.display = 'none';
+        });
+
+        const loginPanel = document.getElementById('view-login');
+        if (loginPanel) {
+            loginPanel.classList.remove('hidden');
+            loginPanel.style.setProperty('display', 'flex', 'important');
+        }
     },
 
     async validateOtpAndLogin(e) {
         if(e) e.preventDefault();
         const otpInput = document.getElementById('main-otp-input-field').value;
-        if (!otpInput || otpInput.length < 4) {
-            alert("Please enter the verification start code.");
+        if (!otpInput) {
+            alert("Please enter your verification code to complete login.");
             return;
         }
 
@@ -51,8 +71,19 @@ const AppEngine = {
         this.currentUser = user;
         this.initRealtime(); this.initLocation(); this.syncProfileUI(); this.fetchCustomerAssets(); this.fetchSubscriptions();
 
-        // Bypass instantly to the home view panel
-        navigateTo('home'); 
+        // Force-dismiss to dashboard container view panels
+        document.querySelectorAll('.view-panel').forEach(panel => {
+            panel.classList.add('hidden');
+            panel.style.display = 'none';
+        });
+
+        const homePanel = document.getElementById('view-home') || document.getElementById('view-dashboard');
+        if (homePanel) {
+            homePanel.classList.remove('hidden');
+            homePanel.style.setProperty('display', 'flex', 'important');
+        } else if (typeof navigateTo === "function") {
+            navigateTo('home');
+        }
     },
     
     checkSession() {
