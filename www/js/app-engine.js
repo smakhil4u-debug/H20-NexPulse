@@ -208,199 +208,130 @@ const AppEngine = {
         }
     },
 
-    // --- PIN-DROP RADAR LOGIC (Overhaul: Automated Address Generation) ---
-    // --- LIVE LEAFLET MAP ENGINE ---
+    // --- LIVE LEAFLET MAP ENGINE (High-Fidelity React Translation) ---
     leafletMap: null,
     leafletMarker: null,
     geofenceCircle: null,
 
     initLeafletMap() {
-        if (this.leafletMap) return; // Prevent double init
+        if (this.leafletMap) return;
+
+        const loadingState = document.getElementById('map-loading-state');
 
         // Initialize Map focused on Hub
         this.leafletMap = L.map('interactive-map-canvas', {
             zoomControl: false,
             attributionControl: false
-        }).setView([this.ProductionHub.lat, this.ProductionHub.lng], 13);
+        }).setView([this.ProductionHub.lat, this.ProductionHub.lng], 12);
 
-        // Add Dark Theme Tiles (CartoDB Dark Matter)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            maxZoom: 19
+        // Load standard OpenStreetMap map styling tiles (as per React code)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
         }).addTo(this.leafletMap);
 
-        // Draw the 35km Geofence Circle
+        // Render our strict 35km operating boundary circle zone
         this.geofenceCircle = L.circle([this.ProductionHub.lat, this.ProductionHub.lng], {
-            color: '#00BCD4',
+            color: '#00A896',
             fillColor: '#00BCD4',
-            fillOpacity: 0.05,
-            radius: this.MaxDeliveryRadiusKm * 1000, // 35000 meters
-            dashArray: '5, 10',
-            weight: 2
+            fillOpacity: 0.08,
+            radius: this.MaxDeliveryRadiusKm * 1000 // meters
         }).addTo(this.leafletMap);
 
-        // Add Hub Marker
-        L.circleMarker([this.ProductionHub.lat, this.ProductionHub.lng], {
-            radius: 8,
-            fillColor: '#00BCD4',
-            color: '#fff',
-            weight: 2,
-            opacity: 1,
-            fillOpacity: 1
-        }).addTo(this.leafletMap).bindPopup('<b>NexPulse Production Hub</b>').openPopup();
+        // Attach primary drop-pin indicator
+        this.leafletMarker = L.marker([this.ProductionHub.lat, this.ProductionHub.lng], { 
+            draggable: false 
+        }).addTo(this.leafletMap);
 
-        // Add Click Listener
-        this.leafletMap.on('click', (e) => this.handleLeafletMapClick(e.latlng));
+        // Map events
+        this.leafletMap.on('click', (e) => this.processNewLocationCoordinates(e.latlng.lat, e.latlng.lng));
+        
+        // Hide loading state
+        if (loadingState) loadingState.classList.add('hidden');
 
-        // Initial default selection at Hub
-        this.handleLeafletMapClick(L.latLng(this.ProductionHub.lat, this.ProductionHub.lng));
+        // Initial default selection
+        this.processNewLocationCoordinates(this.ProductionHub.lat, this.ProductionHub.lng);
 
-        // Ensure map renders correctly in dynamic view
-        setTimeout(() => {
-            this.leafletMap.invalidateSize();
-        }, 300);
+        setTimeout(() => this.leafletMap.invalidateSize(), 300);
     },
 
-    handleLeafletMapClick(latlng) {
+    processNewLocationCoordinates(lat, lng) {
         const addrDisplay = document.getElementById('map-address-display');
         const distText = document.getElementById('map-distance-text');
         const statusDesc = document.getElementById('map-status-desc');
         const banner = document.getElementById('map-distance-banner');
         const saveBtn = document.getElementById('btn-save-interactive-map');
+        const navIcon = document.getElementById('map-nav-icon');
 
-        // 1. Move or Create Marker
-        if (this.leafletMarker) {
-            this.leafletMarker.setLatLng(latlng);
+        const selectedLat = lat.toFixed(4);
+        const selectedLng = lng.toFixed(4);
+
+        // 1. Reposition visual map pin icon
+        if (this.leafletMarker) this.leafletMarker.setLatLng([lat, lng]);
+
+        // 2. Run the geofence calculation checks (Haversine)
+        const computedKm = this.calculateDistance(this.ProductionHub.lat, this.ProductionHub.lng, lat, lng);
+        const distanceStr = computedKm.toFixed(2);
+        const isOutOfBounds = computedKm > this.MaxDeliveryRadiusKm;
+
+        // 3. Dynamic Zone Validation & Automatic Address Generation
+        let autoAddress = "";
+        if (isOutOfBounds) {
+            autoAddress = `Out of Service Range (Lat: ${selectedLat}, Lng: ${selectedLng})`;
+            if (this.geofenceCircle) this.geofenceCircle.setStyle({ color: '#EF4444', fillColor: '#EF4444' });
+            if (banner) banner.className = "p-3.5 rounded-xl border flex items-start gap-3 transition-colors bg-red-950/40 border-red-900/60 text-red-400";
+            if (statusDesc) statusDesc.innerText = "Out of Range: We cannot dispatch orders here. Please tap inside the 35km geofence map circle.";
+            if (navIcon) navIcon.className = "fa-solid fa-location-arrow transform rotate-45 text-red-400";
+            if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '0.2'; }
         } else {
-            this.leafletMarker = L.marker(latlng, {
-                icon: L.divIcon({
-                    className: 'custom-div-icon',
-                    html: `<div style='background-color:#00BCD4; width:12px; height:12px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 15px #00BCD4;'></div>`,
-                    iconSize: [12, 12],
-                    iconAnchor: [6, 6]
-                })
-            }).addTo(this.leafletMap);
-        }
-
-        // 2. Calculate Distance
-        const distance = this.calculateDistance(this.ProductionHub.lat, this.ProductionHub.lng, latlng.lat, latlng.lng);
-        const isSupported = distance <= this.MaxDeliveryRadiusKm;
-
-        // 3. Automated Sector Logic
-        let sector = "Outer Perimeter";
-        if (distance < 5) sector = "Sri Rampura Hub Sector";
-        else if (distance < 15) sector = "Ballari City Center Block";
-        else if (distance < 25) sector = "Cantonment Zone Loop";
-        else if (distance <= 35) sector = "Perimeter Loop Zone";
-
-        const generatedAddress = `${sector}, within 35km delivery loop, Ballari, Karnataka`;
-        
-        // 4. Update UI
-        if (addrDisplay) addrDisplay.innerText = generatedAddress;
-        if (distText) distText.innerText = `Distance metrics: ${distance.toFixed(2)} KM from hub`;
-
-        if (isSupported) {
-            banner.className = "p-4 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400";
-            statusDesc.innerText = "Service deliverable: We are actively dispatching to this location.";
-            this.geofenceCircle.setStyle({ color: '#00BCD4', fillColor: '#00BCD4' });
+            autoAddress = `H2ONEXPULSE Area Hub, Coordinate Quadrant Sector [${selectedLat}, ${selectedLng}]`;
+            if (this.geofenceCircle) this.geofenceCircle.setStyle({ color: '#00A896', fillColor: '#00BCD4' });
+            if (banner) banner.className = "p-3.5 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400";
+            if (statusDesc) statusDesc.innerText = "Verified Area: Active dispatch coordinates mapped successfully. Your dashboard errors will clear.";
+            if (navIcon) navIcon.className = "fa-solid fa-location-arrow transform rotate-45 text-[#00BCD4]";
             if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = '1'; }
-        } else {
-            banner.className = "p-4 rounded-xl border flex items-start gap-3 transition-colors bg-rose-950/30 border-rose-900/50 text-rose-400";
-            statusDesc.innerText = "Out of service bounds: Please select a spot within the 35km limit ring.";
-            this.geofenceCircle.setStyle({ color: '#f43f5e', fillColor: '#f43f5e' });
-            if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '0.1'; }
         }
+
+        // 4. Update UI Displays
+        if (addrDisplay) addrDisplay.innerText = autoAddress;
+        if (distText) distText.innerText = `Radius Check: ${distanceStr} KM from Ballari Hub`;
 
         this.pendingInteractiveAddress = {
-            address: generatedAddress,
-            coords: `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`,
-            distance: distance.toFixed(2)
+            address: autoAddress,
+            coords: `${selectedLat}, ${selectedLng}`,
+            distance: distanceStr
         };
     },
 
     saveInteractiveLocation() {
         if (!this.pendingInteractiveAddress) return alert("Please tap the map to set a location!");
-        
         const data = this.pendingInteractiveAddress;
-        
-        this.savedAddresses.push({ 
-            address: data.address, 
-            category: 'Others', 
-            coords: data.coords 
-        });
+
+        // Save to system
+        this.savedAddresses.push({ address: data.address, category: 'Others', coords: data.coords });
         localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
         localStorage.setItem('h2o_last_address', data.address);
 
+        // Clear dashboard pop-ups instantly
         this.toggleServiceAlerts(false);
         this.updateLocationUI("Ballari");
         this.renderSavedAddresses();
-        this.showNotificationToast("Location Locked Successfully! 🎯", 'success');
+        this.showNotificationToast("Address Locked Successfully! 🎯", 'success');
         
         navigateTo('home');
     },
 
-    handleMapSelection(e) {
-        // Redundant - replaced by leafletMap.on('click')
+    openHelp(type) {
+        if (type === 'call') {
+            window.location.href = "tel:+917483266062";
+        } else if (type === 'chat') {
+            window.location.href = "https://wa.me/917483266062";
+        } else if (type === 'email') {
+            window.location.href = "mailto:support@nexpulse.com";
+        }
     },
 
     handleMapClick(e) {
-        const canvas = document.getElementById('radar-map-canvas');
-        const pin = document.getElementById('map-pin-target');
-        const latInput = document.getElementById('new-address-lat');
-        const lngInput = document.getElementById('new-address-lng');
-        const addrTextDisplay = document.getElementById('generated-address-text');
-        const hiddenInput = document.getElementById('new-address-input');
-        const errorMsg = document.getElementById('geofence-error');
-
-        if (!canvas || !pin) return;
-
-        const rect = canvas.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const clickY = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const offsetX = clickX - centerX;
-        const offsetY = clickY - centerY;
-
-        // Map to Coordinates (Scale around Hub)
-        const scale = 0.0018; 
-        const newLat = this.ProductionHub.lat - (offsetY * (scale / 10));
-        const newLng = this.ProductionHub.lng + (offsetX * (scale / 10));
-
-        if (latInput) latInput.value = newLat.toFixed(6);
-        if (lngInput) lngInput.value = newLng.toFixed(6);
-
-        // Move Visual Pin
-        pin.style.left = `${clickX}px`;
-        pin.style.top = `${clickY}px`;
-        pin.style.transform = `translate(-50%, -100%) scale(1.2)`;
-        setTimeout(() => pin.style.transform = `translate(-50%, -100%) scale(1)`, 200);
-
-        // Calculate Distance
-        const distance = this.calculateDistance(newLat, newLng, this.ProductionHub.lat, this.ProductionHub.lng);
-        const isSupported = distance <= this.MaxDeliveryRadiusKm;
-
-        // AUTOMATED ADDRESS GENERATION (Ref 2)
-        let sector = "Outer Perimeter";
-        if (distance < 5) sector = "Sri Rampura Hub Sector";
-        else if (distance < 15) sector = "Ballari City Center Block";
-        else if (distance < 25) sector = "Cantonment Zone Loop";
-        else if (distance <= 35) sector = "Perimeter Loop Zone";
-
-        const generatedAddress = `${sector}, within 35km delivery loop, Ballari, Karnataka`;
-        if (addrTextDisplay) addrTextDisplay.innerText = generatedAddress;
-        if (hiddenInput) hiddenInput.value = generatedAddress;
-
-        if (!isSupported) {
-            if (errorMsg) errorMsg.classList.remove('hidden');
-            document.getElementById('btn-save-new-address').disabled = true;
-            document.getElementById('btn-save-new-address').style.opacity = '0.3';
-        } else {
-            if (errorMsg) errorMsg.classList.add('hidden');
-            document.getElementById('btn-save-new-address').disabled = false;
-            document.getElementById('btn-save-new-address').style.opacity = '1';
-        }
+        // Redundant - replaced by leafletMap.on('click')
     },
 
     async addNewAddress() {

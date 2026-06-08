@@ -302,15 +302,15 @@
 
         <!-- VIEW PANEL: FULLY INTERACTIVE MAP (React Design Translation) -->
         <section class="view-panel p-0 bg-[#0A0E1A] flex-col" id="view-fully-interactive-map">
-            <!-- Sticky App Header Banner -->
-            <div class="bg-[#009688] text-white px-4 py-4 flex items-center gap-4 sticky top-0 z-50 shadow-md">
+            <!-- Top Main Navigation Header -->
+            <div class="bg-[#009688] text-white px-4 py-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
                 <div class="flex items-center gap-4">
                     <button onclick="navigateTo('select-location')" class="p-1 active:bg-teal-800 rounded-full text-white">
                         <i class="fa-solid fa-arrow-left text-xl"></i>
                     </button>
                     <div class="flex flex-col text-left">
-                        <h1 class="text-lg font-bold tracking-wide">Mark Delivery Spot</h1>
-                        <p class="text-[10px] text-teal-100 font-medium tracking-widest uppercase">Tap map to drop locator pin</p>
+                        <h1 class="text-lg font-bold tracking-wide">Live Map Location</h1>
+                        <p class="text-[10px] text-teal-100 font-medium tracking-wider uppercase">Tap your exact house position on the map</p>
                     </div>
                 </div>
                 <button onclick="AppEngine.openHelp('call')" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white active:bg-white/20 transition">
@@ -318,34 +318,45 @@
                 </button>
             </div>
 
-            <!-- Main Full-Bleed Map Dashboard Canvas -->
-            <div id="interactive-map-canvas" class="flex-1 w-full bg-[#0D1527] relative overflow-hidden border-b border-[#1E294B] min-h-[400px] z-10">
-                <!-- Leaflet Live Map will mount here -->
+            <!-- Live Map Display Window Frame -->
+            <div class="flex-1 w-full relative bg-[#0D1527] border-b border-[#1E294B] min-h-[400px]">
+                <div id="map-loading-state" class="absolute inset-0 flex flex-col items-center justify-center space-y-3 z-40 bg-[#0A0E1A]">
+                    <div class="w-10 h-10 border-4 border-[#00BCD4] border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-xs text-gray-500 font-semibold uppercase tracking-widest">Loading Live Map Data...</p>
+                </div>
+                <div id="interactive-map-canvas" class="w-full h-full z-10">
+                    <!-- Leaflet will mount here -->
+                </div>
             </div>
 
-            <!-- Lower Details Tray -->
-            <div class="bg-[#131A30] border-t border-[#1E294B] p-4 space-y-4 shadow-2xl max-w-md mx-auto w-full z-40">
+            <!-- Bottom Form Info Summary & Validation Cards Tray -->
+            <div class="bg-[#131A30] border-t border-[#1E294B] p-4 space-y-4 shadow-2xl z-40 max-w-md mx-auto w-full">
                 <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">Automated Location Signature</label>
-                    <div id="map-address-display" class="bg-[#0A0E1A] border border-[#1E294B] rounded-xl px-4 py-3.5 text-sm text-gray-200 font-medium leading-relaxed shadow-inner">
-                        Ballari Production Center, Sri Rampura Colony Core Zone
+                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">
+                        Auto-Generated Delivery Address
+                    </label>
+                    <div id="map-address-display" class="bg-[#0A0E1A] border border-[#1E294B] rounded-xl px-4 py-3 text-sm text-gray-200 font-medium leading-relaxed">
+                        Ballari Production Hub, Sri Rampura Colony Zone Center
                     </div>
                 </div>
 
-                <!-- Distance Banner -->
-                <div id="map-distance-banner" class="p-4 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400">
+                <!-- Proximity Response Status Message Banner -->
+                <div id="map-distance-banner" class="p-3.5 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400">
                     <div class="mt-0.5 shrink-0">
-                        <i class="fa-solid fa-paper-plane transform rotate-45 text-[#00BCD4]"></i>
+                        <i class="fa-solid fa-location-arrow transform rotate-45 text-[#00BCD4]" id="map-nav-icon"></i>
                     </div>
-                    <div class="text-xs space-y-1 leading-normal">
-                        <p id="map-distance-text" class="font-extrabold tracking-wide uppercase">Distance metrics: 0.00 KM from hub</p>
-                        <p id="map-status-desc" class="text-gray-400 font-medium">Service deliverable: We are actively dispatching to this location.</p>
+                    <div class="text-xs space-y-0.5">
+                        <p id="map-distance-text" class="font-bold uppercase tracking-wide">Radius Check: 0.00 KM from Ballari Hub</p>
+                        <p id="map-status-desc" class="text-gray-400">Verified Area: Active dispatch coordinates mapped successfully. Your dashboard errors will clear.</p>
                     </div>
                 </div>
 
+                <!-- Control Button Grid Layout -->
                 <div class="flex gap-4">
-                    <button onclick="navigateTo('select-location')" class="flex-1 bg-[#1E294B] border border-[#2E3B5E] text-gray-400 font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider active:bg-slate-800">Cancel</button>
-                    <button onclick="AppEngine.saveInteractiveLocation()" id="btn-save-interactive-map" class="flex-[2] bg-[#00BCD4] text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-widest shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition">
+                    <button onclick="navigateTo('select-location')" class="flex-1 bg-[#1E294B] border border-[#2E3B5E] text-gray-400 font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider active:bg-slate-800">
+                        Cancel
+                    </button>
+                    <button onclick="AppEngine.saveInteractiveLocation()" id="btn-save-interactive-map" class="flex-[2] bg-[#00BCD4] text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-widest disabled:opacity-20 flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-95">
                         <i class="fa-solid fa-check"></i> Save Address Location
                     </button>
                 </div>
