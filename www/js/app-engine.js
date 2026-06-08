@@ -78,10 +78,10 @@ const AppEngine = {
                 this.savedAddresses.push({ address: street, category: 'Current', coords: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}` });
                 localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
                 localStorage.setItem('h2o_last_address', street);
-                this.toggleServiceAlerts(false); this.updateLocationUI("Ballari");
+                this.toggleServiceAlerts(false); this.updateLocationUI("Ballari", street);
                 if(overlay) overlay.classList.add('hidden');
                 this.showNotificationToast("Location Detected & Saved! 📍");
-                this.renderSavedAddresses();
+                navigateTo('home');
             } catch(e) { if(overlay) overlay.classList.add('hidden'); alert("Reverse geocode failed"); }
         }, (err) => { if(overlay) overlay.classList.add('hidden'); alert("GPS denied"); }, { enableHighAccuracy: true });
     },
@@ -108,10 +108,10 @@ const AppEngine = {
         this.savedAddresses.push({ address: addr, category: this.currentAddrCategory });
         localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
         localStorage.setItem('h2o_last_address', addr);
-        this.toggleServiceAlerts(false); this.updateLocationUI("Ballari");
+        this.toggleServiceAlerts(false); this.updateLocationUI("Ballari", addr);
         this.showNotificationToast("Manual Address Saved! 📝");
-        this.setLocationViewMode('main');
         if(input) input.value = "";
+        navigateTo('home');
     },
 
     renderSavedAddresses() {
