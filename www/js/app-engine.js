@@ -4,7 +4,7 @@
 const AppEngine = {
     cart: [], subscriptions: [], products: [], currentUser: null,
     subState: { productKey: null, freq: 'daily', days: [1,2,3,4,5,6,0] },
-    currentCoords: { lat: 15.1384, lng: 76.9244 }, // Ballari Production Hub
+    currentCoords: { lat: 15.1384, lng: 76.9244 }, 
     savedAddresses: [], currentAddrCategory: 'Home', systemSettings: {},
     IS_PRODUCTION: false,
     MerchantConfig: { merchant_upi_id: "7483266062@ybl", merchant_name: "H2O NexPulse", default_deposit_amount: 2000 },
@@ -90,14 +90,21 @@ const AppEngine = {
         this.currentAddrCategory = cat;
         ['Home', 'Office', 'Others'].forEach(c => {
             const btn = document.getElementById(`manual-cat-${c}`);
-            if(btn) btn.classList.toggle('border-teal-500/50', c === cat);
+            if(btn) {
+                btn.classList.toggle('border-teal-500/50', c === cat);
+                btn.classList.toggle('bg-teal-500/10', c === cat);
+                btn.classList.toggle('text-teal-400', c === cat);
+                btn.classList.toggle('border-slate-800', c !== cat);
+                btn.classList.toggle('bg-slate-950', c !== cat);
+                btn.classList.toggle('text-slate-500', c !== cat);
+            }
         });
     },
 
     saveManualAddress() {
         const input = document.getElementById('manual-address-input');
         const addr = input ? input.value.trim() : "";
-        if(!addr) return alert("Enter valid address");
+        if(!addr) return alert("Please enter valid address");
         this.savedAddresses.push({ address: addr, category: this.currentAddrCategory });
         localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
         localStorage.setItem('h2o_last_address', addr);
@@ -167,14 +174,28 @@ const AppEngine = {
     async searchOnMap() {
         const query = document.getElementById('map-search-input').value.trim();
         if(!query) return;
+        
+        // Coords Regex Check
+        const coordRegex = /(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/;
+        const matched = query.match(coordRegex);
+        if(matched) {
+            const lat = parseFloat(matched[1]);
+            const lon = parseFloat(matched[2]);
+            if(this.isLeafletReady) { this.leafletMap.setView([lat, lon], 16); this.leafletMarker.setLatLng([lat, lon]); }
+            this.processNewLocationCoordinates(lat, lon);
+            return;
+        }
+
         try {
             const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
             const data = await res.json();
             if(data.length > 0) {
                 const { lat, lon } = data[0];
-                if(this.isLeafletReady) { this.leafletMap.setView([lat, lon], 16); this.leafletMarker.setLatLng([lat, lon]); }
-                this.processNewLocationCoordinates(parseFloat(lat), parseFloat(lon));
-            } else alert("Not found");
+                const latNum = parseFloat(lat);
+                const lonNum = parseFloat(lon);
+                if(this.isLeafletReady) { this.leafletMap.setView([latNum, lonNum], 16); this.leafletMarker.setLatLng([latNum, lonNum]); }
+                this.processNewLocationCoordinates(latNum, lonNum);
+            } else alert("Location not found");
         } catch(e) {}
     },
 
@@ -198,10 +219,25 @@ const AppEngine = {
         this.processNewLocationCoordinates(this.ProductionHub.lat + (50-yPct)*0.016, this.ProductionHub.lng + (xPct-50)*0.016);
     },
 
-    processNewLocationCoordinates(lat, lng) {
+    async processNewLocationCoordinates(lat, lng) {
         const dist = this.calculateDistance(this.ProductionHub.lat, this.ProductionHub.lng, lat, lng);
         const out = dist > 35;
-        const addr = out ? `Outer Region Area [${lat.toFixed(4)}, ${lng.toFixed(4)}]` : `Ballari Delivery Sub-Sector [${lat.toFixed(4)}, ${lng.toFixed(4)}]`;
+        
+        let addr = "";
+        if(out) {
+            addr = `Out of Service Range [${lat.toFixed(4)}, ${lng.toFixed(4)}]`;
+        } else {
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+                const data = await res.json();
+                const road = data.address.road || data.address.suburb || 'Delivery Zone';
+                const city = data.address.city || data.address.town || 'Ballari';
+                addr = `${road}, ${city} [${lat.toFixed(4)}, ${lng.toFixed(4)}]`;
+            } catch {
+                addr = `Registered Delivery Sector [${lat.toFixed(4)}, ${lng.toFixed(4)}]`;
+            }
+        }
+
         document.getElementById('map-address-display').innerText = addr;
         document.getElementById('map-distance-text').innerText = `Radius Check: ${dist.toFixed(2)} KM from Hub`;
         const b = document.getElementById('map-distance-banner');
@@ -215,6 +251,7 @@ const AppEngine = {
         const d = this.pendingInteractiveAddress; if(!d) return;
         this.savedAddresses.push({ address: d.address, category: 'Others', coords: d.coords });
         localStorage.setItem('h2o_last_address', d.address);
+        localStorage.setItem('h2o_saved_addresses', JSON.stringify(this.savedAddresses));
         this.toggleServiceAlerts(false); this.updateLocationUI("Ballari"); navigateTo('home');
     },
 
