@@ -187,19 +187,20 @@
             </div>
         </div>
 
-        <!-- GLOBAL TOP BLOCK -->
-        <div id="global-top-bar">
-            <div class="location-banner cursor-pointer" onclick="navigateTo('select-location'); AppEngine.setLocationViewMode('map');">
-                <i class="fa-solid fa-location-dot pin"></i>
-                <div class="meta">
-                    <h4>Ballari <i class="fa-solid fa-chevron-down text-xs"></i></h4>
-                    <p id="dashboard-address-sub">Tap to set delivery location</p>
+        <!-- GLOBAL TOP BLOCK (React Header Translation) -->
+        <div id="global-top-bar" class="px-4 pt-5 pb-3 flex items-center justify-between border-b border-[#1E294B] bg-[#0A0E1A]">
+            <button onclick="navigateTo('select-location'); AppEngine.setLocationViewMode('map');" class="flex items-start gap-2 text-left max-w-[80%] focus:outline-none group active:opacity-70">
+                <i class="fa-solid fa-map-pin text-[#00BCD4] mt-0.5 shrink-0 text-xl"></i>
+                <div class="space-y-0.5">
+                    <div class="flex items-center gap-1 font-bold text-sm text-white">
+                        <span class="location-banner-title">Ballari</span>
+                        <i class="fa-solid fa-chevron-down text-gray-400 group-hover:text-[#00BCD4] transition-colors text-[10px]"></i>
+                    </div>
+                    <p id="dashboard-address-sub" class="text-[11px] text-gray-500 truncate font-medium max-w-[250px]">
+                        Tap to set delivery location...
+                    </p>
                 </div>
-            </div>
-            <div class="search-container cursor-pointer" onclick="navigateTo('search')">
-                <i class="fa-solid fa-magnifying-glass search-ico"></i>
-                <input type="text" placeholder="Search..." id="global-search" readonly>
-            </div>
+            </button>
         </div>
 
         <!-- VIEW PANEL: SEARCH (New) -->
@@ -1029,23 +1030,32 @@
             </div>
         </section>
 
-        <section class="view-panel active" id="view-home">
-            <div class="promo-slider">
-                <div class="slide-content">
-                    <span class="brand-badge">H2ONEXPULSE PREMIUM</span>
-                    <h3>Natural Alpine Spring Water</h3>
-                    <p>A life full of altitude.</p>
+        <!-- VIEW PANEL: HOME -->
+        <section class="view-panel active flex-col p-0 pb-20 bg-[#0A0E1A]" id="view-home">
+            
+            <!-- Global Core Search Node -->
+            <div class="p-4 pt-24">
+                <div onclick="navigateTo('search')" class="w-full bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-3 flex items-center gap-3 active:border-[#00BCD4] transition-all shadow-inner cursor-pointer">
+                    <i class="fa-solid fa-magnifying-glass text-gray-500"></i>
+                    <input type="text" placeholder="Search packages, hydration products..." class="w-full bg-transparent border-none text-sm text-white placeholder-gray-600 focus:outline-none pointer-events-none" disabled>
                 </div>
             </div>
-            
-            <div class="quick-category-row">
-                <div class="cat-chip active"><span>Daily H2O</span></div>
-                <div class="cat-chip"><span>Premium H2O</span></div>
-                <div class="cat-chip"><span>Change over</span></div>
-                <div class="cat-chip"><span>Traveling</span></div>
+
+            <!-- Rebranded Premium Banner -->
+            <div class="px-4 py-2">
+                <div class="w-full bg-gradient-to-br from-[#131A30] to-[#1E294B] border border-[#1E294B] rounded-2xl p-6 relative overflow-hidden shadow-xl">
+                    <div class="space-y-1.5 max-w-[70%] z-10 relative">
+                        <span class="text-[10px] font-black tracking-[0.2em] text-[#00BCD4] uppercase">H2ONEXPULSE PREMIUM</span>
+                        <h2 class="text-xl font-extrabold text-white tracking-wide leading-tight">Natural Alpine Spring Water</h2>
+                        <p class="text-xs text-gray-400 font-medium">Pure, pristine hydration directly from natural reserve zones.</p>
+                    </div>
+                    <!-- Ambient Glow -->
+                    <div class="absolute right-[-20px] bottom-[-20px] w-36 h-36 bg-[#00BCD4]/10 rounded-full blur-2xl pointer-events-none"></div>
+                </div>
             </div>
 
-            <div class="service-alert-box" id="alert-home">
+            <!-- Delivery Alert Banner -->
+            <div class="service-alert-box mx-4 hidden" id="alert-home">
                 <div class="alert-txt">
                     <h3>Location not deliverable</h3>
                     <p>Sorry, we are not delivering at this location at the moment.</p>
@@ -1053,38 +1063,54 @@
                 <div class="alert-icon-circle"><i class="fa-solid fa-xmark"></i></div>
             </div>
 
-            <div class="banner-subscribe-cta">
-                <h3>Subscribe Once. <br><span class="highlight">Stay H2O daily.</span></h3>
-                <button class="cta-btn-sm" onclick="AppEngine.handleSubscriptionIntent()">SUBSCRIBE NOW</button>
-            </div>
-
-            <div class="grid-section">
-                <h3 class="section-title">Shop by Need</h3>
-                <div class="needs-grid">
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Daily H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Daily H2O</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Premium H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Premium H2O</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Change over')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Change over</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Traveling')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Traveling</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Party Mood')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Party Mood</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Glass H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Glass H2O</span></div>
+            <!-- Automated Subscription Call-To-Action Box -->
+            <div class="p-4">
+                <div class="w-full bg-[#131A30] border border-[#1E294B] rounded-2xl p-5 flex items-center justify-between gap-4 shadow-lg">
+                    <div class="space-y-1">
+                        <h3 class="text-base font-bold text-white tracking-wide">Subscribe Once.</h3>
+                        <p class="text-xs font-bold text-[#00BCD4]">Stay H2O daily.</p>
+                    </div>
+                    <button onclick="AppEngine.handleSubscriptionIntent()" class="bg-[#00BCD4] text-[#0A0E1A] font-black px-5 py-3 rounded-xl text-xs uppercase tracking-wider shadow-md active:scale-95 transition-all">
+                        SUBSCRIBE NOW
+                    </button>
                 </div>
             </div>
 
+            <!-- Clean Grid Segment Categorization -->
+            <div class="px-4 pt-2 space-y-3">
+                <h4 class="text-xs font-black tracking-widest text-gray-500 uppercase px-1">Shop by Need</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div onclick="AppEngine.filterByCategory('Daily H2O')" class="bg-[#131A30] border border-[#1E294B] p-5 rounded-2xl flex flex-col items-center text-center space-y-3 cursor-pointer active:bg-[#1E294B] transition-all">
+                        <div class="p-3 bg-[#0A0E1A] text-gray-400 rounded-xl border border-[#1E294B]">
+                            <i class="fa-solid fa-bottle-water text-xl text-[#00BCD4]"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-300">Daily H2O</span>
+                    </div>
+
+                    <div onclick="AppEngine.filterByCategory('Premium H2O')" class="bg-[#131A30] border border-[#1E294B] p-5 rounded-2xl flex flex-col items-center text-center space-y-3 cursor-pointer active:bg-[#1E294B] transition-all">
+                        <div class="p-3 bg-[#0A0E1A] text-gray-400 rounded-xl border border-[#1E294B]">
+                            <i class="fa-solid fa-bottle-water text-xl text-cyan-400 animate-pulse"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-300">Premium H2O</span>
+                    </div>
+                </div>
+            </div>
+            
             <!-- ASSET LEDGER (Ref: 1000298470.jpg) -->
-            <div class="asset-ledger-section mt-8">
-                <div class="ledger-card">
-                    <div class="ledger-header">
-                        <h4><i class="fa-solid fa-box-open"></i> Physical Account Ledger</h4>
+            <div class="px-4 mt-8">
+                <div class="ledger-card bg-[#131A30] border border-[#1E294B]">
+                    <div class="ledger-header border-b border-[#1E294B]">
+                        <h4 class="text-white"><i class="fa-solid fa-box-open text-[#00BCD4]"></i> Physical Account Ledger</h4>
                     </div>
                     <div class="ledger-metrics">
                         <div class="metric-node">
-                            <span class="metric-val" id="ui-jars-held">0</span>
-                            <span class="metric-lbl">Jars At Home</span>
+                            <span class="metric-val text-white" id="ui-jars-held">0</span>
+                            <span class="metric-lbl text-gray-400">Jars At Home</span>
                         </div>
-                        <div class="metric-divider"></div>
+                        <div class="metric-divider bg-[#1E294B]"></div>
                         <div class="metric-node">
-                            <span class="metric-val" id="ui-deposit-held">₹0.00</span>
-                            <span class="metric-lbl">Security Deposit</span>
+                            <span class="metric-val text-white" id="ui-deposit-held">₹0.00</span>
+                            <span class="metric-lbl text-gray-400">Security Deposit</span>
                         </div>
                     </div>
                 </div>

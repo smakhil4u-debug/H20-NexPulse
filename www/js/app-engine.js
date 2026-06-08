@@ -313,8 +313,8 @@ const AppEngine = {
         }
     },
     updateLocationUI(n, addrStr) { 
-        const h = document.querySelector('.location-banner h4'); 
-        if(h) h.innerHTML = `${n} <i class="fa-solid fa-chevron-down"></i>`; 
+        const h = document.querySelector('.location-banner-title'); 
+        if(h) h.innerText = n; 
         const sub = document.getElementById('dashboard-address-sub');
         if(sub && addrStr) sub.innerText = addrStr;
     },
