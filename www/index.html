@@ -233,135 +233,113 @@
             </div>
         </section>
 
-        <!-- VIEW PANEL: SELECT LOCATION (New) -->
-        <section class="view-panel p-0 bg-slate-950" id="view-select-location">
-            <div class="bg-teal-600 p-6 flex items-center gap-4 text-white sticky top-0 z-[110]">
-                <button onclick="navigateTo('home')" class="text-2xl"><i class="fa-solid fa-chevron-left"></i></button>
-                <h2 class="text-xl font-bold flex-1 text-center pr-8">Select a location</h2>
-            </div>
+        <!-- VIEW PANEL: COMPREHENSIVE LOCATION CONTROL -->
+        <section class="view-panel p-0 bg-[#0A0E1A] flex-col hidden" id="view-select-location">
             
-            <div class="p-6 space-y-4">
-                <!-- Current Location Card -->
-                <div onclick="AppEngine.selectCurrentLocation('36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India', true)" class="border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm cursor-pointer active:scale-95 transition">
-                    <div class="text-teal-400 text-2xl"><i class="fa-solid fa-crosshairs"></i></div>
-                    <div class="flex-1">
-                        <div class="text-teal-400 font-black text-sm tracking-wide">CURRENT LOCATION</div>
-                        <p class="text-slate-400 text-[11px] font-medium leading-tight mt-1">36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India</p>
-                    </div>
-                </div>
-
-                <!-- Add Address Section -->
-                <div id="location-list-view" class="space-y-4">
-                    <button onclick="navigateTo('fully-interactive-map')" class="w-full bg-[#00BCD4] rounded-2xl p-6 flex items-center gap-4 shadow-xl shadow-teal-900/20 active:scale-95 transition text-left group">
-                        <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-white text-2xl group-hover:scale-110 transition"><i class="fa-solid fa-map-location-dot"></i></div>
-                        <div class="flex-1">
-                            <div class="text-[#0A0E1A] font-black text-sm tracking-widest uppercase">Open Map Picker</div>
-                            <p class="text-[#0A0E1A]/60 text-[10px] font-bold uppercase mt-0.5">Drop pin to set doorstep delivery</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-[#0A0E1A]/40"></i>
-                    </button>
-
-                    <button onclick="AppEngine.toggleAddAddressForm(true)" class="w-full border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm active:scale-95 transition text-left">
-                        <div class="text-teal-400 text-2xl"><i class="fa-solid fa-plus"></i></div>
-                        <div class="text-teal-400 font-black text-sm tracking-wide">ADD ADDRESS MANUALLY</div>
-                    </button>
-
-                    <!-- Saved Addresses Sub-Section -->
-                    <div class="pt-8">
-                        <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] mb-6 uppercase text-center">Saved Addresses</div>
-                        <div id="dynamic-saved-addresses-target">
-                            <!-- Empty State or List will be injected here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ADD ADDRESS FORM (Hidden initially) -->
-                <div id="add-address-form" class="hidden space-y-6 animate-fadeIn">
-                    <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Enter Address Details</label>
-                        <textarea id="new-address-input" rows="3" placeholder="Enter full street address, apartment, building number..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition"></textarea>
-                        
-                        <div class="flex gap-4">
-                            <div class="flex-1 space-y-2">
-                                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Latitude</label>
-                                <input type="number" id="new-address-lat" step="any" placeholder="15.1384" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition">
-                            </div>
-                            <div class="flex-1 space-y-2">
-                                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Longitude</label>
-                                <input type="number" id="new-address-lng" step="any" placeholder="76.9244" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition">
-                            </div>
-                        </div>
-                        <p id="geofence-error" class="text-[10px] text-rose-500 font-bold uppercase hidden">Out of Service Zone: Location falls outside our 35km delivery radius</p>
-                    </div>
-                    <div class="flex gap-4">
-                        <button onclick="AppEngine.toggleAddAddressForm(false)" class="flex-1 py-4 bg-slate-800 rounded-2xl font-bold text-slate-400 text-xs uppercase">Cancel</button>
-                        <button onclick="AppEngine.addNewAddress()" id="btn-save-new-address" class="flex-[2] py-4 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl shadow-teal-900/20 text-xs uppercase tracking-widest">Save Address</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL: FULLY INTERACTIVE MAP (React Design Translation) -->
-        <section class="view-panel p-0 bg-[#0A0E1A] flex-col" id="view-fully-interactive-map">
-            <!-- Top Main Navigation Header -->
-            <div class="bg-[#009688] text-white px-4 py-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
-                <div class="flex items-center gap-4">
-                    <button onclick="navigateTo('select-location')" class="p-1 active:bg-teal-800 rounded-full text-white">
-                        <i class="fa-solid fa-arrow-left text-xl"></i>
-                    </button>
-                    <div class="flex flex-col text-left">
-                        <h1 class="text-lg font-bold tracking-wide">Live Map Location</h1>
-                        <p class="text-[10px] text-teal-100 font-medium tracking-wider uppercase">Tap your exact house position on the map</p>
-                    </div>
-                </div>
-                <button onclick="AppEngine.openHelp('call')" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white active:bg-white/20 transition">
-                    <i class="fa-solid fa-phone-volume"></i>
-                </button>
-            </div>
-
-            <!-- Main Map Content Layer Frame -->
-            <div class="flex-1 w-full relative bg-[#0D1527] border-b border-[#1E294B] min-h-[400px]">
-                <!-- Layer 1: Real Dynamic Map (Hidden until ready) -->
-                <div id="live-map-layer" class="absolute inset-0 z-20 opacity-0 transition-opacity duration-300 pointer-events-none">
-                    <!-- Leaflet mounts here -->
+            <!-- SUB-VIEW: MAIN -->
+            <div id="loc-subview-main" class="flex flex-col w-full h-full">
+                <div class="bg-teal-600 p-6 flex items-center gap-4 text-white sticky top-0 z-[110]">
+                    <button onclick="navigateTo('home')" class="text-2xl"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h2 class="text-xl font-bold flex-1 text-center pr-8">Select a location</h2>
                 </div>
                 
-                <!-- Layer 2: Instant Tactical Fallback (Visible instantly) -->
-                <div id="fallback-map-layer" class="absolute inset-0 z-10">
-                    <!-- Fallback UI injected here -->
+                <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                    <button onclick="AppEngine.detectCurrentGPSLocation()" class="w-full border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm active:scale-95 transition text-left group">
+                        <div class="text-teal-400 text-2xl group-hover:scale-110 transition"><i class="fa-solid fa-location-crosshairs"></i></div>
+                        <div class="flex-1">
+                            <div class="text-teal-400 font-black text-sm tracking-wide">DETECT CURRENT LOCATION</div>
+                            <p class="text-slate-400 text-[10px] font-medium mt-1 uppercase">Instant GPS Auto-Detection</p>
+                        </div>
+                    </button>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="AppEngine.setLocationViewMode('map')" class="bg-[#00BCD4] rounded-2xl p-4 flex flex-col items-center justify-center gap-2 shadow-xl active:scale-95 transition text-center">
+                            <i class="fa-solid fa-map-location-dot text-2xl text-[#0A0E1A]"></i>
+                            <span class="text-[#0A0E1A] font-black text-[10px] uppercase tracking-wider">Map Picker</span>
+                        </button>
+                        <button onclick="AppEngine.setLocationViewMode('manual')" class="border-2 border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 bg-slate-900 active:scale-95 transition text-center">
+                            <i class="fa-solid fa-keyboard text-2xl text-slate-400"></i>
+                            <span class="text-slate-400 font-black text-[10px] uppercase tracking-wider">Manual Entry</span>
+                        </button>
+                    </div>
+
+                    <div class="pt-8">
+                        <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] mb-6 uppercase text-center">Saved Addresses</div>
+                        <div id="dynamic-saved-addresses-target"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Bottom Form Info Summary & Validation Cards Tray -->
-            <div class="bg-[#131A30] border-t border-[#1E294B] p-4 space-y-4 shadow-2xl z-40 max-w-md mx-auto w-full">
-                <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">
-                        Auto-Generated Delivery Address
-                    </label>
-                    <div id="map-address-display" class="bg-[#0A0E1A] border border-[#1E294B] rounded-xl px-4 py-3 text-sm text-gray-200 font-medium leading-relaxed">
-                        Ballari Production Hub, Sri Rampura Colony Zone Center
+            <!-- SUB-VIEW: MAP PICKER -->
+            <div id="loc-subview-map" class="flex flex-col w-full h-full hidden">
+                <div class="bg-[#009688] text-white px-4 py-4 flex items-center justify-between sticky top-0 z-[120] shadow-md">
+                    <div class="flex items-center gap-4">
+                        <button onclick="AppEngine.setLocationViewMode('main')" class="p-1 active:bg-teal-800 rounded-full text-white"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+                        <div class="flex flex-col text-left">
+                            <h1 class="text-lg font-bold tracking-wide">Mark Delivery Spot</h1>
+                            <p class="text-[10px] text-teal-100 font-medium tracking-wider">Search or tap exact house position</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Proximity Response Status Message Banner -->
-                <div id="map-distance-banner" class="p-3.5 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400">
-                    <div class="mt-0.5 shrink-0">
+                <div class="flex-1 w-full relative bg-[#0D1527] border-b border-[#1E294B] flex flex-col min-h-0">
+                    <div class="absolute top-4 left-4 right-4 z-[100]">
+                        <div class="bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-2xl flex items-center px-4 gap-3 shadow-2xl focus-within:border-teal-500 transition">
+                            <i class="fa-solid fa-magnifying-glass text-slate-500 text-sm"></i>
+                            <input type="text" id="map-search-input" placeholder="Search area or coordinates..." class="flex-1 bg-transparent border-none outline-none py-4 text-sm text-white font-medium" onkeydown="if(event.key==='Enter') AppEngine.searchOnMap()">
+                            <button onclick="AppEngine.searchOnMap()" class="text-teal-400 font-black text-[10px] uppercase tracking-widest">Search</button>
+                        </div>
+                    </div>
+                    <div id="live-map-layer" class="absolute inset-0 z-10 opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+                    <div id="fallback-map-layer" class="absolute inset-0 z-0"></div>
+                </div>
+
+                <div class="bg-[#131A30] border-t border-[#1E294B] p-4 space-y-4 shadow-2xl z-40 max-w-md mx-auto w-full">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">Auto-Generated Delivery Address</label>
+                        <div id="map-address-display" class="bg-[#0A0E1A] border border-[#1E294B] rounded-xl px-4 py-3 text-sm text-gray-200 font-medium leading-relaxed">Detecting...</div>
+                    </div>
+                    <div id="map-distance-banner" class="p-3.5 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400">
                         <i class="fa-solid fa-location-arrow transform rotate-45 text-[#00BCD4]" id="map-nav-icon"></i>
+                        <div class="text-xs space-y-0.5">
+                            <p id="map-distance-text" class="font-bold uppercase tracking-wide">Radius Check: 0.00 KM from Hub</p>
+                            <p id="map-status-desc" class="text-gray-400">Verified Area: Active coordinates mapped successfully.</p>
+                        </div>
                     </div>
-                    <div class="text-xs space-y-0.5">
-                        <p id="map-distance-text" class="font-bold uppercase tracking-wide">Radius Check: 0.00 KM from Ballari Hub</p>
-                        <p id="map-status-desc" class="text-gray-400">Verified Area: Active dispatch coordinates mapped successfully. Your dashboard errors will clear.</p>
-                    </div>
+                    <button onclick="AppEngine.saveInteractiveLocation()" id="btn-save-interactive-map" class="w-full bg-[#00BCD4] text-[#0A0E1A] font-extrabold py-4 rounded-2xl text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-all">SAVE ADDRESS LOCATION</button>
                 </div>
+            </div>
 
-                <!-- Control Button Grid Layout -->
-                <div class="flex gap-4">
-                    <button onclick="navigateTo('select-location')" class="flex-1 bg-[#1E294B] border border-[#2E3B5E] text-gray-400 font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider active:bg-slate-800">
-                        Cancel
-                    </button>
-                    <button onclick="AppEngine.saveInteractiveLocation()" id="btn-save-interactive-map" class="flex-[2] bg-[#00BCD4] text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-widest disabled:opacity-20 flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-95">
-                        <i class="fa-solid fa-check"></i> Save Address Location
-                    </button>
+            <!-- SUB-VIEW: MANUAL ENTRY -->
+            <div id="loc-subview-manual" class="flex flex-col w-full h-full hidden">
+                <div class="bg-slate-900 p-6 flex items-center gap-4 text-white sticky top-0 z-[120] border-b border-white/5">
+                    <button onclick="AppEngine.setLocationViewMode('main')" class="text-xl"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h2 class="text-xl font-bold flex-1 text-center pr-8">Manual Entry</h2>
+                </div>
+                <div class="p-6 space-y-6 flex-1 overflow-y-auto">
+                    <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Full Street Address</label>
+                            <textarea id="manual-address-input" rows="4" placeholder="Enter building name, flat number, street details..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition"></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Category</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="AppEngine.setAddrCategory('Home')" id="manual-cat-Home" class="py-3 rounded-xl border border-teal-500/50 bg-teal-500/10 text-[10px] font-black text-teal-400 uppercase">Home</button>
+                                <button onclick="AppEngine.setAddrCategory('Office')" id="manual-cat-Office" class="py-3 rounded-xl border border-slate-800 bg-slate-950 text-[10px] font-black text-slate-500 uppercase">Office</button>
+                                <button onclick="AppEngine.setAddrCategory('Others')" id="manual-cat-Others" class="py-3 rounded-xl border border-slate-800 bg-slate-950 text-[10px] font-black text-slate-500 uppercase">Others</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="AppEngine.saveManualAddress()" class="w-full py-5 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl text-xs uppercase active:scale-95 transition">SAVE MANUAL ADDRESS</button>
+                </div>
+            </div>
+
+            <!-- GPS LOADING OVERLAY -->
+            <div id="gps-loading-overlay" class="fixed inset-0 z-[200] bg-slate-950/90 flex flex-col items-center justify-center space-y-4 hidden">
+                <div class="w-16 h-16 border-4 border-teal-500/20 border-t-teal-500 rounded-full animate-spin"></div>
+                <div class="text-center">
+                    <p class="text-teal-400 font-black text-xs uppercase tracking-[0.3em]">GPS Pinging Active...</p>
                 </div>
             </div>
         </section>
