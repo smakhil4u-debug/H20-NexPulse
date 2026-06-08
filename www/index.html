@@ -35,18 +35,14 @@
     </div>
 
     <script>
-        // High-Priority Root-Level Gate (5 Seconds - Ref: 1000300505_4.png)
+        // High-Priority Root-Level Gate (5 Seconds)
         (function() {
-            console.log("5-SECOND AD GATE STARTED...");
             setTimeout(function() {
                 var splash = document.getElementById('promo-splash');
                 if (splash) {
-                    console.log("AD GATE ENDED. REMOVING SPLASH.");
                     splash.style.opacity = '0';
                     splash.style.transition = 'opacity 0.8s ease';
-                    setTimeout(function() {
-                        splash.style.display = 'none';
-                    }, 800);
+                    setTimeout(function() { splash.style.display = 'none'; }, 800);
                 }
             }, 5000);
         })();
@@ -54,136 +50,53 @@
 
     <div id="app-viewport">
 
-        <!-- AUTH OVERLAY: Secure Access Portal (React Design Translation) -->
+        <!-- AUTH OVERLAY -->
         <div id="auth-overlay" class="fixed inset-0 bg-[#0A0E1A] z-[500] flex flex-col justify-between transition-transform translate-y-0 pb-6 overflow-y-auto">
-            
-            <!-- Top Section / Centered Branding -->
             <div class="flex-1 flex flex-col items-center justify-center px-6 max-w-md mx-auto w-full space-y-8">
-                
                 <div class="text-center space-y-1">
-                    <h1 class="text-3xl font-extrabold tracking-wider text-white uppercase font-brand">
-                        H2O NEXPULSE
-                    </h1>
-                    <p class="text-[10px] font-bold tracking-[0.4em] text-gray-500 uppercase">
-                        Secure Access Portal
-                    </p>
+                    <h1 class="text-3xl font-extrabold tracking-wider text-white uppercase font-brand">H2O NEXPULSE</h1>
+                    <p class="text-[10px] font-bold tracking-[0.4em] text-gray-500 uppercase">Secure Access Portal</p>
                 </div>
 
-                <!-- Step 1: Phone Entry Interface -->
                 <div id="login-step-phone" class="w-full space-y-6">
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">
-                            Phone Number
-                        </label>
-                        
+                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">Phone Number</label>
                         <div class="flex gap-3">
-                            <!-- Country Code Block -->
-                            <div class="bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-4 font-semibold text-gray-300 text-base flex items-center justify-center min-w-[64px]">
-                                +91
-                            </div>
-                            <!-- Number Input Field -->
+                            <div class="bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-4 font-semibold text-gray-300 text-base flex items-center justify-center min-w-[64px]">+91</div>
                             <div class="flex-1 bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-1 flex items-center gap-2 focus-within:border-[#00BCD4] transition-all">
                                 <input type="tel" id="login-phone" placeholder="Enter phone number" class="w-full bg-transparent border-none text-white font-medium placeholder-gray-600 focus:outline-none tracking-wide text-base py-3" maxlength="10">
                             </div>
                         </div>
                     </div>
-
-                    <button onclick="AppEngine.goToOtpStep()" class="w-full bg-[#00BCD4] text-white font-bold py-4 rounded-xl transition-all active:scale-[0.99] shadow-[0_4px_20px_rgba(0,188,212,0.25)] text-center text-sm tracking-widest uppercase">
-                        GET START CODE
-                    </button>
+                    <button onclick="AppEngine.goToOtpStep()" class="w-full bg-[#00BCD4] text-white font-bold py-4 rounded-xl shadow-[0_4px_20px_rgba(0,188,212,0.25)] text-center text-sm tracking-widest uppercase">GET START CODE</button>
                 </div>
 
-                <!-- Step 2: OTP Verification Interface (Hidden initially) -->
                 <div id="login-step-otp" class="hidden w-full space-y-6 animate-fadeIn">
                     <div class="space-y-2">
                         <div class="flex justify-between items-center px-1">
-                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">
-                                Enter Verification Code
-                            </label>
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">Enter Verification Code</label>
                             <span id="otp-phone-display" class="text-[10px] text-gray-400 font-medium">Sent to +91 00000 00000</span>
                         </div>
-                        
                         <div class="bg-[#131A30] border border-[#1E294B] rounded-xl px-4 py-1 flex items-center focus-within:border-[#00BCD4] transition-all">
                             <input type="text" id="login-otp" placeholder="• • • • • •" class="w-full bg-transparent border-none text-white font-bold tracking-[0.5em] text-center placeholder-gray-600 focus:outline-none text-lg py-3" maxlength="6">
                         </div>
                     </div>
-
                     <div class="space-y-3">
-                        <button onclick="AppEngine.handleMockLogin()" class="w-full bg-[#00BCD4] text-white font-bold py-4 rounded-xl transition-all active:scale-[0.99] shadow-[0_4px_20px_rgba(0,188,212,0.25)] text-center text-sm tracking-widest uppercase">
-                            VERIFY & LOGIN
-                        </button>
-
+                        <button onclick="AppEngine.handleMockLogin()" class="w-full bg-[#00BCD4] text-white font-bold py-4 rounded-xl shadow-[0_4px_20px_rgba(0,188,212,0.25)] text-center text-sm tracking-widest uppercase">VERIFY & LOGIN</button>
                         <div class="flex justify-between items-center px-1 pt-1">
-                            <button onclick="AppEngine.goToPhoneStep()" class="text-xs font-semibold text-gray-500 hover:text-white flex items-center gap-1 transition-colors">
-                                <i class="fa-solid fa-arrow-left text-[10px]"></i> Edit Number
-                            </button>
-                            <button onclick="alert('New code sent!')" class="text-xs font-semibold text-[#00BCD4] hover:text-cyan-400 flex items-center gap-1 transition-colors">
-                                <i class="fa-solid fa-rotate text-[10px]"></i> Resend Code
-                            </button>
+                            <button onclick="AppEngine.goToPhoneStep()" class="text-xs font-semibold text-gray-500 hover:text-white flex items-center gap-1 transition-colors"><i class="fa-solid fa-arrow-left text-[10px]"></i> Edit Number</button>
+                            <button onclick="alert('New code sent!')" class="text-xs font-semibold text-[#00BCD4] hover:text-cyan-400 flex items-center gap-1 transition-colors"><i class="fa-solid fa-rotate text-[10px]"></i> Resend Code</button>
                         </div>
                     </div>
                 </div>
-
             </div>
 
-            <!-- Bottom Global Navigation Tray Layer -->
             <div class="max-w-md mx-auto w-full border-t border-[#1E294B] bg-[#0A0E1A] flex justify-around py-3 text-[10px] font-bold text-gray-500">
-                <div class="flex flex-col items-center text-[#00BCD4]">
-                    <i class="fa-solid fa-house mb-1 text-sm"></i>
-                    <span>Home</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-bottle-water mb-1 text-sm"></i>
-                    <span>Products</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-calendar-check mb-1 text-sm"></i>
-                    <span>Subscriptions</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-cart-shopping mb-1 text-sm"></i>
-                    <span>Cart</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-user-gear mb-1 text-sm"></i>
-                    <span>Profile</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- SUBSCRIPTION SCHEDULER MODAL -->
-        <div id="sub-modal" class="fixed inset-0 bg-slate-950/95 z-[150] hidden flex items-end">
-            <div class="w-full glass-card rounded-t-[40px] p-8 space-y-6">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-2xl font-black font-brand tracking-tighter" id="sub-prod-name">---</h3>
-                    <button onclick="AppEngine.closeSubscriptionFlow()" class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                
-                <div class="space-y-4">
-                    <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Frequency</label>
-                    <div class="flex gap-2">
-                        <button id="freq-daily" onclick="AppEngine.setSubFreq('daily')" class="flex-1 py-3 rounded-xl border border-teal-500/50 bg-teal-500/10 text-xs font-bold text-teal-400 transition">Daily</button>
-                        <button id="freq-alt" onclick="AppEngine.setSubFreq('alt')" class="flex-1 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400 transition">Alt Days</button>
-                        <button id="freq-custom" onclick="AppEngine.setSubFreq('custom')" class="flex-1 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400 transition">Custom</button>
-                    </div>
-                </div>
-
-                <div class="space-y-4" id="custom-days-picker">
-                    <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Delivery Days</label>
-                    <div class="flex justify-between gap-1">
-                        <button class="day-btn" data-day="1">M</button>
-                        <button class="day-btn" data-day="2">T</button>
-                        <button class="day-btn" data-day="3">W</button>
-                        <button class="day-btn" data-day="4">T</button>
-                        <button class="day-btn" data-day="5">F</button>
-                        <button class="day-btn" data-day="6">S</button>
-                        <button class="day-btn" data-day="0">S</button>
-                    </div>
-                </div>
-
-                <button onclick="AppEngine.saveSubscription()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition uppercase tracking-widest">
-                    ACTIVATE SCHEDULE
-                </button>
+                <div class="flex flex-col items-center text-[#00BCD4]"><i class="fa-solid fa-house mb-1 text-sm"></i><span>Home</span></div>
+                <div class="flex flex-col items-center"><i class="fa-solid fa-bottle-water mb-1 text-sm"></i><span>Products</span></div>
+                <div class="flex flex-col items-center"><i class="fa-solid fa-calendar-check mb-1 text-sm"></i><span>Subscriptions</span></div>
+                <div class="flex flex-col items-center"><i class="fa-solid fa-cart-shopping mb-1 text-sm"></i><span>Cart</span></div>
+                <div class="flex flex-col items-center"><i class="fa-solid fa-user-gear mb-1 text-sm"></i><span>Profile</span></div>
             </div>
         </div>
 
@@ -193,7 +106,7 @@
                 <i class="fa-solid fa-location-dot pin"></i>
                 <div class="meta">
                     <h4>Ballari <i class="fa-solid fa-chevron-down text-xs"></i></h4>
-                    <p>36, Sri Rampura Colony, Bandimot, Ballari, ...</p>
+                    <p>Detecting location...</p>
                 </div>
             </div>
             <div class="search-container cursor-pointer" onclick="navigateTo('search')">
@@ -202,7 +115,7 @@
             </div>
         </div>
 
-        <!-- VIEW PANEL: SEARCH (New) -->
+        <!-- VIEW PANEL: SEARCH -->
         <section class="view-panel p-0 bg-slate-950" id="view-search">
             <div class="p-6 space-y-6">
                 <div class="flex items-center gap-4">
@@ -210,821 +123,119 @@
                     <div class="flex-1 bg-slate-900 border border-slate-800 rounded-2xl flex items-center px-4 gap-3 focus-within:border-teal-500 transition">
                         <i class="fa-solid fa-magnifying-glass text-slate-500 text-sm"></i>
                         <input type="text" id="main-search-input" placeholder="Search products..." class="flex-1 bg-transparent border-none outline-none py-4 text-sm text-white font-medium">
-                        <button onclick="AppEngine.clearSearch()" id="btn-clear-search" class="hidden text-slate-500 hover:text-white"><i class="fa-solid fa-circle-xmark"></i></button>
                     </div>
                 </div>
-
-                <!-- Popular Searches -->
-                <div id="popular-searches-box" class="space-y-4">
-                    <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1">Popular Searches</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="AppEngine.execPopularSearch('20 Ltr Cold Water Jar')" class="px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-bold text-slate-300 active:bg-teal-500/10 active:border-teal-500/50 transition">20 Ltr Cold Water Jar</button>
-                        <button onclick="AppEngine.execPopularSearch('20 Ltr Normal Water Jar')" class="px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-bold text-slate-300 active:bg-teal-500/10 active:border-teal-500/50 transition">20 Ltr Normal Water Jar</button>
-                        <button onclick="AppEngine.execPopularSearch('2 Ltr Water Bottle')" class="px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-bold text-slate-300 active:bg-teal-500/10 active:border-teal-500/50 transition">2 Ltr Water Bottle</button>
-                        <button onclick="AppEngine.execPopularSearch('1 Ltr Water Bottle')" class="px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-bold text-slate-300 active:bg-teal-500/10 active:border-teal-500/50 transition">1 Ltr Water Bottle</button>
-                    </div>
-                </div>
-
-                <!-- Search Results Target -->
-                <div id="search-results-target" class="space-y-4">
-                    <!-- Dynamic search results here -->
-                </div>
+                <div id="search-results-target" class="space-y-4"></div>
             </div>
         </section>
 
-        <!-- VIEW PANEL: SELECT LOCATION (New) -->
-        <section class="view-panel p-0 bg-slate-950" id="view-select-location">
-            <div class="bg-teal-600 p-6 flex items-center gap-4 text-white sticky top-0 z-[110]">
-                <button onclick="navigateTo('home')" class="text-2xl"><i class="fa-solid fa-chevron-left"></i></button>
-                <h2 class="text-xl font-bold flex-1 text-center pr-8">Select a location</h2>
-            </div>
+        <!-- VIEW PANEL: COMPREHENSIVE LOCATION CONTROL (Unified Overhaul) -->
+        <section class="view-panel p-0 bg-slate-950 flex-col" id="view-select-location">
             
-            <div class="p-6 space-y-4">
-                <!-- Current Location Card -->
-                <div onclick="AppEngine.selectCurrentLocation('36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India', true)" class="border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm cursor-pointer active:scale-95 transition">
-                    <div class="text-teal-400 text-2xl"><i class="fa-solid fa-crosshairs"></i></div>
-                    <div class="flex-1">
-                        <div class="text-teal-400 font-black text-sm tracking-wide">CURRENT LOCATION</div>
-                        <p class="text-slate-400 text-[11px] font-medium leading-tight mt-1">36, Sri Rampura Colony, Bandimot, Ballari, Karnataka 583101, India</p>
-                    </div>
-                </div>
-
-                <!-- Add Address Section -->
-                <div id="location-list-view" class="space-y-4">
-                    <button onclick="navigateTo('fully-interactive-map')" class="w-full bg-[#00BCD4] rounded-2xl p-6 flex items-center gap-4 shadow-xl shadow-teal-900/20 active:scale-95 transition text-left group">
-                        <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-white text-2xl group-hover:scale-110 transition"><i class="fa-solid fa-map-location-dot"></i></div>
-                        <div class="flex-1">
-                            <div class="text-[#0A0E1A] font-black text-sm tracking-widest uppercase">Open Map Picker</div>
-                            <p class="text-[#0A0E1A]/60 text-[10px] font-bold uppercase mt-0.5">Drop pin to set doorstep delivery</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-[#0A0E1A]/40"></i>
-                    </button>
-
-                    <button onclick="AppEngine.toggleAddAddressForm(true)" class="w-full border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm active:scale-95 transition text-left">
-                        <div class="text-teal-400 text-2xl"><i class="fa-solid fa-plus"></i></div>
-                        <div class="text-teal-400 font-black text-sm tracking-wide">ADD ADDRESS MANUALLY</div>
-                    </button>
-
-                    <!-- Saved Addresses Sub-Section -->
-                    <div class="pt-8">
-                        <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] mb-6 uppercase text-center">Saved Addresses</div>
-                        <div id="dynamic-saved-addresses-target">
-                            <!-- Empty State or List will be injected here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ADD ADDRESS FORM (Hidden initially) -->
-                <div id="add-address-form" class="hidden space-y-6 animate-fadeIn">
-                    <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Enter Address Details</label>
-                        <textarea id="new-address-input" rows="3" placeholder="Enter full street address, apartment, building number..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition"></textarea>
-                        
-                        <div class="flex gap-4">
-                            <div class="flex-1 space-y-2">
-                                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Latitude</label>
-                                <input type="number" id="new-address-lat" step="any" placeholder="15.1384" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition">
-                            </div>
-                            <div class="flex-1 space-y-2">
-                                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Longitude</label>
-                                <input type="number" id="new-address-lng" step="any" placeholder="76.9244" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition">
-                            </div>
-                        </div>
-                        <p id="geofence-error" class="text-[10px] text-rose-500 font-bold uppercase hidden">Out of Service Zone: Location falls outside our 35km delivery radius</p>
-                    </div>
-                    <div class="flex gap-4">
-                        <button onclick="AppEngine.toggleAddAddressForm(false)" class="flex-1 py-4 bg-slate-800 rounded-2xl font-bold text-slate-400 text-xs uppercase">Cancel</button>
-                        <button onclick="AppEngine.addNewAddress()" id="btn-save-new-address" class="flex-[2] py-4 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl shadow-teal-900/20 text-xs uppercase tracking-widest">Save Address</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL: FULLY INTERACTIVE MAP (React Design Translation) -->
-        <section class="view-panel p-0 bg-[#0A0E1A] flex-col" id="view-fully-interactive-map">
-            <!-- Top Main Navigation Header -->
-            <div class="bg-[#009688] text-white px-4 py-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
-                <div class="flex items-center gap-4">
-                    <button onclick="navigateTo('select-location')" class="p-1 active:bg-teal-800 rounded-full text-white">
-                        <i class="fa-solid fa-arrow-left text-xl"></i>
-                    </button>
-                    <div class="flex flex-col text-left">
-                        <h1 class="text-lg font-bold tracking-wide">Live Map Location</h1>
-                        <p class="text-[10px] text-teal-100 font-medium tracking-wider uppercase">Tap your exact house position on the map</p>
-                    </div>
-                </div>
-                <button onclick="AppEngine.openHelp('call')" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white active:bg-white/20 transition">
-                    <i class="fa-solid fa-phone-volume"></i>
-                </button>
-            </div>
-
-            <!-- Main Map Content Layer Frame -->
-            <div class="flex-1 w-full relative bg-[#0D1527] border-b border-[#1E294B] min-h-[400px]">
-                <!-- Layer 1: Real Dynamic Map (Hidden until ready) -->
-                <div id="live-map-layer" class="absolute inset-0 z-20 opacity-0 transition-opacity duration-300 pointer-events-none">
-                    <!-- Leaflet mounts here -->
+            <!-- SUB-VIEW: MAIN -->
+            <div id="loc-subview-main" class="flex-col h-full">
+                <div class="bg-teal-600 p-6 flex items-center gap-4 text-white sticky top-0 z-[110]">
+                    <button onclick="navigateTo('home')" class="text-2xl"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h2 class="text-xl font-bold flex-1 text-center pr-8">Select a location</h2>
                 </div>
                 
-                <!-- Layer 2: Instant Tactical Fallback (Visible instantly) -->
-                <div id="fallback-map-layer" class="absolute inset-0 z-10">
-                    <!-- Fallback UI injected here -->
+                <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                    <button onclick="AppEngine.detectCurrentGPSLocation()" class="w-full border-2 border-teal-500/50 rounded-2xl p-4 flex items-center gap-4 bg-slate-900 shadow-sm active:scale-95 transition text-left group">
+                        <div class="text-teal-400 text-2xl group-hover:scale-110 transition"><i class="fa-solid fa-location-crosshairs"></i></div>
+                        <div class="flex-1">
+                            <div class="text-teal-400 font-black text-sm tracking-wide">DETECT CURRENT LOCATION</div>
+                            <p class="text-slate-400 text-[10px] font-medium mt-1 uppercase">Instant GPS Auto-Detection</p>
+                        </div>
+                    </button>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="AppEngine.setLocationViewMode('map')" class="bg-[#00BCD4] rounded-2xl p-4 flex flex-col items-center justify-center gap-2 shadow-xl active:scale-95 transition text-center">
+                            <i class="fa-solid fa-map-location-dot text-2xl text-[#0A0E1A]"></i>
+                            <span class="text-[#0A0E1A] font-black text-[10px] uppercase tracking-wider">Map Picker</span>
+                        </button>
+                        <button onclick="AppEngine.setLocationViewMode('manual')" class="border-2 border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 bg-slate-900 active:scale-95 transition text-center">
+                            <i class="fa-solid fa-keyboard text-2xl text-slate-400"></i>
+                            <span class="text-slate-400 font-black text-[10px] uppercase tracking-wider">Manual Entry</span>
+                        </button>
+                    </div>
+
+                    <div class="pt-8">
+                        <div class="text-[10px] font-bold text-slate-500 tracking-[0.2em] mb-6 uppercase text-center">Saved Addresses</div>
+                        <div id="dynamic-saved-addresses-target"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Bottom Form Info Summary & Validation Cards Tray -->
-            <div class="bg-[#131A30] border-t border-[#1E294B] p-4 space-y-4 shadow-2xl z-40 max-w-md mx-auto w-full">
-                <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">
-                        Auto-Generated Delivery Address
-                    </label>
-                    <div id="map-address-display" class="bg-[#0A0E1A] border border-[#1E294B] rounded-xl px-4 py-3 text-sm text-gray-200 font-medium leading-relaxed">
-                        Ballari Production Hub, Sri Rampura Colony Zone Center
+            <!-- SUB-VIEW: MAP PICKER -->
+            <div id="loc-subview-map" class="hidden flex-col h-full">
+                <div class="bg-[#009688] text-white px-4 py-4 flex items-center justify-between sticky top-0 z-[120] shadow-md">
+                    <div class="flex items-center gap-4">
+                        <button onclick="AppEngine.setLocationViewMode('main')" class="p-1 active:bg-teal-800 rounded-full text-white"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+                        <div class="flex flex-col text-left">
+                            <h1 class="text-lg font-bold tracking-wide">Mark Delivery Spot</h1>
+                            <p class="text-[10px] text-teal-100 font-medium tracking-wider">Search or tap exact house position</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Proximity Response Status Message Banner -->
-                <div id="map-distance-banner" class="p-3.5 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400">
-                    <div class="mt-0.5 shrink-0">
+                <div class="flex-1 w-full relative bg-[#0D1527] border-b border-[#1E294B] flex flex-col min-h-0">
+                    <div class="absolute top-4 left-4 right-4 z-[100]">
+                        <div class="bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-2xl flex items-center px-4 gap-3 shadow-2xl focus-within:border-teal-500 transition">
+                            <i class="fa-solid fa-magnifying-glass text-slate-500 text-sm"></i>
+                            <input type="text" id="map-search-input" placeholder="Search area or coordinates..." class="flex-1 bg-transparent border-none outline-none py-4 text-sm text-white font-medium" onkeydown="if(event.key==='Enter') AppEngine.searchOnMap()">
+                            <button onclick="AppEngine.searchOnMap()" class="text-teal-400 font-black text-[10px] uppercase tracking-widest">Search</button>
+                        </div>
+                    </div>
+                    <div id="live-map-layer" class="absolute inset-0 z-10 opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+                    <div id="fallback-map-layer" class="absolute inset-0 z-0"></div>
+                </div>
+
+                <div class="bg-[#131A30] border-t border-[#1E294B] p-4 space-y-4 shadow-2xl z-40 max-w-md mx-auto w-full">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block px-1">Auto-Generated Delivery Address</label>
+                        <div id="map-address-display" class="bg-[#0A0E1A] border border-[#1E294B] rounded-xl px-4 py-3 text-sm text-gray-200 font-medium leading-relaxed">Detecting...</div>
+                    </div>
+                    <div id="map-distance-banner" class="p-3.5 rounded-xl border flex items-start gap-3 transition-colors bg-teal-950/30 border-teal-900/50 text-teal-400">
                         <i class="fa-solid fa-location-arrow transform rotate-45 text-[#00BCD4]" id="map-nav-icon"></i>
+                        <div class="text-xs space-y-0.5">
+                            <p id="map-distance-text" class="font-bold uppercase tracking-wide">Radius Check: 0.00 KM from Hub</p>
+                            <p id="map-status-desc" class="text-gray-400">Verified Area: Active coordinates mapped successfully.</p>
+                        </div>
                     </div>
-                    <div class="text-xs space-y-0.5">
-                        <p id="map-distance-text" class="font-bold uppercase tracking-wide">Radius Check: 0.00 KM from Ballari Hub</p>
-                        <p id="map-status-desc" class="text-gray-400">Verified Area: Active dispatch coordinates mapped successfully. Your dashboard errors will clear.</p>
-                    </div>
-                </div>
-
-                <!-- Control Button Grid Layout -->
-                <div class="flex gap-4">
-                    <button onclick="navigateTo('select-location')" class="flex-1 bg-[#1E294B] border border-[#2E3B5E] text-gray-400 font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider active:bg-slate-800">
-                        Cancel
-                    </button>
-                    <button onclick="AppEngine.saveInteractiveLocation()" id="btn-save-interactive-map" class="flex-[2] bg-[#00BCD4] text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-widest disabled:opacity-20 flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-95">
-                        <i class="fa-solid fa-check"></i> Save Address Location
-                    </button>
+                    <button onclick="AppEngine.saveInteractiveLocation()" id="btn-save-interactive-map" class="w-full bg-[#00BCD4] text-[#0A0E1A] font-extrabold py-4 rounded-2xl text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-all">SAVE ADDRESS LOCATION</button>
                 </div>
             </div>
-        </section>
 
-        <!-- VIEW PANEL: SUBSCRIPTION SETUP (New) -->
-        <section class="view-panel p-0 bg-slate-950" id="view-subscription-setup">
-            <div class="p-6 space-y-8">
-                <div class="flex items-center gap-4">
-                    <button onclick="navigateTo('home')" class="text-white text-xl"><i class="fa-solid fa-chevron-left"></i></button>
-                    <h2 class="text-xl font-black font-brand tracking-tight">SUBSCRIPTION <span class="text-teal-400">SETUP</span></h2>
+            <!-- SUB-VIEW: MANUAL ENTRY -->
+            <div id="loc-subview-manual" class="hidden flex-col h-full">
+                <div class="bg-slate-900 p-6 flex items-center gap-4 text-white sticky top-0 z-[120] border-b border-white/5">
+                    <button onclick="AppEngine.setLocationViewMode('main')" class="text-xl"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h2 class="text-xl font-bold flex-1 text-center pr-8">Manual Entry</h2>
                 </div>
-
-                <div class="glass-card rounded-[32px] p-8 border border-white/5 space-y-6">
-                    <div class="space-y-1">
-                        <h4 class="text-teal-400 font-bold text-xs uppercase tracking-widest">Plan Selection</h4>
-                        <p id="setup-plan-name" class="text-white text-lg font-black">20 Ltr Daily H2O Plan</p>
-                    </div>
-
-                    <div class="h-px bg-white/5 w-full"></div>
-
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-slate-400">Refundable Jar Deposit</span>
-                            <span id="setup-deposit-val" class="text-white font-bold">₹0.00</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-slate-400">Initial Plan Credits</span>
-                            <span class="text-white font-bold">₹0.00</span>
-                        </div>
-                        <div class="flex justify-between items-center pt-4">
-                            <span class="text-white font-black uppercase tracking-tighter">Total Payable</span>
-                            <span id="setup-total-val" class="text-teal-400 text-2xl font-black">₹0.00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="p-4 bg-teal-500/5 border border-teal-500/20 rounded-2xl">
-                    <p class="text-[10px] text-teal-200/70 leading-relaxed">
-                        <i class="fa-solid fa-circle-info mr-1"></i> The security deposit is 100% refundable upon account closure and return of empty jars.
-                    </p>
-                </div>
-
-                <button onclick="navigateTo('payment-selection')" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition uppercase tracking-widest">
-                    PROCEED TO PAYMENT
-                </button>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL: PAYMENT SELECTION (New) -->
-        <section class="view-panel p-0 bg-slate-950" id="view-payment-selection">
-            <div class="p-6 space-y-8">
-                <div class="flex items-center gap-4">
-                    <button onclick="navigateTo('subscription-setup')" class="text-white text-xl"><i class="fa-solid fa-chevron-left"></i></button>
-                    <h2 class="text-xl font-black font-brand tracking-tight">PAYMENT <span class="text-teal-400">MODE</span></h2>
-                </div>
-
-                <div id="payment-options-list" class="space-y-4">
-                    <!-- Option A: UPI -->
-                    <div onclick="AppEngine.showPaymentForm('UPI')" class="p-6 bg-slate-900 border border-white/5 rounded-[24px] flex items-center gap-6 cursor-pointer hover:border-teal-500/50 transition">
-                        <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-2xl text-teal-400"><i class="fa-brands fa-google-pay"></i></div>
-                        <div class="flex-1">
-                            <h4 class="text-white font-bold text-sm">UPI (GPay / PhonePe)</h4>
-                            <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-1">Instant Activation</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-slate-700"></i>
-                    </div>
-
-                    <!-- Option B: Card -->
-                    <div onclick="AppEngine.showPaymentForm('Card')" class="p-6 bg-slate-900 border border-white/5 rounded-[24px] flex items-center gap-6 cursor-pointer hover:border-teal-500/50 transition">
-                        <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-2xl text-teal-400"><i class="fa-solid fa-credit-card"></i></div>
-                        <div class="flex-1">
-                            <h4 class="text-white font-bold text-sm">Credit / Debit Card</h4>
-                            <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-1">Safe & Secure</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-slate-700"></i>
-                    </div>
-
-                    <!-- Option C: COD -->
-                    <div onclick="AppEngine.showPaymentForm('COD')" class="p-6 bg-slate-900 border border-white/5 rounded-[24px] flex items-center gap-6 cursor-pointer hover:border-teal-500/50 transition">
-                        <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-2xl text-teal-400"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-                        <div class="flex-1">
-                            <h4 class="text-white font-bold text-sm">Pay on First Delivery</h4>
-                            <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-1">Manual Verification</p>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-slate-700"></i>
-                    </div>
-                </div>
-
-                <!-- UPI FORM SUB-VIEW -->
-                <div id="form-upi" class="hidden space-y-6 animate-fadeIn">
-                    <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Enter UPI ID</label>
-                            <div id="upi-status-icon" class="hidden">
-                                <i id="upi-valid-tick" class="fa-solid fa-circle-check text-emerald-500 hidden"></i>
-                                <i id="upi-invalid-cross" class="fa-solid fa-circle-xmark text-rose-500 hidden"></i>
-                            </div>
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="upi-id" placeholder="username@okaxis" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white outline-none focus:border-teal-500 transition pr-12">
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="AppEngine.quickFillUPI('user@gpay')" class="flex-1 py-2 bg-slate-950 border border-slate-800 rounded-xl text-[10px] text-slate-400 font-bold">GPAY</button>
-                            <button onclick="AppEngine.quickFillUPI('user@ybl')" class="flex-1 py-2 bg-slate-950 border border-slate-800 rounded-xl text-[10px] text-slate-400 font-bold">PHONEPE</button>
-                            <button onclick="AppEngine.quickFillUPI('user@paytm')" class="flex-1 py-2 bg-slate-950 border border-slate-800 rounded-xl text-[10px] text-slate-400 font-bold">PAYTM</button>
-                        </div>
-                    </div>
-                    
-                    <button id="btn-upi-verify" onclick="AppEngine.verifyUPI()" disabled class="w-full py-5 bg-slate-800 border border-slate-700 rounded-2xl font-black text-white active:scale-95 transition uppercase tracking-widest">VERIFY & PAY</button>
-                </div>
-
-                <!-- CARD FORM SUB-VIEW -->
-                <div id="form-card" class="hidden space-y-6 animate-fadeIn">
-                    <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
+                <div class="p-6 space-y-6 flex-1 overflow-y-auto">
+                    <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-6">
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Card Number</label>
-                            <input type="number" placeholder="XXXX XXXX XXXX XXXX" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white outline-none focus:border-teal-500 transition">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Full Street Address</label>
+                            <textarea id="manual-address-input" rows="4" placeholder="Enter building name, flat number, street details..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm outline-none focus:border-teal-500 transition"></textarea>
                         </div>
-                        <div class="flex gap-4">
-                            <div class="flex-1 space-y-2">
-                                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Expiry</label>
-                                <input type="text" placeholder="MM/YY" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white outline-none focus:border-teal-500 transition">
-                            </div>
-                            <div class="flex-1 space-y-2">
-                                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">CVV</label>
-                                <input type="password" placeholder="***" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white outline-none focus:border-teal-500 transition">
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="AppEngine.processPayment('Card')" id="btn-card-pay" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 uppercase tracking-widest">PAY SECURELY</button>
-                </div>
-
-                <!-- COD FORM SUB-VIEW -->
-                <div id="form-cod" class="hidden space-y-6 animate-fadeIn">
-                    <div class="bg-slate-900 p-8 rounded-[32px] border border-white/5 space-y-6 text-center">
-                        <div class="w-20 h-20 bg-teal-500/10 rounded-full flex items-center justify-center mx-auto text-3xl text-teal-400"><i class="fa-solid fa-shield-check"></i></div>
                         <div class="space-y-2">
-                            <h4 class="text-white font-bold">Verification Notice</h4>
-                            <p class="text-xs text-slate-400 leading-relaxed">Deposit will be collected by our delivery partner during your first H2O batch arrival. Subscription activates upon collection.</p>
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Category</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="AppEngine.setAddrCategory('Home')" id="manual-cat-Home" class="py-3 rounded-xl border border-teal-500/50 bg-teal-500/10 text-[10px] font-black text-teal-400 uppercase">Home</button>
+                                <button onclick="AppEngine.setAddrCategory('Office')" id="manual-cat-Office" class="py-3 rounded-xl border border-slate-800 bg-slate-950 text-[10px] font-black text-slate-500 uppercase">Office</button>
+                                <button onclick="AppEngine.setAddrCategory('Others')" id="manual-cat-Others" class="py-3 rounded-xl border border-slate-800 bg-slate-950 text-[10px] font-black text-slate-500 uppercase">Others</button>
+                            </div>
                         </div>
-                        <label class="flex items-center gap-3 justify-center cursor-pointer">
-                            <input type="checkbox" id="cod-confirm" class="w-5 h-5 accent-teal-500">
-                            <span class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">I UNDERSTAND & AGREE</span>
-                        </label>
                     </div>
-                    <button onclick="AppEngine.processPayment('COD')" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 uppercase tracking-widest">CONFIRM SUBSCRIPTION</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL 4: PROFILE (Premium Dark Design) -->
-        <section class="view-panel p-0 bg-[#0A0E1A]" id="view-profile">
-            <!-- Top Application Header -->
-            <div class="px-5 pt-6 pb-2 flex items-center justify-between">
-                <h1 class="text-2xl font-bold tracking-tight text-white">Profile</h1>
-                <div class="flex items-center gap-1.5 text-[#00BCD4] text-[10px] font-black tracking-widest uppercase bg-[#131A30] px-3 py-1.5 rounded-full border border-[#1E294B]">
-                    <i class="fa-solid fa-map-pin"></i> <span id="profile-current-zone">Ballari</span>
+                    <button onclick="AppEngine.saveManualAddress()" class="w-full py-5 bg-[#00BCD4] rounded-2xl font-black text-[#0A0E1A] shadow-xl text-xs uppercase active:scale-95 transition">SAVE MANUAL ADDRESS</button>
                 </div>
             </div>
 
-            <!-- Identity User Ribbon -->
-            <div class="flex items-center gap-4 px-5 py-4 mb-2">
-                <div class="w-14 h-14 rounded-full bg-[#1E294B] flex items-center justify-center text-[#00BCD4] shadow-md border border-[#2E3B5E]">
-                    <i class="fa-solid fa-user text-2xl"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-xl font-bold text-white">Hi,</span>
-                    <span id="profile-display-phone" class="text-sm font-medium text-gray-400 tracking-wide">7483266062</span>
-                </div>
-            </div>
-
-            <!-- Content Action Cards Block -->
-            <div class="px-4 space-y-5">
-                <!-- MAIN DETAILS -->
-                <div class="space-y-1.5">
-                    <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
-                        <button onclick="navigateTo('profile-details')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-user"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">View Profile Details</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                        <button onclick="navigateTo('wallet')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-wallet"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">H2ONEXPULSE Wallet</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-[14px] font-bold text-white" id="wallet-balance-display">₹0</span>
-                                <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                            </div>
-                        </button>
-                        <button onclick="navigateTo('bank-details')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-landmark"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Bank Details</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- ORDERS -->
-                <div class="space-y-1.5">
-                    <h2 class="px-2 text-[11px] font-bold tracking-wider text-gray-500 uppercase">ORDERS</h2>
-                    <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
-                        <button onclick="navigateTo('all-orders')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-bag-shopping"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">All Orders</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                        <button onclick="navigateTo('calendar')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-calendar"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Order Calendar</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                        <button onclick="navigateTo('favorites')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-heart"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Favorite Orders</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                        <button onclick="navigateTo('select-location')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-map-pin"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Address Book</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                        <button onclick="navigateTo('transaction-history')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-clock-rotate-left"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Transaction History</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                        <button onclick="navigateTo('return-jar')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-rotate"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Return Empty Jar</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- CUSTOMER SUPPORT -->
-                <div class="space-y-1.5">
-                    <h2 class="px-2 text-[11px] font-bold tracking-wider text-gray-500 uppercase">CUSTOMER SUPPORT</h2>
-                    <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
-                        <button onclick="navigateTo('contact-info')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-headset"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Contact Information</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                        <button onclick="AppEngine.openHelp('chat')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-message"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Chat With Us</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                        <button onclick="navigateTo('faq')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-circle-question"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">FAQ</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                        <button onclick="navigateTo('locate-us')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-location-crosshairs"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Locate Us</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- REWARDS -->
-                <div class="space-y-1.5">
-                    <h2 class="px-2 text-[11px] font-bold tracking-wider text-gray-500 uppercase">REWARDS</h2>
-                    <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
-                        <button onclick="navigateTo('coupons')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-ticket"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Collected Coupons</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- LEGAL -->
-                <div class="space-y-1.5">
-                    <h2 class="px-2 text-[11px] font-bold tracking-wider text-gray-500 uppercase">LEGAL</h2>
-                    <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
-                        <button onclick="navigateTo('about')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-circle-info"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">About us</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                        <button onclick="navigateTo('terms')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B] border-b border-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-file-contract"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Terms & Conditions</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                        </button>
-                        <button onclick="navigateTo('refund-policy')" class="w-full flex items-center justify-between px-4 py-4 text-left transition-colors active:bg-[#1E294B]">
-                            <div class="flex items-center gap-3.5">
-                                <div class="text-[#00BCD4] w-5 text-center"><i class="fa-solid fa-shield-halved"></i></div>
-                                <span class="text-[14px] font-semibold text-gray-200">Cancellation & Refunds Policy</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="px-5 py-10">
-                <button onclick="location.reload()" class="w-full py-4 bg-[#131A30] border border-[#1E294B] rounded-2xl text-gray-500 font-bold text-xs uppercase tracking-widest active:scale-95 transition">Logout Session</button>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL: CONTACT INFO (New) -->
-        <section class="view-panel p-0 bg-slate-950" id="view-contact-info">
-            <div class="bg-slate-900 p-6 flex items-center gap-4 text-white sticky top-0 z-[110] border-b border-white/5">
-                <button onclick="navigateTo('profile')" class="text-xl"><i class="fa-solid fa-chevron-left"></i></button>
-                <h2 class="text-xl font-bold flex-1">Contact Information</h2>
-            </div>
-            <div class="p-6 space-y-4">
-                <div onclick="AppEngine.openHelp('call')" class="p-6 bg-slate-900 border border-white/5 rounded-[24px] flex items-center gap-6 cursor-pointer active:scale-95 transition">
-                    <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-2xl text-teal-400"><i class="fa-solid fa-phone"></i></div>
-                    <div class="flex-1">
-                        <h4 class="text-white font-bold text-sm">Call Hotline</h4>
-                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-1">+91 7483266062</p>
-                    </div>
-                </div>
-
-                <div onclick="AppEngine.openHelp('email')" class="p-6 bg-slate-900 border border-white/5 rounded-[24px] flex items-center gap-6 cursor-pointer active:scale-95 transition">
-                    <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-2xl text-teal-400"><i class="fa-solid fa-envelope"></i></div>
-                    <div class="flex-1">
-                        <h4 class="text-white font-bold text-sm">Mail Us</h4>
-                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-1">support@nexpulse.com</p>
-                    </div>
-                </div>
-
-                <div onclick="AppEngine.openHelp('chat')" class="p-6 bg-slate-900 border border-white/5 rounded-[24px] flex items-center gap-6 cursor-pointer active:scale-95 transition">
-                    <div class="w-12 h-12 bg-slate-950 rounded-xl flex items-center justify-center text-2xl text-teal-400"><i class="fa-solid fa-comments"></i></div>
-                    <div class="flex-1">
-                        <h4 class="text-white font-bold text-sm">WhatsApp Support</h4>
-                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-1">Instant Chat</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL: PROFILE DETAILS (New) -->
-        <section class="view-panel p-0 bg-slate-950" id="view-profile-details">
-            <div class="bg-slate-900 p-6 flex items-center gap-4 text-white sticky top-0 z-[110] border-b border-white/5">
-                <button onclick="navigateTo('profile')" class="text-xl"><i class="fa-solid fa-chevron-left"></i></button>
-                <h2 class="text-xl font-bold flex-1">Profile Details</h2>
-            </div>
-            <div class="p-6 space-y-6">
-                <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Customer Title</label>
-                        <p id="detail-name" class="text-white font-bold text-lg">---</p>
-                        <input type="text" id="edit-name" class="hidden w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-teal-500">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Phone Number</label>
-                        <p id="detail-phone" class="text-white font-bold text-lg">---</p>
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Mail ID</label>
-                        <p id="detail-email" class="text-white font-bold text-lg">---</p>
-                        <input type="email" id="edit-email" class="hidden w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white outline-none focus:border-teal-500">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Account Created</label>
-                        <p id="detail-created" class="text-white font-bold text-lg">---</p>
-                    </div>
-                </div>
-
-                <button id="btn-edit-profile" onclick="AppEngine.toggleProfileEdit(true)" class="w-full py-5 bg-slate-800 border border-white/5 rounded-2xl font-black text-white active:scale-95 transition uppercase tracking-widest">
-                    EDIT PROFILE
-                </button>
-                <button id="btn-save-profile" onclick="AppEngine.saveProfileDetails()" class="hidden w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition uppercase tracking-widest">
-                    SAVE CHANGES
-                </button>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL: WALLET (New) -->
-        <section class="view-panel p-0 bg-slate-950" id="view-wallet">
-            <div class="bg-teal-600 p-8 rounded-b-[40px] space-y-6 text-white shadow-2xl shadow-teal-900/20">
-                <div class="flex items-center gap-4">
-                    <button onclick="navigateTo('profile')" class="text-xl"><i class="fa-solid fa-chevron-left"></i></button>
-                    <h2 class="text-xl font-black uppercase tracking-tighter">NexPulse <span class="opacity-60">Wallet</span></h2>
-                </div>
-                <div class="space-y-1">
-                    <p class="text-xs font-bold uppercase tracking-widest opacity-80">Active Balance</p>
-                    <h3 class="text-5xl font-black">₹0.00</h3>
-                </div>
-            </div>
-            <div class="p-8 space-y-8">
-                <div class="space-y-4">
-                    <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Add Funds</h4>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
-                        <input type="number" id="wallet-amount" placeholder="0.00" class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 pl-8 text-white text-xl font-black outline-none focus:border-teal-500 transition">
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="document.getElementById('wallet-amount').value=100" class="flex-1 py-3 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">+100</button>
-                        <button onclick="document.getElementById('wallet-amount').value=500" class="flex-1 py-3 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">+500</button>
-                        <button onclick="document.getElementById('wallet-amount').value=1000" class="flex-1 py-3 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">+1000</button>
-                    </div>
-                </div>
-                <button onclick="AppEngine.addWalletFunds()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 uppercase tracking-widest">PROCEED TO PAY</button>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL: BANK DETAILS (New) -->
-        <section class="view-panel p-0 bg-slate-950" id="view-bank-details">
-            <div class="bg-slate-900 p-6 flex items-center gap-4 text-white sticky top-0 z-[110] border-b border-white/5">
-                <button onclick="navigateTo('profile')" class="text-xl"><i class="fa-solid fa-chevron-left"></i></button>
-                <h2 class="text-xl font-bold flex-1">Bank Details</h2>
-            </div>
-            <div class="p-6 space-y-6">
-                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">Configure your receiving bank details for deposit refunds and settlement.</p>
-                <div class="bg-slate-900 p-6 rounded-[32px] border border-white/5 space-y-4">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Account Holder Name</label>
-                        <input type="text" placeholder="Full Name" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white outline-none focus:border-teal-500 transition">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Account Number</label>
-                        <input type="number" placeholder="Enter Account No" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white outline-none focus:border-teal-500 transition">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">IFSC Code</label>
-                        <input type="text" placeholder="SBIN00XXXXX" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white outline-none focus:border-teal-500 transition">
-                    </div>
-                </div>
-                <button onclick="alert('Bank Details Saved Successfully! ✅'); navigateTo('profile')" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 uppercase tracking-widest">SAVE DETAILS</button>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL: TERMS & CONDITIONS (Dark Mode Overhaul) -->
-        <section class="view-panel p-0 bg-[#0A0E1A]" id="view-terms">
-            <!-- Top Sticky Dark Navigation Header -->
-            <div class="sticky top-0 bg-[#0B132B] border-b border-[#1E294B] px-4 py-4 flex items-center gap-3 z-50 shadow-lg">
-                <button onclick="navigateTo('profile')" class="p-1 rounded-full hover:bg-[#1E294B] transition-colors text-gray-300" aria-label="Go back">
-                    <i class="fa-solid fa-arrow-left text-xl text-[#00BCD4]"></i>
-                </button>
-                <h1 class="text-lg font-bold tracking-tight text-white">Terms & Conditions</h1>
-            </div>
-
-            <div class="max-w-md mx-auto p-4 space-y-6">
-                <!-- Brand Acknowledgment Card -->
-                <div class="bg-[#131A30] p-5 rounded-xl border border-[#1E294B] flex items-start gap-4 shadow-xl">
-                    <div class="p-3 bg-[#1E294B] text-[#00BCD4] rounded-lg shrink-0">
-                        <i class="fa-solid fa-shield-check text-xl"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-base font-bold text-white">Welcome to H2ONEXPULSE</h2>
-                        <p class="text-xs text-gray-400 mt-1 leading-relaxed">
-                            Please read these terms carefully before starting your subscription service. By using our application, you agree to comply with these rules.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Vertically Scrolling Terms Policy Box -->
-                <div class="bg-[#131A30] rounded-xl border border-[#1E294B] shadow-xl overflow-hidden">
-                    <div class="h-[60vh] overflow-y-auto p-5 space-y-6 text-[14px] leading-relaxed text-gray-300">
-                        
-                        <!-- Section 1 -->
-                        <div class="space-y-2">
-                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                1. Account Registration & Eligibility
-                            </h3>
-                            <p class="text-gray-400">
-                                To access the water delivery features provided by <strong>H2ONEXPULSE</strong>, you must register a valid account using an active mobile phone number. You are solely responsible for ensuring that all account details, credentials, and profile information remain updated and accurate.
-                            </p>
-                        </div>
-
-                        <hr class="border-[#1E294B]" />
-
-                        <!-- Section 2 -->
-                        <div class="space-y-2">
-                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                <i class="fa-solid fa-calendar text-[#00BCD4]"></i> 2. Subscription Plans & Scheduled Deliveries
-                            </h3>
-                            <p class="text-gray-400">
-                                <strong>H2ONEXPULSE</strong> offers custom subscription tiers and scheduled options to fit your lifestyle requirements:
-                            </p>
-                            <ul class="list-disc pl-5 space-y-1.5 text-gray-400">
-                                <li>Deliveries are processed, fulfilled, and automated entirely based on the selection arrays specified in your active app calendar.</li>
-                                <li>Users can seamlessly cycle between our premium water categories, including <strong>Daily H2O</strong> and <strong>Premium H2O</strong> packages.</li>
-                                <li>Any modifications, pauses, or immediate cancellations to scheduled deliveries must be executed in the application before the designated daily calendar cutoff time to avoid automatic dispatch.</li>
-                            </ul>
-                        </div>
-
-                        <hr class="border-[#1E294B]" />
-
-                        <!-- Section 3 -->
-                        <div class="space-y-2">
-                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                <i class="fa-solid fa-arrows-rotate text-[#00BCD4]"></i> 3. The Empty Jar Exchange Policy
-                            </h3>
-                            <p class="text-gray-400">
-                                Our commercial operations rely strictly on an exact container lifecycle network. By accepting delivery services from <strong>H2ONEXPULSE</strong>, you explicitly acknowledge and consent to the empty jar clause:
-                            </p>
-                            <ul class="list-disc pl-5 space-y-1.5 text-gray-400">
-                                <li>Customers must return a clean, undamaged empty water jar of the identical volume segment for every fresh water jar delivered by our logistics partners.</li>
-                                <li>If an empty jar is unavailable, damaged, or unreturned at the designated moment of delivery, the customer shall be liable to immediately forfeit their established jar security deposit.</li>
-                                <li>Additional delivery dispatches may be restricted or paused if the customer accumulates an unbalanced jar deficit or outstanding container debt.</li>
-                            </ul>
-                        </div>
-
-                        <hr class="border-[#1E294B]" />
-
-                        <!-- Section 4 -->
-                        <div class="space-y-2">
-                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                <i class="fa-solid fa-map-pin text-[#00BCD4]"></i> 4. Service Area & Location Deliverability
-                            </h3>
-                            <p class="text-gray-400">
-                                Service availability is determined strictly by defined geographic delivery sectors and municipal boundaries:
-                            </p>
-                            <ul class="list-disc pl-5 space-y-1.5 text-gray-400">
-                                <li>Orders and recurring deliveries will only execute if your structural address coordinates fall within active <strong>H2ONEXPULSE</strong> geo-coverage blocks.</li>
-                                <li>The application reserves the absolute right to restrict checkouts, cancel active plans, or mark a user coordinate block as "Location non-deliverable" if access routes are blocked or fall outside operations.</li>
-                            </ul>
-                        </div>
-
-                        <hr class="border-[#1E294B]" />
-
-                        <!-- Section 5 -->
-                        <div class="space-y-2">
-                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                <i class="fa-solid fa-wallet text-[#00BCD4]"></i> 5. App Wallet, Payments & Fees
-                            </h3>
-                            <p class="text-gray-400">
-                                All balances, secure transactions, and individual order invoices are managed directly using the integrated digital platform portal:
-                            </p>
-                            <ul class="list-disc pl-5 space-y-1.5 text-gray-400">
-                                <li>Charges for water orders and jar deposits are deducted systematically from your active <strong>H2ONEXPULSE</strong> wallet balance or processed via approved digital gateways.</li>
-                                <li>Any balance discrepancies, refund applications, or billing queries must be raised with our Customer Support division within 7 business days of invoice compilation.</li>
-                            </ul>
-                        </div>
-
-                    </div>
-                    
-                    <!-- Bottom Dark Accent Strip -->
-                    <div class="bg-[#0B132B] px-5 py-3 border-t border-[#1E294B] flex justify-between items-center text-xs text-gray-500 font-bold">
-                        <span>Version 2.1.0 (2026)</span>
-                        <span>© H2ONEXPULSE Inc.</span>
-                    </div>
-                </div>
-
-                <!-- Accept / Acknowledge Action Button Container -->
-                <button onclick="navigateTo('profile')" class="w-full bg-[#00A896] text-white font-black py-4 rounded-xl transition-all active:scale-[0.99] shadow-md text-center text-sm tracking-widest uppercase">
-                    I ACKNOWLEDGE & AGREE
-                </button>
-            </div>
-        </section>
-
-        <!-- VIEW PANEL: COLLECTED COUPONS (Dark Mode Overhaul) -->
-        <section class="view-panel p-0 bg-[#0A0E1A]" id="view-coupons">
-            <!-- Top Application Navigation Header -->
-            <div class="bg-[#0B132B] text-white px-4 py-4 flex items-center justify-between sticky top-0 z-50 border-b border-[#1E294B] shadow-lg">
-                <div class="flex items-center gap-3">
-                    <button onclick="navigateTo('profile')" class="p-1 active:bg-white/10 rounded-full transition-colors">
-                        <i class="fa-solid fa-arrow-left text-xl text-[#00BCD4]"></i>
-                    </button>
-                    <h1 class="text-xl font-semibold tracking-wide text-white">Collected Coupons</h1>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button class="p-1 active:bg-white/10 rounded-full transition-colors"><i class="fa-solid fa-magnifying-glass text-xl text-gray-400"></i></button>
-                    <button onclick="navigateTo('cart')" class="p-1 active:bg-white/10 rounded-full transition-colors"><i class="fa-solid fa-cart-shopping text-xl text-gray-400"></i></button>
-                </div>
-            </div>
-
-            <!-- Two-State Dark Navigation Tabs -->
-            <div class="bg-[#111827] border-b border-[#1E294B] flex">
-                <button id="tab-coupons-collected" onclick="AppEngine.setCouponTab('collected')" class="flex-1 py-3.5 text-center font-bold text-sm transition-all border-b-2 border-[#00BCD4] text-[#00BCD4]">
-                    My Coupons (0)
-                </button>
-                <button id="tab-coupons-offers" onclick="AppEngine.setCouponTab('offers')" class="flex-1 py-3.5 text-center font-bold text-sm transition-all border-b-2 border-transparent text-gray-500">
-                    Active Offers (2)
-                </button>
-            </div>
-
-            <!-- Main Content Area Container -->
-            <div id="coupons-content-target" class="max-w-md mx-auto p-4">
-                <!-- Dynamic Content will be injected here -->
-            </div>
-        </section>
-
-        <!-- VIEW PANEL: CANCELLATION & REFUNDS (Dark Mode Overhaul) -->
-        <section class="view-panel p-0 bg-[#0A0E1A]" id="view-refund-policy">
-            <!-- Sticky Dark Navigation Header -->
-            <div class="sticky top-0 bg-[#0B132B] border-b border-[#1E294B] px-4 py-4 flex items-center gap-3 z-50 shadow-lg">
-                <button onclick="navigateTo('profile')" class="p-1 rounded-full hover:bg-[#1E294B] text-gray-300">
-                    <i class="fa-solid fa-arrow-left text-xl text-[#00BCD4]"></i>
-                </button>
-                <h1 class="text-lg font-bold tracking-tight text-white">Cancellation & Refunds</h1>
-            </div>
-
-            <div class="max-w-md mx-auto p-4 space-y-6">
-                <!-- Policy Highlights Card -->
-                <div class="bg-[#131A30] p-5 rounded-xl border border-[#1E294B] flex items-start gap-4 shadow-xl">
-                    <div class="p-3 bg-[#1E294B] text-[#00BCD4] rounded-lg shrink-0">
-                        <i class="fa-solid fa-rotate-left text-xl"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-base font-bold text-white">Our Service Commitment</h2>
-                        <p class="text-xs text-gray-400 mt-1 leading-relaxed">
-                            At H2ONEXPULSE, we aim to provide reliable deliveries. Review our guidelines below regarding adjustments and processing.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Policy Scroller Box -->
-                <div class="bg-[#131A30] rounded-xl border border-[#1E294B] overflow-hidden shadow-xl">
-                    <div class="h-[60vh] overflow-y-auto p-5 space-y-6 text-[14px] leading-relaxed text-gray-300">
-                        
-                        <!-- Section 1 -->
-                        <div class="space-y-2">
-                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                <i class="fa-solid fa-truck text-[#00BCD4]"></i> 1. Delivery Terms & Conditions
-                            </h3>
-                            <ul class="list-disc pl-5 space-y-2 text-gray-400">
-                                <li><strong>H2ONEXPULSE</strong> operates and delivers products exclusively within selected operational city zones.</li>
-                                <li><strong>Multi-Story Delivery Rule:</strong> If your building does not have a functional service elevator, deliveries will be completed at the main security gate or up to the 2nd floor maximum.</li>
-                            </ul>
-                        </div>
-
-                        <hr class="border-[#1E294B]" />
-
-                        <!-- Section 2 -->
-                        <div class="space-y-2">
-                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                                <i class="fa-solid fa-circle-exclamation text-[#00BCD4]"></i> 2. Subscriptions & Empty Jars
-                            </h3>
-                            <ul class="list-disc pl-5 space-y-2 text-gray-400">
-                                <li><strong>Jar Quality Enforcement:</strong> Empty jars returned during delivery cycles must be clean and reusable. Jars previously used to store chemicals, oils, or non-potable liquids will be rejected. No smell, oil, or chemical contamination is allowed.</li>
-                            </ul>
-                        </div>
-
-                    </div>
+            <!-- GPS LOADING OVERLAY -->
+            <div id="gps-loading-overlay" class="fixed inset-0 z-[200] bg-slate-950/90 flex flex-col items-center justify-center space-y-4 hidden">
+                <div class="w-16 h-16 border-4 border-teal-500/20 border-t-teal-500 rounded-full animate-spin"></div>
+                <div class="text-center">
+                    <p class="text-teal-400 font-black text-xs uppercase tracking-[0.3em]">GPS Pinging Active...</p>
                 </div>
             </div>
         </section>
@@ -1034,22 +245,11 @@
                 <div class="slide-content">
                     <span class="brand-badge">Bisleri vedica</span>
                     <h3>Himalayan Spring Water</h3>
-                    <p>A life full of altitude.</p>
                 </div>
             </div>
             
-            <div class="quick-category-row">
-                <div class="cat-chip active"><span>Daily H2O</span></div>
-                <div class="cat-chip"><span>Premium H2O</span></div>
-                <div class="cat-chip"><span>Change over</span></div>
-                <div class="cat-chip"><span>Traveling</span></div>
-            </div>
-
             <div class="service-alert-box" id="alert-home">
-                <div class="alert-txt">
-                    <h3>Location not deliverable</h3>
-                    <p>Sorry, we are not delivering at this location at the moment.</p>
-                </div>
+                <div class="alert-txt"><h3>Location not deliverable</h3><p>Sorry, we are not delivering at this location at the moment.</p></div>
                 <div class="alert-icon-circle"><i class="fa-solid fa-xmark"></i></div>
             </div>
 
@@ -1063,265 +263,52 @@
                 <div class="needs-grid">
                     <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Daily H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Daily H2O</span></div>
                     <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Premium H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Premium H2O</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Change over')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Change over</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Traveling')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Traveling</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Party Mood')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Party Mood</span></div>
-                    <div class="grid-card cursor-pointer active:scale-95 transition" onclick="AppEngine.filterByCategory('Glass H2O')"><div><i class="fa-solid fa-bottle-water"></i></div><span>Glass H2O</span></div>
-                </div>
-            </div>
-
-            <!-- ASSET LEDGER (Ref: 1000298470.jpg) -->
-            <div class="asset-ledger-section mt-8">
-                <div class="ledger-card">
-                    <div class="ledger-header">
-                        <h4><i class="fa-solid fa-box-open"></i> Physical Account Ledger</h4>
-                    </div>
-                    <div class="ledger-metrics">
-                        <div class="metric-node">
-                            <span class="metric-val" id="ui-jars-held">0</span>
-                            <span class="metric-lbl">Jars At Home</span>
-                        </div>
-                        <div class="metric-divider"></div>
-                        <div class="metric-node">
-                            <span class="metric-val" id="ui-deposit-held">₹0.00</span>
-                            <span class="metric-lbl">Security Deposit</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- VIEW PANEL 2: PRODUCTS (Ref: 1000298514.jpg) -->
+        <!-- VIEW PANEL 2: PRODUCTS -->
         <section class="view-panel" id="view-products">
             <div class="view-header"><h2>Products</h2></div>
-            <div class="quick-category-row">
-                <div class="cat-chip active"><span>Daily H2O</span></div>
-                <div class="cat-chip"><span>Premium H2O</span></div>
-                <div class="cat-chip"><span>Change over</span></div>
-                <div class="cat-chip"><span>Traveling</span></div>
-            </div>
-            <div class="service-alert-box" id="alert-products">
-                <div class="alert-txt">
-                    <h3>Location not deliverable</h3>
-                    <p>Sorry, we are not delivering at this location at the moment.</p>
-                </div>
-                <div class="alert-icon-circle"><i class="fa-solid fa-xmark"></i></div>
-            </div>
-            <div id="dynamic-product-list-target" class="space-y-4">
-                <!-- Real products will be injected here -->
-            </div>
+            <div id="dynamic-product-list-target" class="space-y-4"></div>
         </section>
 
-        <!-- VIEW PANEL 3: SUBSCRIPTIONS (Ref: 1000298515.jpg) -->
-        <section class="view-panel" id="view-subscriptions">
-            <!-- Dynamic Subscriptions will be injected here -->
-        </section>
-
-        <!-- VIEW PANEL: CART -->
-        <section class="view-panel" id="view-cart">
-            <div class="view-header"><h2>Cart</h2></div>
-            <div class="empty-state-view">
-                <div class="empty-vector">🛒❗</div>
-                <h3>Don't leave your cart high & dry</h3>
-                <p>Add some bottles to quench your thirst</p>
-                <button class="action-accent-button" onclick="navigateTo('products')">BROWSE PRODUCTS</button>
-            </div>
-        </section>
-
-        <section class="view-panel" id="view-history">
-            <div class="view-header"><h2>Orders</h2></div>
-            <div class="empty-state-view">
-                <div class="empty-vector">📦❌</div>
-                <h3>No Orders Yet!</h3>
-                <p>You haven't placed any orders yet.</p>
-            </div>
-        </section>
-
-        <!-- GLOBAL STICKY ROUTING NAVIGATION FOOTER -->
+        <!-- GLOBAL STICKY FOOTER -->
         <nav id="global-bottom-navigation" class="fixed bottom-0 left-0 right-0 h-16 bg-[#0B132B] border-t border-[#1E294B] flex items-center justify-around px-2 z-50 shadow-2xl">
-            <button class="nav-btn active flex flex-col items-center" onclick="navigateTo('home')" data-target="home">
-                <i class="fa-solid fa-house mb-1"></i>
-                <span class="text-[10px] font-bold">Home</span>
-            </button>
-            <button class="nav-btn flex flex-col items-center" onclick="navigateTo('products')" data-target="products">
-                <i class="fa-solid fa-bottle-water mb-1"></i>
-                <span class="text-[10px] font-bold">Products</span>
-            </button>
-            <button class="nav-btn flex flex-col items-center" onclick="navigateTo('subscriptions')" data-target="subscriptions">
-                <i class="fa-solid fa-calendar-check mb-1"></i>
-                <span class="text-[10px] font-bold">Subscriptions</span>
-            </button>
-            <button class="nav-btn flex flex-col items-center" onclick="navigateTo('cart')" data-target="cart">
-                <i class="fa-solid fa-cart-shopping mb-1"></i>
-                <span class="text-[10px] font-bold">Cart</span>
-            </button>
-            <button class="nav-btn flex flex-col items-center" onclick="navigateTo('profile')" data-target="profile">
-                <i class="fa-solid fa-user-gear mb-1"></i>
-                <span class="text-[10px] font-bold">Profile</span>
-            </button>
+            <button class="nav-btn active flex flex-col items-center" onclick="navigateTo('home')" data-target="home"><i class="fa-solid fa-house mb-1"></i><span class="text-[10px] font-bold">Home</span></button>
+            <button class="nav-btn flex flex-col items-center" onclick="navigateTo('products')" data-target="products"><i class="fa-solid fa-bottle-water mb-1"></i><span class="text-[10px] font-bold">Products</span></button>
+            <button class="nav-btn flex flex-col items-center" onclick="navigateTo('profile')" data-target="profile"><i class="fa-solid fa-user-gear mb-1"></i><span class="text-[10px] font-bold">Profile</span></button>
         </nav>
-
-        <!-- CHECKOUT DELIVERY INFO MODAL (Ref: Step 3) -->
-        <div id="checkout-modal" class="fixed inset-0 bg-slate-950/95 z-[160] hidden overflow-y-auto">
-            <div class="p-6 pt-12 max-w-md mx-auto space-y-8">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-2xl font-black font-brand tracking-tight">DELIVERY <span class="text-teal-500">INFO</span></h3>
-                    <button onclick="AppEngine.closeCheckout()" class="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center">
-                        <i class="fa-solid fa-xmark text-white"></i>
-                    </button>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="space-y-2">
-                        <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Full Name</label>
-                        <input type="text" id="cust-name" placeholder="Enter your name" class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 focus:border-teal-500 outline-none transition text-white">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Phone Number</label>
-                        <input type="tel" id="cust-phone" readonly class="w-full bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-slate-500 outline-none font-bold">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Delivery Address</label>
-                        <div class="flex gap-2">
-                            <textarea id="cust-address" placeholder="Flat No, Building, Street..." rows="2" class="flex-1 bg-slate-900 border border-slate-800 rounded-2xl p-4 focus:border-teal-500 outline-none transition text-sm text-white"></textarea>
-                            <button onclick="AppEngine.toggleMapPicker()" class="w-14 bg-slate-800 border border-slate-700 rounded-2xl flex items-center justify-center text-teal-400 active:bg-teal-500/10">
-                                <i class="fa-solid fa-map-pin"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Address Category</label>
-                        <div class="flex gap-2">
-                            <button onclick="AppEngine.setAddrCategory('Home')" id="cat-Home" class="flex-1 py-3 rounded-xl border border-teal-500/50 bg-teal-500/10 text-xs font-bold text-teal-400 transition flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-house"></i> Home
-                            </button>
-                            <button onclick="AppEngine.setAddrCategory('Office')" id="cat-Office" class="flex-1 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400 transition flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-briefcase"></i> Office
-                            </button>
-                            <button onclick="AppEngine.setAddrCategory('Others')" id="cat-Others" class="flex-1 py-3 rounded-xl border border-slate-800 bg-slate-900 text-xs font-bold text-slate-400 transition flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-map-pin"></i> Others
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- GOOGLE MAPS CONTAINER -->
-                <div id="map-picker-container" class="hidden space-y-4">
-                    <div id="map-canvas" class="w-full h-64 bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden relative z-[50]">
-                        <!-- Leaflet will mount here -->
-                    </div>
-                    <p class="text-[9px] text-center text-teal-500/70 font-bold uppercase tracking-widest">Move the map to pinpoint your doorstep</p>
-                </div>
-
-                <button onclick="AppEngine.saveAddress()" class="w-full py-5 bg-teal-600 rounded-2xl font-black text-white shadow-xl shadow-teal-900/40 active:scale-95 transition">
-                    CONFIRM ADDRESS
-                </button>
-            </div>
-        </div>
-
-        <!-- GLOBAL PROCESSING LOADER -->
-        <div id="global-loader" class="fixed inset-0 bg-slate-950/80 z-[1000] hidden flex flex-col items-center justify-center space-y-4">
-            <div class="w-12 h-12 border-4 border-teal-500/20 border-t-teal-500 rounded-full animate-spin"></div>
-            <p class="text-[10px] font-black text-teal-400 uppercase tracking-[0.3em]">Processing Transaction</p>
-        </div>
-
-        <!-- SUCCESS POPUP -->
-        <div id="success-popup" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-8 bg-slate-950/90 backdrop-blur-sm">
-            <div class="bg-slate-900 border border-white/5 rounded-[40px] p-10 w-full max-w-xs text-center space-y-6 scale-90 opacity-0 transition-all duration-500" id="success-card">
-                <div class="w-24 h-24 bg-teal-500 rounded-full flex items-center justify-center mx-auto text-white text-5xl shadow-2xl shadow-teal-500/40 animate-bounce"><i class="fa-solid fa-check"></i></div>
-                <div class="space-y-2">
-                    <h3 class="text-2xl font-black text-white">Subscription Active!</h3>
-                    <p class="text-sm text-slate-400">Welcome to the H2O NexPulse family. Your daily delivery starts tomorrow.</p>
-                </div>
-                <button onclick="AppEngine.closeSuccess()" class="w-full py-4 bg-slate-800 rounded-2xl font-bold text-white text-xs uppercase tracking-widest">GO TO DASHBOARD</button>
-            </div>
-        </div>
 
     </div>
 
     <script>
         function navigateTo(target) {
-            // 1. Update View Panels
             const panels = document.querySelectorAll('.view-panel');
             panels.forEach(p => p.classList.remove('active'));
-            
             const targetPanel = document.getElementById(`view-${target}`);
-            if (targetPanel) {
-                targetPanel.classList.add('active');
-            }
+            if (targetPanel) targetPanel.classList.add('active');
 
-            // 2. Hide/Show Global UI elements for specific views
             const topBar = document.getElementById('global-top-bar');
             const bottomNav = document.getElementById('global-bottom-navigation');
-            
-            const hideGlobalUI = ['select-location', 'profile-details', 'wallet', 'bank-details', 'subscription-setup', 'payment-selection', 'search', 'contact-info', 'terms', 'refund-policy', 'coupons', 'fully-interactive-map'].includes(target);
+            const hideGlobalUI = ['select-location', 'search'].includes(target);
+            if (hideGlobalUI) { topBar?.classList.add('hidden'); bottomNav?.classList.add('hidden'); }
+            else { topBar?.classList.remove('hidden'); bottomNav?.classList.remove('hidden'); }
 
-            if (hideGlobalUI) {
-                if (topBar) topBar.classList.add('hidden');
-                if (bottomNav) bottomNav.classList.add('hidden');
-            } else {
-                if (topBar) topBar.classList.remove('hidden');
-                if (bottomNav) bottomNav.classList.remove('hidden');
-            }
-
-            // 3. Update Bottom Nav Buttons
             const navButtons = document.querySelectorAll('.nav-btn');
             navButtons.forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('data-target') === target) {
-                    btn.classList.add('active');
-                }
+                btn.classList.toggle('active', btn.getAttribute('data-target') === target);
             });
 
-            // 4. Special Logic for specific views
-            if (target === 'products') {
-                if (typeof syncProductUI === 'function') syncProductUI();
-            }
-            if (target === 'cart') {
-                if (window.AppEngine) window.AppEngine.syncCartUI();
-            }
-            if (target === 'profile') {
-                if (window.AppEngine) window.AppEngine.syncProfileUI();
-            }
-            if (target === 'profile-details') {
-                if (window.AppEngine) window.AppEngine.populateProfileDetails();
-            }
-            if (target === 'search') {
-                if (window.AppEngine) window.AppEngine.clearSearch();
-            }
-            if (target === 'coupons') {
-                if (window.AppEngine) window.AppEngine.renderCouponsUI();
-            }
-            if (target === 'fully-interactive-map') {
-                if (window.AppEngine) window.AppEngine.initLeafletMap();
-            }
-
-            // Scroll to top on navigation
+            if (target === 'profile') window.AppEngine.syncProfileUI();
+            if (target === 'select-location') window.AppEngine.setLocationViewMode('main');
             window.scrollTo(0,0);
         }
 
         window.onload = () => {
-            // 1. Promotional Splash Timer (Ref: 1000300505_4.png)
-            setTimeout(() => {
-                const splash = document.getElementById('promo-splash');
-                if (splash) {
-                    splash.style.opacity = '0';
-                    splash.style.transition = 'opacity 0.8s ease';
-                    setTimeout(() => splash.style.display = 'none', 800);
-                }
-            }, 5000);
-
-            // Initial load
-            if (typeof syncProductUI === 'function') syncProductUI();
-            
-            // Check for logged in user
             if (window.AppEngine) {
-                window.AppEngine.fetchSystemSettings();
                 window.AppEngine.checkSession();
                 window.AppEngine.initLocation();
-                window.AppEngine.initSearch();
-                window.AppEngine.initPaymentListeners();
             }
         };
     </script>
